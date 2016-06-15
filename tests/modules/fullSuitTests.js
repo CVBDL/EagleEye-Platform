@@ -3,3 +3,4 @@
  */
 
 require('./testDbLearnLogic');
+require('./testChartModule');

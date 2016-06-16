@@ -37,7 +37,7 @@ brew install mongodb --with-openssl
 ```
 
 
-## Install application Node.js packages:
+## Install application Node.js packages
 
 ```sh
 npm install

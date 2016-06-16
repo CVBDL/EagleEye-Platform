@@ -8,7 +8,7 @@ var should = require('should')
 
 var chartModule = require('../../modules/chartModule');
 
-describe('Model DbLearn Tests', function() {
+describe('Model chart Tests', function() {
 
     before(function(done) {
         DB.connect(DB.MODE_TEST, done);

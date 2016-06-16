@@ -28,6 +28,7 @@ exports.connect = function(mode, done) {
 }
 
 exports.get = function() {
+    exports.connect(exports.MODE_PRODUCTION, (err => err && console.log("Missing database connection.")));
     return state.db;
 }
 

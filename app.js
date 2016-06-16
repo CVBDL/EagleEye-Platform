@@ -70,8 +70,6 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
-db.connect(db.MODE_PRODUCTION, (err => err && console.log(err.message)));
-
 var port = process.env.PORT || 3000;
 console.log('Listening on port 3000');
 app.listen(port);

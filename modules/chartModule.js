@@ -1,6 +1,8 @@
 /**
  * Created by MMo2 on 6/14/2016.
  */
+'use strict';
+
 var ObjectId = require('mongodb').ObjectId;
 var DB = require('../helpers/dbHelper');
 

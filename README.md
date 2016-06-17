@@ -11,7 +11,7 @@
 * Install MongoDB (https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.2.7-signed.msi)
 
 
-## MacOS
+### MacOS
 
 * Install Homebrew (http://brew.sh)
 

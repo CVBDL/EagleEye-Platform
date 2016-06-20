@@ -30,11 +30,19 @@ describe('Model excelHelper Tests', function() {
         done();
     })
 
-    it('writeXLSX', function(done) {
+    it('write and read', function(done) {
         excelHelper.writeXlsx(fixtures.setting, fixtures.data, function() {
             var rs = {};
-            excelHelper.readFile(fixtures.setting, rs, function() {
-                //console.log(workbook);
+            excelHelper.readFile(fixtures.setting, function(workbook) {
+                var worksheet = workbook.getWorksheet(fixtures.setting.worksheet);
+                worksheet.eachRow(function(row, rowNumber) {
+                    if (rowNumber == 1) return;
+                    rowNumber.should.not.be.greaterThan(fixtures.data.length + 1);
+                    row.eachCell(function(cell, colNumber) {
+                        var key = fixtures.setting.columns[colNumber - 1].key;
+                        cell.value.should.be.eql(fixtures.data[rowNumber - 2][key]);
+                    });
+                });
                 done();
             }, excelHelper.MODE_TEST);
         }, excelHelper.MODE_TEST);

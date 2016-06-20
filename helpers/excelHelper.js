@@ -8,6 +8,7 @@ var stream = require("stream");
 var defaultSetting = {
     creator: "EagleEye-Platform",
     lastModifiedBy: "EagleEye-Platform",
+    worksheet: "Chart data"
 };
 
 var PRODUCTION_PATH = './excelPath/prod',
@@ -39,6 +40,7 @@ var createWorkbook = function(setting) {
 }
 
 var workbookToJSObject = function(workbook, result) {
+    return {};
 }
 
 exports.writeXlsx = function(setting, data, done, mode) {
@@ -49,11 +51,12 @@ exports.writeXlsx = function(setting, data, done, mode) {
 
     var workbook = createWorkbook(setting);
 
-    var worksheet = workbook.addWorksheet('My Sheet', 'FFC0000');
+    var worksheet = workbook.addWorksheet(setting.worksheet ? setting.worksheet : defaultSetting.worksheet, 'FFC0000');
 
     worksheet.columns = setting.columns;
 
-    data.forEach(line => worksheet.addRow(line));
+    // data.forEach(line => worksheet.addRow(line));
+    worksheet.addRows(data);
 
     var path = mode === exports.MODE_TEST ? TEST_PATH : PRODUCTION_PATH;
 
@@ -64,7 +67,7 @@ exports.writeXlsx = function(setting, data, done, mode) {
     }
 };
 
-exports.readFile = function(setting, result, done, mode) {
+exports.readFile = function(setting, done, mode) {
     var workbook = new Excel.Workbook();
     
     if (setting.filename) {

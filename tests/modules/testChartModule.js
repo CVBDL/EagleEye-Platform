@@ -4,7 +4,7 @@
 
 var should = require('should')
     , DB = require('../../helpers/dbHelper')
-    , fixtures = require('../fixtures/chartModule.json');
+    , fixtures = require('../fixtures/chartModule');
 
 var chartModule = require('../../modules/chartModule');
 

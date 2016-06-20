@@ -14,7 +14,8 @@
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0",
     "mongodb": "~2.1.18",
-    "async": "~2.0.0-rc.6"
+    "async": "~2.0.0-rc.6",
+    "exceljs": "latest"
   },
   "devDependencies": {
     "mocha": "~1.21.4",

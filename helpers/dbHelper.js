@@ -16,7 +16,7 @@ var state = {
 }
 
 exports.connect = function(mode, done) {
-    if (state.db) return done()
+    if (state.db) return done();
     var uri = mode === exports.MODE_TEST ? TEST_URI : PRODUCTION_URI
     
     MongoClient.connect(uri, function(err, db) {

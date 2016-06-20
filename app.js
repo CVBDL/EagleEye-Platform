@@ -9,6 +9,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var dbLearn = require('./routes/dbLearn');
 var cvbdl_api = require('./routes/CVBDL_Api');
+var chartFile = require('./routes/chartFile');
 
 var db = require('./helpers/dbHelper');
 
@@ -36,6 +37,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/dbLearn', dbLearn);
 app.use('/api', cvbdl_api);
+app.use('/chartFile', chartFile);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

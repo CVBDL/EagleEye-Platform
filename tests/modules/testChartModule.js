@@ -51,7 +51,7 @@ describe('Model chart Tests', function() {
                     "title": "Inventory"
                 }
             },
-            "datatables": {
+            "datatable": {
                 "cols": [
                     {
                         "type": "string",

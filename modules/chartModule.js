@@ -12,7 +12,7 @@ exports.create = function(chartData, callback) {
     db.collection(COLLECTION).insert(chartData, function(err, result) {
         if (err) return callback(err);
         callback(null, result.insertedIds[0]);
-    })
+    });
 }
 
 exports.all = function(callback) {
@@ -22,7 +22,13 @@ exports.all = function(callback) {
 
 exports.getOne = function(_id, callback) {
     let db = DB.get();
-    db.collection(COLLECTION).find({"_id": ObjectId(_id)}).toArray(callback);
+    let regExp = /^s-/g;
+
+    if (regExp.test(_id)) {
+        db.collection(COLLECTION).find({ "friendlyUrl": _id }).toArray(callback);
+    } else {
+        db.collection(COLLECTION).find({ "_id": ObjectId(_id) }).toArray(callback);
+    }
 }
 
 exports.clearCollection = function(callback) {
@@ -34,7 +40,7 @@ exports.clearCollection = function(callback) {
 
 exports.remove = function(id, callback) {
     let db = DB.get();
-    db.collection(COLLECTION).removeOne({_id:id}, function(err, result) {
+    db.collection(COLLECTION).removeOne({ _id: id }, function(err, result) {
         callback(err);
-    })
+    });
 }

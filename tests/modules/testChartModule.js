@@ -10,6 +10,35 @@ var chartModule = require('../../modules/chartModule');
 
 describe('Model chart Tests', function() {
 
+    var chart = {
+      "timestamp": 1465891633478,
+      "lastUpdateTimestamp": 1465891842059,
+      "chartType": "LineChart",
+      "domainDataType": "string",
+      "friendlyUrl": "s-eagleeye",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
+      "options": {
+        "title": "Fruits Overview",
+        "hAxis": {
+          "title": "Category"
+        },
+        "vAxis": {
+          "title": "Inventory"
+        }
+      },
+      "datatable": {
+        "cols": [
+          { "type": "string", "label": "Category" },
+          { "type": "number", "label": "Apple" },
+          { "type": "number", "label": "Orange" }
+        ],
+        "rows": [
+          { "c": [{ "v": "Apple" }, { "v": 5 }, { "v": 9 }] },
+          { "c": [{ "v": "Orange" }, { "v": 7 }, { "v": 3 }] }
+        ]
+      }
+    };
+
     before(function(done) {
         DB.connect(DB.MODE_TEST, done);
     })
@@ -38,72 +67,36 @@ describe('Model chart Tests', function() {
     })
 
     it('create', function(done) {
-        var testData = {
-            "chartType": "LineChart",
-            "domainDataType": "string",
-            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-            "options": {
-                "title": "Fruits Overview",
-                "hAxis": {
-                    "title": "Category"
-                },
-                "vAxis": {
-                    "title": "Inventory"
-                }
-            },
-            "datatable": {
-                "cols": [
-                    {
-                        "type": "string",
-                        "label": "Category"
-                    },
-                    {
-                        "type": "number",
-                        "label": "Apple"
-                    },
-                    {
-                        "type": "number",
-                        "label": "Orange"
-                    }
-                ],
-                "rows": [
-                    {
-                        "c": [
-                            {
-                                "v": "Apple"
-                            },
-                            {
-                                "v": 5
-                            },
-                            {
-                                "v": 9
-                            }
-                        ]
-                    },
-                    {
-                        "c": [
-                            {
-                                "v": "Orange"
-                            },
-                            {
-                                "v": 7
-                            },
-                            {
-                                "v": 3
-                            }
-                        ]
-                    }
-                ]
-            }
-        };
-        chartModule.create(testData, function(err, id) {
+        chartModule.create(chart, function(err, id) {
             chartModule.all(function(err, docs) {
                 docs.length.should.eql(3);
                 for (var key in fixtures.collections.chart_collection[0]) {
-                    docs[2][key].should.eql(testData[key]);
+                    docs[2][key].should.eql(chart[key]);
                 }
                 done();
             })
+        })
+    })
+
+    it('getOne: id', function(done) {
+        chartModule.create(chart, function(err, id) {
+            chartModule.getOne(id, function(err, docs) {
+                docs.length.should.eql(1);
+                for (var key in fixtures.collections.chart_collection[0]) {
+                    docs[0][key].should.eql(chart[key]);
+                }
+                done();
+            })
+        })
+    })
+
+    it('getOne: friendlyUrl', function(done) {
+        chartModule.getOne(fixtures.collections.chart_collection[0].friendlyUrl, function(err, docs) {
+            docs.length.should.eql(1);
+            for (var key in fixtures.collections.chart_collection[0]) {
+                docs[0][key].should.eql(fixtures.collections.chart_collection[0][key]);
+            }
+            done();
         })
     })
 

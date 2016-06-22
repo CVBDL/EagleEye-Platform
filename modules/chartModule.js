@@ -22,7 +22,7 @@ exports.all = function(callback) {
 
 exports.getOne = function(_id, callback) {
     let db = DB.get();
-    let regExp = /^s-/g;
+    let regExp = /^c-/g;
 
     if (regExp.test(_id)) {
         db.collection(COLLECTION).find({ "friendlyUrl": _id }).toArray(callback);

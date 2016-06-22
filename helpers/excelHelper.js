@@ -44,7 +44,7 @@ var workbookToJSObject = function(workbook, result) {
 }
 
 exports.writeXlsx = function(setting, data, done, mode) {
-    if (!setting || !setting.columns || !setting.filename) {
+    if (!setting || !setting.columns || (!setting.filename && !setting.outStream)) {
         return;
     }
     mode = typeof mode !== 'undefined' ?  mode : exports.MODE_PRODUCTION;

@@ -11,13 +11,13 @@ var should = require('should')
 describe('Model excelHelper Tests', function() {
 
     before(function(done) {
-        var path = "../../../." + excelHelper.getWorkPath(excelHelper.MODE_TEST);
+        var path = "../." + excelHelper.getWorkPath(excelHelper.MODE_TEST);
         fixtures.setting.filename = path + "/" + fixtures.setting.filename;
         done();
     })
 
     beforeEach(function(done) {
-        var path = "../." + excelHelper.getWorkPath(excelHelper.MODE_TEST);
+        var path = "." + excelHelper.getWorkPath(excelHelper.MODE_TEST);
 
         var files = [];
         if( fs.existsSync(path) ) {

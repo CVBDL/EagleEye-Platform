@@ -20,10 +20,10 @@
           "label": "Category"
         }, {
           "type": "number",
-          "label": "Apple"
+          "label": "value1"
         }, {
           "type": "number",
-          "label": "Orange"
+          "label": "value2"
         }],
         "rows": [{
           "c": [{
@@ -63,10 +63,10 @@
           "label": "Category"
         }, {
           "type": "number",
-          "label": "Apple"
+          "label": "value 1"
         }, {
           "type": "number",
-          "label": "Orange"
+          "label": "value 2"
         }],
         "rows": [{
           "c": [{

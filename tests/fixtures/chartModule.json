@@ -1,122 +1,91 @@
 {
   "collections": {
-    "chart_collection": [
-      {
-        "chartType": "LineChart",
-        "domainDataType": "string",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-        "options": {
-          "title": "Fruits Overview",
-          "hAxis": {
-            "title": "Category"
-          },
-          "vAxis": {
-            "title": "Inventory"
-          }
+    "chart_collection": [{
+      "chartType": "LineChart",
+      "domainDataType": "string",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
+      "friendlyUrl": "s-eagleeye-line-chart",
+      "options": {
+        "title": "Fruits Overview",
+        "hAxis": {
+          "title": "Category"
         },
-        "datatables": {
-          "cols": [
-            {
-              "type": "string",
-              "label": "Category"
-            },
-            {
-              "type": "number",
-              "label": "Apple"
-            },
-            {
-              "type": "number",
-              "label": "Orange"
-            }
-          ],
-          "rows": [
-            {
-              "c": [
-                {
-                  "v": "Apple"
-                },
-                {
-                  "v": 5
-                },
-                {
-                  "v": 9
-                }
-              ]
-            },
-            {
-              "c": [
-                {
-                  "v": "Orange"
-                },
-                {
-                  "v": 7
-                },
-                {
-                  "v": 3
-                }
-              ]
-            }
-          ]
+        "vAxis": {
+          "title": "Inventory"
         }
       },
-      {
-        "chartType": "ColumnChart",
-        "domainDataType": "number",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-        "options": {
-          "title": "Fruits Overview",
-          "hAxis": {
-            "title": "Category"
-          },
-          "vAxis": {
-            "title": "Inventory"
-          }
-        },
-        "datatables": {
-          "cols": [
-            {
-              "type": "string",
-              "label": "Category"
-            },
-            {
-              "type": "number",
-              "label": "Apple"
-            },
-            {
-              "type": "number",
-              "label": "Orange"
-            }
-          ],
-          "rows": [
-            {
-              "c": [
-                {
-                  "v": "Apple"
-                },
-                {
-                  "v": 5
-                },
-                {
-                  "v": 9
-                }
-              ]
-            },
-            {
-              "c": [
-                {
-                  "v": "Orange"
-                },
-                {
-                  "v": 7
-                },
-                {
-                  "v": 3
-                }
-              ]
-            }
-          ]
-        }
+      "datatable": {
+        "cols": [{
+          "type": "string",
+          "label": "Category"
+        }, {
+          "type": "number",
+          "label": "Apple"
+        }, {
+          "type": "number",
+          "label": "Orange"
+        }],
+        "rows": [{
+          "c": [{
+            "v": "Apple"
+          }, {
+            "v": 5
+          }, {
+            "v": 9
+          }]
+        }, {
+          "c": [{
+            "v": "Orange"
+          }, {
+            "v": 7
+          }, {
+            "v": 3
+          }]
+        }]
       }
-    ]
+    }, {
+      "chartType": "ColumnChart",
+      "domainDataType": "number",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
+      "friendlyUrl": "s-eagleeye-column-chart",
+      "options": {
+        "title": "Fruits Overview",
+        "hAxis": {
+          "title": "Category"
+        },
+        "vAxis": {
+          "title": "Inventory"
+        }
+      },
+      "datatable": {
+        "cols": [{
+          "type": "string",
+          "label": "Category"
+        }, {
+          "type": "number",
+          "label": "Apple"
+        }, {
+          "type": "number",
+          "label": "Orange"
+        }],
+        "rows": [{
+          "c": [{
+            "v": "Apple"
+          }, {
+            "v": 5
+          }, {
+            "v": 9
+          }]
+        }, {
+          "c": [{
+            "v": "Orange"
+          }, {
+            "v": 7
+          }, {
+            "v": 3
+          }]
+        }]
+      }
+    }]
   }
 }

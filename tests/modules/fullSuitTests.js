@@ -4,4 +4,5 @@
 
 require('./testDbLearnLogic');
 require('./testChartModule');
+require('./testChartSetModule');
 // require('./testExcelHelper');

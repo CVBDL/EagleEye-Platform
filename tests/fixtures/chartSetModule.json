@@ -1,0 +1,15 @@
+{
+  "collections": {
+    "chart_set_collection": [{
+      "title": "Chart set sample",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
+      "friendlyUrl": "s-eagleeye-chart-set",
+      "charts": []
+    }, {
+      "title": "Chart set sample two",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
+      "friendlyUrl": "s-eagleeye-chart-set-two",
+      "charts": []
+    }]
+  }
+}

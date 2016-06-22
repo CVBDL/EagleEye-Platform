@@ -39,8 +39,16 @@ var createWorkbook = function(setting) {
     return workbook;
 }
 
-var workbookToJSObject = function(workbook, result) {
-    return {};
+var workbookToJSObject = function(worksheet, done) {
+    var result = [];
+    worksheet.eachRow(function(row, rowNumber) {
+        var line = [];
+        row.eachCell(function(cell, colNumber) {
+            line.push(cell.value);
+        });
+        result.push(line);
+    });
+    done(result);
 }
 
 exports.writeXlsx = function(setting, data, done, mode) {
@@ -74,10 +82,10 @@ exports.readFile = function(setting, done, mode) {
         mode = typeof mode !== 'undefined' ?  mode : exports.MODE_PRODUCTION;
         var path = mode === exports.MODE_TEST ? TEST_PATH : PRODUCTION_PATH;
         workbook.xlsx.readFile(path + "/" + setting.filename)
-            .then(done);
+            .then((workbook) => workbookToJSObject(workbook.getWorksheet(setting.worksheet), done));
     } else if (setting.inputStream) {
         stream.pipe(workbook.xlsx.createInputStream())
-            .then(done);
+            .then((workbook) => workbookToJSObject(workbook.getWorksheet(setting.worksheet), done));
     } else {
         console.log('default.');
         done();

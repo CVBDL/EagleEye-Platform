@@ -28,8 +28,16 @@ exports.writeOne = function(doc, done, mode) {
     excelHelper.writeXlsx(setting, datas, done, mode);
 }
 
-exports.read = function() {
-
+exports.updateFromFile = function(doc, filename, done, mode) {
+    var setting = {filename: "testChartModule2ExcelRead.xlsx"};
+    excelHelper.readFile(setting, function(result) {
+        // [
+        //     [ 'Id', 'Name', 'D.O.B.' ],
+        //     [ 1, 'John Doe', '1970-1-1T00:00:00Z' ],
+        //     [ 2, 'Jane Doe', '1965-1-7T00:00:00Z' ]
+        // ]
+        done();
+    }, mode);
 }
 
 exports.remove = function() {

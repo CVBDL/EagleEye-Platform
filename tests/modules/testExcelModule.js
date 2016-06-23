@@ -26,9 +26,19 @@ describe('Model excel Tests', function() {
     })
 
     it('writeOne: id', function(done) {
-        chartModule.getOne("s-eagleeye-line-chart", function(err, docs) {
+        chartModule.getOne("c-eagleeye-line-chart", function(err, docs) {
             docs.length.should.eql(1);
             excelModule.writeOne(docs[0], done, excelHelper.MODE_TEST);
+        })
+    })
+
+    it('updateFromFile', function(done) {
+        chartModule.getOne("c-eagleeye-line-chart", function(err, docs) {
+            docs.length.should.eql(1);
+            excelModule.updateFromFile(docs[0], "testChartModule2ExcelRead.xlsx", function(result) {
+                console.log(result);
+                done();
+            }, excelHelper.MODE_TEST);
         })
     })
 

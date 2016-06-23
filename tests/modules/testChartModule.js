@@ -15,7 +15,7 @@ describe('Model chart Tests', function() {
       "lastUpdateTimestamp": 1465891842059,
       "chartType": "LineChart",
       "domainDataType": "string",
-      "friendlyUrl": "s-eagleeye",
+      "friendlyUrl": "c-eagleeye",
       "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
       "options": {
         "title": "Fruits Overview",
@@ -98,6 +98,15 @@ describe('Model chart Tests', function() {
             }
             done();
         })
+    })
+
+    it('updateOne', function(done) {
+        chartModule.updateOne(fixtures.collections.chart_collection[0].friendlyUrl, {friendlyUrl: "c-friendlyUrl"}, function(err, result) {
+            chartModule.getOne("c-friendlyUrl", function(err, docs) {
+                docs.length.should.eql(1);
+                done();
+            });
+        });
     })
 
     it('remove', function(done) {

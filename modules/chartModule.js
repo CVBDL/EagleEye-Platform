@@ -38,9 +38,24 @@ exports.clearCollection = function(callback) {
     });
 }
 
-exports.remove = function(id, callback) {
+exports.remove = function(_id, callback) {
     let db = DB.get();
-    db.collection(COLLECTION).removeOne({ _id: id }, function(err, result) {
+    db.collection(COLLECTION).removeOne({ _id: ObjectId(_id) }, function(err, result) {
         callback(err);
     });
+}
+
+exports.updateOne = function(_id, updateData, callback) {
+    let db = DB.get();
+    let regExp = /^c-/g;
+
+    if (regExp.test(_id)) {
+        db.collection(COLLECTION).updateOne({ "friendlyUrl": _id }, updateData, function(err, result) {
+            callback(err);
+        });
+    } else {
+        db.collection(COLLECTION).updateOne({ _id: ObjectId(_id)}, updateData, function(err, result) {
+            callback(err);
+        });
+    }
 }

@@ -29,14 +29,16 @@ exports.writeOne = function(doc, done, mode) {
 }
 
 exports.updateFromFile = function(doc, filename, done, mode) {
-    var setting = {filename: "testChartModule2ExcelRead.xlsx"};
+    var setting = {filename: filename};
     excelHelper.readFile(setting, function(result) {
-        // [
-        //     [ 'Id', 'Name', 'D.O.B.' ],
-        //     [ 1, 'John Doe', '1970-1-1T00:00:00Z' ],
-        //     [ 2, 'Jane Doe', '1965-1-7T00:00:00Z' ]
+        // [ 
+        //     [ 'Category', 'value1', 'value2', 'value3' ],
+        //     [ 'Apple', 5, 9, 11 ],
+        //     [ 'Orange', 7, 3, 12 ],
+        //     [ 'Banana', 9, 5, 14 ]
         // ]
-        done();
+        console.log(result);
+        done(result);
     }, mode);
 }
 

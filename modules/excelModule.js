@@ -37,8 +37,26 @@ exports.updateFromFile = function(doc, filename, done, mode) {
         //     [ 'Orange', 7, 3, 12 ],
         //     [ 'Banana', 9, 5, 14 ]
         // ]
-        console.log(result);
-        done(result);
+        let updateData = doc;
+        doc.datatable = {
+            "cols": [{
+                "type": "string",
+                "label": "Category"
+            }],
+            "rows": []
+        };
+        var column = result[0];
+        for (let i = 1; i < column.length; i++) {
+            updateData.datatable.cols.push({"label": column[i], "type": "number"});
+        }
+        for (let i = 1; i < result.length; i++) {
+            var row = {c:[]};
+            for (let j = 0; j < column.length; j++) {
+                row.c.push({v: result[i][j]});
+            }
+            updateData.datatable.rows.push(row);
+        }
+        chartModule.updateOne(doc._id, updateData, done);
     }, mode);
 }
 

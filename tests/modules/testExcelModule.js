@@ -1,9 +1,6 @@
 /**
  * Created by MMo2 on 6/22/2016.
  */
-/**
- * Created by MMo2 on 6/15/2016.
- */
 
 var should = require('should')
     , DB = require('../../helpers/dbHelper')
@@ -35,9 +32,11 @@ describe('Model excel Tests', function() {
     it('updateFromFile', function(done) {
         chartModule.getOne("c-eagleeye-line-chart", function(err, docs) {
             docs.length.should.eql(1);
-            excelModule.updateFromFile(docs[0], "testChartModule2ExcelRead.xlsx", function(result) {
-                console.log(result);
-                done();
+            excelModule.updateFromFile(docs[0], "testChartModule2ExcelRead.xlsx", function(err) {
+                chartModule.getOne("c-eagleeye-line-chart", function(err, docs) {
+                    docs.length.should.eql(1);
+                    done();
+                });
             }, excelHelper.MODE_TEST);
         })
     })

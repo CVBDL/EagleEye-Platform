@@ -3,10 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="dc7f4fe2-9d5c-4968-9373-ba512db3f634" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/excelPath/test/testChartModule2Excel.xlsx" afterPath="$PROJECT_DIR$/excelPath/test/testChartModule2Excel.xlsx" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/chartModule.js" afterPath="$PROJECT_DIR$/modules/chartModule.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/excelModule.js" afterPath="$PROJECT_DIR$/modules/excelModule.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/modules/testChartModule.js" afterPath="$PROJECT_DIR$/tests/modules/testChartModule.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/modules/testExcelModule.js" afterPath="$PROJECT_DIR$/tests/modules/testExcelModule.js" />
     </list>
     <ignored path="EagleEye.iws" />
@@ -60,11 +57,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="chartModule.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="chartModule.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/modules/chartModule.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1210">
-              <caret line="55" column="12" selection-start-line="55" selection-start-column="12" selection-end-line="55" selection-end-column="12" />
+            <state relative-caret-position="-667">
+              <caret line="9" column="48" selection-start-line="9" selection-start-column="48" selection-end-line="9" selection-end-column="48" />
               <folding />
             </state>
           </provider>
@@ -85,10 +82,10 @@
       <file leaf-file-name="testExcelModule.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tests/modules/testExcelModule.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="341">
-              <caret line="38" column="20" selection-start-line="38" selection-start-column="20" selection-end-line="38" selection-end-column="20" />
+            <state relative-caret-position="264">
+              <caret line="14" column="39" selection-start-line="14" selection-start-column="39" selection-end-line="14" selection-end-column="39" />
               <folding>
-                <element signature="e#41#81#0" expanded="false" />
+                <element signature="e#0#40#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -119,11 +116,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="excelModule.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="excelModule.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/modules/excelModule.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="403">
-              <caret line="39" column="8" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="28" />
+            <state relative-caret-position="367">
+              <caret line="46" column="10" selection-start-line="46" selection-start-column="10" selection-end-line="46" selection-end-column="10" />
               <folding>
                 <element signature="e#0#40#0" expanded="false" />
               </folding>
@@ -176,10 +173,10 @@
         <option value="$PROJECT_DIR$/tests/fixtures/chartModule.json" />
         <option value="$PROJECT_DIR$/tests/modules/testExcelHelper.js" />
         <option value="$PROJECT_DIR$/helpers/excelHelper.js" />
-        <option value="$PROJECT_DIR$/tests/modules/testExcelModule.js" />
-        <option value="$PROJECT_DIR$/modules/excelModule.js" />
         <option value="$PROJECT_DIR$/tests/modules/testChartModule.js" />
         <option value="$PROJECT_DIR$/modules/chartModule.js" />
+        <option value="$PROJECT_DIR$/modules/excelModule.js" />
+        <option value="$PROJECT_DIR$/tests/modules/testExcelModule.js" />
       </list>
     </option>
   </component>
@@ -352,7 +349,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="nodejs.mocha.mocha_node_package_dir" value="C:\projects\nodejs\EagleEye\node_modules\mocha" />
   </component>
-  <component name="RunManager" selected="Mocha.tests\modules\testChartModule.js">
+  <component name="RunManager" selected="Mocha.tests\modules\testExcelModule.js">
     <configuration default="false" name="fullSuitTests.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-node="$PROJECT_DIR$/node_modules/.bin/_mocha.cmd" path-to-js-file="fullSuitTests.js" working-dir="$PROJECT_DIR$/tests/modules">
       <method />
     </configuration>
@@ -458,8 +455,8 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Mocha.tests\modules\testChartModule.js" />
-        <item index="1" class="java.lang.String" itemvalue="Mocha.tests\modules\testExcelModule.js" />
+        <item index="0" class="java.lang.String" itemvalue="Mocha.tests\modules\testExcelModule.js" />
+        <item index="1" class="java.lang.String" itemvalue="Mocha.tests\modules\testChartModule.js" />
         <item index="2" class="java.lang.String" itemvalue="Mocha.tests\modules\testExcelHelper.js" />
         <item index="3" class="java.lang.String" itemvalue="Node.js.app.js" />
         <item index="4" class="java.lang.String" itemvalue="Node.js.fullSuitTests.js" />
@@ -486,7 +483,7 @@
       <workItem from="1466038713869" duration="1467000" />
       <workItem from="1466056015171" duration="1401000" />
       <workItem from="1466386494337" duration="14828000" />
-      <workItem from="1466557387377" duration="10670000" />
+      <workItem from="1466557387377" duration="12171000" />
     </task>
     <servers />
   </component>
@@ -506,24 +503,24 @@
     <history-entry file="tests_modules_testChartModule_js - 2016.06.23 at 09h 17m 04s.xml">
       <configuration name="tests\modules\testChartModule.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="tests_modules_testExcelModule_js - 2016.06.23 at 08h 52m 03s.xml">
-      <configuration name="tests\modules\testExcelModule.js" configurationId="mocha-javascript-test-runner" />
-    </history-entry>
-    <history-entry file="tests_modules_testExcelModule_js - 2016.06.23 at 08h 52m 20s.xml">
-      <configuration name="tests\modules\testExcelModule.js" configurationId="mocha-javascript-test-runner" />
-    </history-entry>
-    <history-entry file="tests_modules_testExcelModule_js - 2016.06.23 at 08h 55m 21s.xml">
-      <configuration name="tests\modules\testExcelModule.js" configurationId="mocha-javascript-test-runner" />
-    </history-entry>
-    <history-entry file="tests_modules_testExcelModule_js - 2016.06.23 at 08h 55m 24s.xml">
-      <configuration name="tests\modules\testExcelModule.js" configurationId="mocha-javascript-test-runner" />
-    </history-entry>
     <history-entry file="tests_modules_testExcelModule_js - 2016.06.23 at 08h 57m 15s.xml">
+      <configuration name="tests\modules\testExcelModule.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="tests_modules_testExcelModule_js - 2016.06.23 at 09h 30m 16s.xml">
+      <configuration name="tests\modules\testExcelModule.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="tests_modules_testExcelModule_js - 2016.06.23 at 09h 34m 56s.xml">
+      <configuration name="tests\modules\testExcelModule.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="tests_modules_testExcelModule_js - 2016.06.23 at 09h 38m 04s.xml">
+      <configuration name="tests\modules\testExcelModule.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="tests_modules_testExcelModule_js - 2016.06.23 at 09h 38m 28s.xml">
       <configuration name="tests\modules\testExcelModule.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="50738000" />
+    <option name="totallyTimeSpent" value="52239000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1864" height="1098" extended-state="6" />
@@ -854,16 +851,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/modules/testExcelHelper.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="33" column="43" selection-start-line="33" selection-start-column="43" selection-end-line="33" selection-end-column="43" />
-          <folding>
-            <element signature="e#0#40#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tests/fixtures/chartModule.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="132">
@@ -876,26 +863,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
           <caret line="82" column="21" selection-start-line="82" selection-start-column="21" selection-end-line="82" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#40#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/modules/testExcelModule.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="38" column="20" selection-start-line="38" selection-start-column="20" selection-end-line="38" selection-end-column="20" />
-          <folding>
-            <element signature="e#41#81#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/modules/excelModule.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="403">
-          <caret line="39" column="8" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="28" />
           <folding>
             <element signature="e#0#40#0" expanded="false" />
           </folding>
@@ -915,9 +882,39 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/modules/chartModule.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1210">
-          <caret line="55" column="12" selection-start-line="55" selection-start-column="12" selection-end-line="55" selection-end-column="12" />
+        <state relative-caret-position="-667">
+          <caret line="9" column="48" selection-start-line="9" selection-start-column="48" selection-end-line="9" selection-end-column="48" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/modules/testExcelHelper.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="33" column="43" selection-start-line="33" selection-start-column="43" selection-end-line="33" selection-end-column="43" />
+          <folding>
+            <element signature="e#0#40#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/modules/testExcelModule.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="14" column="39" selection-start-line="14" selection-start-column="39" selection-end-line="14" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#40#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/excelModule.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="367">
+          <caret line="46" column="10" selection-start-line="46" selection-start-column="10" selection-end-line="46" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#40#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

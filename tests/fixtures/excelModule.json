@@ -1,0 +1,15 @@
+{
+  "setting": {
+    "filename": "testChartModule2ExcelRead.xlsx",
+    "worksheet": "Data",
+    "columns": [
+      { "header": "Name",   "key": "name",  "width": 32 },
+      { "header": "Id",     "key": "id",    "width": 10 },
+      { "header": "TestFile", "key": "test", "width": 20}
+    ]
+  },
+  "data": [
+    {"id": 1, "name": "John Doe", "test": 123},
+    {"id": 2, "name": "Jane Doe", "test": 456}
+  ]
+}

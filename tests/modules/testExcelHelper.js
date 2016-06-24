@@ -34,7 +34,6 @@ describe('Model excelHelper Tests', function() {
         excelHelper.writeXlsx(fixtures.setting, fixtures.data, function() {
             var rs = {};
             excelHelper.readFile(fixtures.setting, function(result) {
-                console.log(result);
                 done();
             }, excelHelper.MODE_TEST);
         }, excelHelper.MODE_TEST);

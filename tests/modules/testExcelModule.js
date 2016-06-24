@@ -2,10 +2,13 @@
  * Created by MMo2 on 6/22/2016.
  */
 
+'use strict';
+
 var should = require('should')
     , DB = require('../../helpers/dbHelper')
     , excelHelper = require('../../helpers/excelHelper')
-    , fixtures = require('../fixtures/chartModule');
+    , fixtures = require('../fixtures/chartModule')
+    , writeFixtures = require('../fixtures/excelModule.json');
 
 var chartModule = require('../../modules/chartModule');
 var excelModule = require('../../modules/excelModule');
@@ -25,18 +28,40 @@ describe('Model excel Tests', function() {
     it('writeOne: id', function(done) {
         chartModule.getOne("c-eagleeye-line-chart", function(err, docs) {
             docs.length.should.eql(1);
-            excelModule.writeOne(docs[0], done, excelHelper.MODE_TEST);
+            var setting = {
+                //"outStream": outputStream,
+                "filename": "testChartModule2Excel.xlsx",
+                "worksheet": "Data",
+            };
+            excelModule.writeOne(docs[0], setting, function() {
+                excelHelper.readFile(setting, function (result) {
+                    result[0][0].should.eql(docs[0].datatable.cols[0].label);
+                    result[0][1].should.eql(docs[0].datatable.cols[1].label);
+                    result[0][2].should.eql(docs[0].datatable.cols[2].label);
+                    for (let i = 1; i < result.length; i++) {
+                        for (let j = 0; j < result[i].length; j++) {
+                            result[i][j].should.eql(docs[0].datatable.rows[i - 1].c[j].v);
+                        }
+                    }
+                    done();
+                }, excelHelper.MODE_TEST);
+            }, excelHelper.MODE_TEST);
         })
     })
 
     it('updateFromFile', function(done) {
         chartModule.getOne("c-eagleeye-line-chart", function(err, docs) {
             docs.length.should.eql(1);
-            excelModule.updateFromFile(docs[0], "testChartModule2ExcelRead.xlsx", function(err) {
-                chartModule.getOne("c-eagleeye-line-chart", function(err, docs) {
-                    docs.length.should.eql(1);
-                    done();
-                });
+            excelHelper.writeXlsx(writeFixtures.setting, writeFixtures.data, function() {
+                var setting = {filename: "testChartModule2ExcelRead.xlsx"};
+                excelModule.updateFromFileToDB(docs[0], setting, function (err) {
+                    chartModule.getOne("c-eagleeye-line-chart", function (err, docs) {
+                        docs[0].datatable.cols[0].label.should.eql(fixtures.collections.chart_collection[0].datatable.cols[0].label);
+                        docs[0].datatable.cols[1].label.should.eql(writeFixtures.setting.columns[1].header);
+                        docs[0].datatable.cols[2].label.should.eql(writeFixtures.setting.columns[2].header);
+                        done();
+                    });
+                }, excelHelper.MODE_TEST);
             }, excelHelper.MODE_TEST);
         })
     })

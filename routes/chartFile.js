@@ -1,10 +1,15 @@
 /**
  * Created by MMo2 on 6/20/2016.
  */
+"use strict";
 
-var excelHelper = require('../helpers/excelHelper');
-var express = require('express');
-var router = express.Router();
+let excelHelper = require('../helpers/excelHelper');
+let express = require('express');
+let chartModule = require('../modules/chartModule');
+let excelModule = require('../modules/excelModule');
+var multipart = require('connect-multiparty'),
+     multipartyMiddleware = multipart();
+let router = express.Router();
 
 router.get('/testDownload', function(req, res, next) {
     res.setHeader('Content-disposition', 'attachment; filename=test.xlsx');
@@ -44,6 +49,47 @@ router.get('/testWrite', function(req, res, next) {
         ],
         () => res.send("File write done.")
     );
+});
+
+router.post('/upload', function(req, multipartyMiddleware) {
+    let file = req.files.file;
+    let fileName = "";
+    if (file.path.indexOf("/") > -1) {
+        let pathArray = file.path.split("/");
+        fileName = pathArray[pathArray.length - 1];
+    } else {
+        let pathArray = file.path.split("\\");
+        fileName = pathArray[pathArray.length - 1];
+    }
+    console.log(req.body.id);
+    chartModule.getOne(req.body.id, function(err, docs) {
+        if (docs.length < 1) {
+            multipartyMiddleware.send('failed');
+            return;
+        }
+        excelModule.updateFromFileToDB(docs[0], {filename: fileName, worksheet: "Data"}, function (result) {
+            console.log(result);
+            multipartyMiddleware.send('ok');
+        });
+    });
+
+});
+
+router.get('/downloadExcel/:id', function(req, res, next) {
+
+
+    let id = req.params.id;
+
+    chartModule.getOne(req.params.id, function(err, docs) {
+        if (docs.length > 0) {
+            res.setHeader('Content-disposition', 'attachment; filename=' + (docs[0]._id) + '.xlsx');
+            res.setHeader('Content-type', 'application/vnd.ms-excel');
+            excelModule.writeOne(docs[0], {
+                "outStream": res,
+                "worksheet": "Data",
+            }, ()=>console.log());
+        }
+    })
 });
 
 module.exports = router;

@@ -11,6 +11,7 @@ var dbLearn = require('./routes/dbLearn');
 var restAPI = require('./routes/rest-api');
 var chartFile = require('./routes/chartFile');
 
+var multipart = require('connect-multiparty');
 var db = require('./helpers/dbHelper');
 
 var app = express();
@@ -26,6 +27,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(multipart({
+  uploadDir: "./excelPath/prod"
+}));
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -72,6 +77,7 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
+db.get();
 var port = process.env.PORT || 3000;
 console.log('Listening on port 3000');
 app.listen(port);

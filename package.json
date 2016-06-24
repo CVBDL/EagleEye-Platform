@@ -15,7 +15,8 @@
     "serve-favicon": "~2.3.0",
     "mongodb": "~2.1.18",
     "async": "~2.0.0-rc.6",
-    "exceljs": "latest"
+    "exceljs": "latest",
+    "connect-multiparty": "latest"
   },
   "devDependencies": {
     "mocha": "~1.21.4",

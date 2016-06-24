@@ -6,12 +6,7 @@
 let chartModule = require('../modules/chartModule');
 let excelHelper = require('../helpers/excelHelper');
 
-exports.writeOne = function(doc, done, mode) {
-    var setting = {
-        //"outStream": outputStream,
-        "filename": "testChartModule2Excel.xlsx",
-        "worksheet": "Data",
-    };
+exports.writeOne = function(doc, setting, done, mode) {
     setting.columns = doc.datatable.cols;
     for (var i = 0; i < setting.columns.length; i++) {
         setting.columns[i].header = setting.columns[i].label;
@@ -28,10 +23,10 @@ exports.writeOne = function(doc, done, mode) {
     excelHelper.writeXlsx(setting, datas, done, mode);
 }
 
-exports.updateFromFile = function(doc, filename, done, mode) {
-    var setting = {filename: filename};
+exports.updateFromFileToDB = function(doc, setting, done, mode) {
     excelHelper.readFile(setting, function(result) {
-        // [ 
+        // Result format:
+        // [
         //     [ 'Category', 'value1', 'value2', 'value3' ],
         //     [ 'Apple', 5, 9, 11 ],
         //     [ 'Orange', 7, 3, 12 ],

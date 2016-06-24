@@ -1,5 +1,7 @@
 # EagleEye Platform
 
+[![Build Status](https://travis-ci.org/CVBDL/EagleEye-Platform.svg?branch=master)](https://travis-ci.org/CVBDL/EagleEye-Platform)
+
 
 ## Install required softwares
 

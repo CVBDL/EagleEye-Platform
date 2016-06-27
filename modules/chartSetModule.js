@@ -43,10 +43,10 @@ exports.clearCollection = function(callback) {
     });
 };
 
-exports.remove = function(id, callback) {
+exports.remove = function(_id, callback) {
     let db = DB.get();
 
-    db.collection(COLLECTION).removeOne({ _id: id }, function(err, result) {
+    db.collection(COLLECTION).removeOne({ _id: ObjectId(_id) }, function(err, result) {
         callback(err);
     });
 };

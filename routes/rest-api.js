@@ -42,7 +42,7 @@ router.delete('/v1/charts/:id', function(req, res, next) {
     let id = req.params.id;
 
     chartModule.remove(id, function(err, result) {
-        console.log("Delete one chart,Result is:" + result);
+       console.log("Delete one chart,Result is:" + result);
        res.send(result);
     });
 });
@@ -74,6 +74,15 @@ router.get('/v1/chart-sets/:id', function(req, res, next) {
 router.get('/v1/chart-sets/clear', function(reg, res, next) {
     chartSetModule.clearCollection(function(err, result) {
         res.send("success");
+    });
+});
+
+router.delete('/v1/chart-sets/:id', function(req, res, next) {
+    let id = req.params.id;
+
+    chartSetModule.remove(id, function(err, result) {
+       console.log("Delete one chart-set,Result is:" + result);
+       res.send(result);
     });
 });
 

@@ -38,6 +38,15 @@ router.get('/v1/charts/:id', function(req, res, next) {
     });
 });
 
+router.delete('/v1/charts/:id', function(req, res, next) {
+    let id = req.params.id;
+
+    chartModule.remove(id, function(err, result) {
+        console.log("Delete one chart,Result is:" + result);
+       res.send(result);
+    });
+});
+
 
 // CHART SET ROUTES
 

@@ -50,3 +50,15 @@ exports.remove = function(_id, callback) {
         callback(err);
     });
 };
+
+exports.updateOne = function(_id, updateData, callback) {
+    let db = DB.get();
+    db.collection(COLLECTION).update({"_id":ObjectId(_id)}
+        ,{"$set":{"title":updateData.title,
+                  "description":updateData.description,
+                  "friendlyUrl":updateData.friendlyUrl,
+                  "charts":updateData.charts}}
+        ,false,true, function(err, result) {
+        callback(err);
+    });
+}

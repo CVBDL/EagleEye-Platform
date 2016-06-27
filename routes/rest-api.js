@@ -86,4 +86,14 @@ router.delete('/v1/chart-sets/:id', function(req, res, next) {
     });
 });
 
+router.put('/v1/chart-sets/:id', function(req, res, next) {
+    let id = req.params.id;
+    console.log("JoryTest" + id);
+    console.log(req.body);
+    chartSetModule.updateOne(id,req.body, function(err, result) {
+       console.log("Update one chart-set,Result is:" + result);
+       res.send(result);
+    });
+});
+
 module.exports = router;

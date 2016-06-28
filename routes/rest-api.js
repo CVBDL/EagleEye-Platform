@@ -95,5 +95,12 @@ router.put('/v1/chart-sets/:id', function(req, res, next) {
        res.send(result);
     });
 });
-
+//T-P-007		Coding	REST API: Get one chart's options			Owen
+router.get('/v1/charts/:_id/options', function(reg, res, next) {
+    res.send("success");
+});
+//T-P-008		Coding	REST API: Update one chart's options			Owen
+router.post('/v1/charts/:_id/options', function(reg, res, next) {
+    res.send("success");
+});
 module.exports = router;

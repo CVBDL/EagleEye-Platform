@@ -91,7 +91,7 @@ exports.readFile = function(setting, done, mode) {
     if (setting.filename) {
         mode = typeof mode !== 'undefined' ?  mode : exports.MODE_PRODUCTION;
         var path = mode === exports.MODE_TEST ? TEST_PATH : PRODUCTION_PATH;
-        console.log(path + "/" + setting.filename);
+        // console.log(path + "/" + setting.filename);
         workbook.xlsx.readFile(path + "/" + setting.filename)
             .then((workbook) => workbookToJSObject(workbook.getWorksheet(setting.worksheet), done));
     } else if (setting.inputStream) {

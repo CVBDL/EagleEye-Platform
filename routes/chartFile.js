@@ -61,14 +61,14 @@ router.post('/upload', function(req, multipartyMiddleware) {
         let pathArray = file.path.split("\\");
         fileName = pathArray[pathArray.length - 1];
     }
-    console.log(req.body.id);
+    // console.log(req.body.id);
     chartModule.getOne(req.body.id, function(err, docs) {
         if (docs.length < 1) {
             multipartyMiddleware.send('failed');
             return;
         }
         excelModule.updateFromFileToDB(docs[0], {filename: fileName, worksheet: "Data"}, function (result) {
-            console.log(result);
+            //console.log(result);
             multipartyMiddleware.send('ok');
         });
     });

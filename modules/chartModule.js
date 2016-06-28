@@ -7,56 +7,79 @@ var ObjectId = require('mongodb').ObjectId;
 var DB = require('../helpers/dbHelper');
 
 var COLLECTION = "chart_collection";
-exports.create = function(chartData, callback) {
+exports.create = function (chartData, callback) {
     let db = DB.get()
-    db.collection(COLLECTION).insert(chartData, function(err, result) {
+    db.collection(COLLECTION).insert(chartData, function (err, result) {
         if (err) return callback(err);
         callback(null, result.insertedIds[0]);
     });
 }
 
-exports.all = function(callback) {
+exports.all = function (callback) {
     let db = DB.get();
     db.collection(COLLECTION).find().toArray(callback);
 }
 
-exports.getOne = function(_id, callback) {
+exports.getOne = function (_id, callback) {
     let db = DB.get();
     // console.log(db);
     let regExp = /^c-/g;
 
     if (regExp.test(_id)) {
-        db.collection(COLLECTION).find({ "friendlyUrl": _id }).toArray(callback);
+        db.collection(COLLECTION).find({"friendlyUrl": _id}).toArray(callback);
     } else {
-        db.collection(COLLECTION).find({ "_id": ObjectId(_id) }).toArray(callback);
+        db.collection(COLLECTION).find({"_id": ObjectId(_id)}).toArray(callback);
     }
 }
 
-exports.clearCollection = function(callback) {
+exports.clearCollection = function (callback) {
     let db = DB.get();
-    db.collection(COLLECTION).remove({}, function(err, result) {
+    db.collection(COLLECTION).remove({}, function (err, result) {
         callback(err);
     });
 }
 
-exports.remove = function(_id, callback) {
+exports.remove = function (_id, callback) {
     let db = DB.get();
-    db.collection(COLLECTION).removeOne({ _id: ObjectId(_id) }, function(err, result) {
+    db.collection(COLLECTION).removeOne({_id: ObjectId(_id)}, function (err, result) {
         callback(err);
     });
 }
 
-exports.updateOne = function(_id, updateData, callback) {
+exports.updateOne = function (_id, updateData, callback) {
     let db = DB.get();
     let regExp = /^c-/g;
 
     if (regExp.test(_id)) {
-        db.collection(COLLECTION).updateOne({ "friendlyUrl": _id }, updateData, function(err, result) {
+        db.collection(COLLECTION).updateOne({"friendlyUrl": _id}, updateData, function (err, result) {
             callback(err);
         });
     } else {
-        db.collection(COLLECTION).updateOne({ _id: ObjectId(_id)}, updateData, function(err, result) {
+        db.collection(COLLECTION).updateOne({_id: ObjectId(_id)}, updateData, function (err, result) {
             callback(err);
         });
+    }
+}
+
+exports.getChartOptionById = function (_id, callback) {
+    let db = DB.get();
+    // console.log(db);
+    let regExp = /^c-/g;
+
+    if (regExp.test(_id)) {
+        db.collection(COLLECTION).find({"friendlyUrl": _id}).toArray(callback);
+    } else {
+        db.collection(COLLECTION).find({"_id": ObjectId(_id)}).toArray(callback);
+    }
+}
+
+exports.updateChartOptionById = function (_id, updateData, callback) {
+    let db = DB.get();
+    let regExp = /^c-/g;
+
+    if (regExp.test(_id)) {
+        db.collection(COLLECTION).findOneAndUpdate({"friendlyUrl": _id}, {$set: {options: updateData}}, callback);
+    } else {
+        db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {options: updateData}}, callback);
     }
 }

@@ -83,3 +83,26 @@ exports.updateChartOptionById = function (_id, updateData, callback) {
         db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {options: updateData}}, callback);
     }
 }
+
+exports.getChartDataTableById = function (_id, callback) {
+    let db = DB.get();
+    // console.log(db);
+    let regExp = /^c-/g;
+
+    if (regExp.test(_id)) {
+        db.collection(COLLECTION).find({"friendlyUrl": _id}).toArray(callback);
+    } else {
+        db.collection(COLLECTION).find({"_id": ObjectId(_id)}).toArray(callback);
+    }
+}
+
+exports.updateChartDataTableById = function (_id, updateData, callback) {
+    let db = DB.get();
+    let regExp = /^c-/g;
+
+    if (regExp.test(_id)) {
+        db.collection(COLLECTION).findOneAndUpdate({"friendlyUrl": _id}, {$set: {datatables: updateData}}, callback);
+    } else {
+        db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {datatables: updateData}}, callback);
+    }
+}

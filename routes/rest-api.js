@@ -114,4 +114,24 @@ router.post('/v1/charts/:id/options', function (req, res, next) {
         }
     });
 });
+
+//T-P-009 REST API: Get one chart's datatable	Owen
+router.get('/v1/charts/:id/datatable', function (req, res, next) {
+    let id = req.params.id;
+    chartModule.getChartDataTableById(id, function (err, docs) {
+        res.send(docs[0].datatables);
+    });
+});
+//T-P-010 REST API: Update one chart's datatable Owen
+router.post('/v1/charts/:id/datatable', function (req, res, next) {
+    let id = req.params.id;
+    chartModule.updateChartDataTableById(id, req.body, function (err, result) {
+        if (!err) {
+            res.send("success");
+        } else {
+            res.send(err);
+        }
+    });
+});
+
 module.exports = router;

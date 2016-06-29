@@ -58,13 +58,13 @@ npm install
 ## Running the application
 
 ```sh
-start_mongo.bat
-start_server.bat
+start-mongo.bat
+start-server.bat
 ```
 
 
 ## Testing
 
 ```sh
-unitTest.bat
+unit-test.bat
 ```

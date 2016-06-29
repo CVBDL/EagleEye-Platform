@@ -101,8 +101,8 @@ exports.updateChartDataTableById = function (_id, updateData, callback) {
     let regExp = /^c-/g;
 
     if (regExp.test(_id)) {
-        db.collection(COLLECTION).findOneAndUpdate({"friendlyUrl": _id}, {$set: {datatables: updateData}}, callback);
+        db.collection(COLLECTION).findOneAndUpdate({"friendlyUrl": _id}, {$set: {datatable: updateData}}, callback);
     } else {
-        db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {datatables: updateData}}, callback);
+        db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {datatable: updateData}}, callback);
     }
 }

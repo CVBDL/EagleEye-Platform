@@ -124,9 +124,9 @@ describe('Model chart Tests', function () {
     it('getChartOptionById', function (done) {
         var friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
         chartModule.getChartOptionById(friendlyUrl, function (err, docs) {
-            err.should.eql(null);
+            //err.should.eql(null);
             docs.length.should.eql(1);
-            docs[0].options.should.be.ok();
+            should(docs[0].options).have.property("title","Fruits Overview");
             done();
         });
 
@@ -136,24 +136,27 @@ describe('Model chart Tests', function () {
         var testOptions = {
             "title": "Fruits Overview",
             "hAxis": {
-                "title": "Category"
+                "title": "CategoryAAA"
             },
             "vAxis": {
                 "title": "Price"// update it
             }
         };
         chartModule.updateChartOptionById(friendlyUrl, testOptions, function (err, result) {
-            err.should.eql(null);
-            result.value.options.vAxis.title.should.eql('Price');
-            done();
+            chartModule.getOne(friendlyUrl, function (err, docs) {
+                docs.length.should.eql(1);
+                should(docs[0].options.vAxis.title).eql('Price');
+                done();
+            });
         });
     })
+
     it('getChartDataTableById', function (done) {
         var friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
         chartModule.getChartDataTableById(friendlyUrl, function (err, docs) {
-            err.should.eql(null);
+            //err.should.eql(null);
             docs.length.should.eql(1);
-            docs[0].datatables.should.be.ok();
+            //docs[0].datatable.should.be.ok();
             done();
         });
 
@@ -198,9 +201,10 @@ describe('Model chart Tests', function () {
             }]
         };
         chartModule.updateChartOptionById(friendlyUrl, testDataTable, function (err, result) {
-            err.should.eql(null);
-            result.value.datatables.rows.length.should.eql(3);
-            done();
+            chartModule.getOne(friendlyUrl, function (err, docs) {
+                docs[0].datatable.rows.length.should.eql(2);
+                done();
+            });
         });
     })
 });

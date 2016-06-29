@@ -8,67 +8,67 @@ var should = require('should')
 
 var chartModule = require('../../modules/chartModule');
 
-describe('Model chart Tests', function() {
+describe('Model chart Tests', function () {
 
     var chart = {
-      "timestamp": 1465891633478,
-      "lastUpdateTimestamp": 1465891842059,
-      "chartType": "LineChart",
-      "domainDataType": "string",
-      "friendlyUrl": "c-eagleeye",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-      "options": {
-        "title": "Fruits Overview",
-        "hAxis": {
-          "title": "Category"
+        "timestamp": 1465891633478,
+        "lastUpdateTimestamp": 1465891842059,
+        "chartType": "LineChart",
+        "domainDataType": "string",
+        "friendlyUrl": "c-eagleeye",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
+        "options": {
+            "title": "Fruits Overview",
+            "hAxis": {
+                "title": "Category"
+            },
+            "vAxis": {
+                "title": "Inventory"
+            }
         },
-        "vAxis": {
-          "title": "Inventory"
+        "datatable": {
+            "cols": [
+                {"type": "string", "label": "Category"},
+                {"type": "number", "label": "Apple"},
+                {"type": "number", "label": "Orange"}
+            ],
+            "rows": [
+                {"c": [{"v": "Apple"}, {"v": 5}, {"v": 9}]},
+                {"c": [{"v": "Orange"}, {"v": 7}, {"v": 3}]}
+            ]
         }
-      },
-      "datatable": {
-        "cols": [
-          { "type": "string", "label": "Category" },
-          { "type": "number", "label": "Apple" },
-          { "type": "number", "label": "Orange" }
-        ],
-        "rows": [
-          { "c": [{ "v": "Apple" }, { "v": 5 }, { "v": 9 }] },
-          { "c": [{ "v": "Orange" }, { "v": 7 }, { "v": 3 }] }
-        ]
-      }
     };
 
-    before(function(done) {
+    before(function (done) {
         DB.connect(DB.MODE_TEST, done);
     })
 
-    beforeEach(function(done) {
-        DB.drop(function(err) {
+    beforeEach(function (done) {
+        DB.drop(function (err) {
             if (err) return done(err)
             DB.fixtures(fixtures, done);
         })
     })
 
-    it('all', function(done) {
-        chartModule.all(function(err, docs) {
+    it('all', function (done) {
+        chartModule.all(function (err, docs) {
             docs.length.should.eql(2);
             done();
         })
     })
 
-    it('clear', function(done) {
-        chartModule.clearCollection(function(err) {
-            chartModule.all(function(err, result) {
+    it('clear', function (done) {
+        chartModule.clearCollection(function (err) {
+            chartModule.all(function (err, result) {
                 result.length.should.eql(0);
                 done();
             })
         })
     })
 
-    it('create', function(done) {
-        chartModule.create(chart, function(err, id) {
-            chartModule.all(function(err, docs) {
+    it('create', function (done) {
+        chartModule.create(chart, function (err, id) {
+            chartModule.all(function (err, docs) {
                 docs.length.should.eql(3);
                 for (var key in fixtures.collections.chart_collection[0]) {
                     docs[2][key].should.eql(chart[key]);
@@ -78,9 +78,9 @@ describe('Model chart Tests', function() {
         })
     })
 
-    it('getOne: id', function(done) {
-        chartModule.create(chart, function(err, id) {
-            chartModule.getOne(id, function(err, docs) {
+    it('getOne: id', function (done) {
+        chartModule.create(chart, function (err, id) {
+            chartModule.getOne(id, function (err, docs) {
                 docs.length.should.eql(1);
                 for (var key in fixtures.collections.chart_collection[0]) {
                     docs[0][key].should.eql(chart[key]);
@@ -90,8 +90,8 @@ describe('Model chart Tests', function() {
         })
     })
 
-    it('getOne: friendlyUrl', function(done) {
-        chartModule.getOne(fixtures.collections.chart_collection[0].friendlyUrl, function(err, docs) {
+    it('getOne: friendlyUrl', function (done) {
+        chartModule.getOne(fixtures.collections.chart_collection[0].friendlyUrl, function (err, docs) {
             docs.length.should.eql(1);
             for (var key in fixtures.collections.chart_collection[0]) {
                 docs[0][key].should.eql(fixtures.collections.chart_collection[0][key]);
@@ -100,24 +100,107 @@ describe('Model chart Tests', function() {
         })
     })
 
-    it('updateOne', function(done) {
-        chartModule.updateOne(fixtures.collections.chart_collection[0].friendlyUrl, {friendlyUrl: "c-friendlyUrl"}, function(err, result) {
-            chartModule.getOne("c-friendlyUrl", function(err, docs) {
+    it('updateOne', function (done) {
+        chartModule.updateOne(fixtures.collections.chart_collection[0].friendlyUrl, {friendlyUrl: "c-friendlyUrl"}, function (err, result) {
+            chartModule.getOne("c-friendlyUrl", function (err, docs) {
                 docs.length.should.eql(1);
                 done();
             });
         });
     })
 
-    it('remove', function(done) {
-        chartModule.all(function(err, docs) {
-            chartModule.remove(docs[0]._id, function(err) {
-                chartModule.all(function(err, result) {
+    it('remove', function (done) {
+        chartModule.all(function (err, docs) {
+            chartModule.remove(docs[0]._id, function (err) {
+                chartModule.all(function (err, result) {
                     result.length.should.eql(1);
                     result[0]._id.should.not.eql(docs[0]._id);
                     done();
                 })
             })
         })
+    })
+
+    it('getChartOptionById', function (done) {
+        var friendlyUrl = fixtures.chart_collection[0].friendlyUrl;
+        chartModule.getChartOptionById(friendlyUrl, function (err, docs) {
+            err.should.eql(null);
+            docs.length.should.eql(1);
+            docs[0].options.should.be.ok();
+            done();
+        });
+
+    })
+    it('updateChartOptionById', function (done) {
+        var friendlyUrl = fixtures.chart_collection[0].friendlyUrl;
+        var testOptions = {
+            "title": "Fruits Overview",
+            "hAxis": {
+                "title": "Category"
+            },
+            "vAxis": {
+                "title": "Price"// update it
+            }
+        };
+        chartModule.updateChartOptionById(friendlyUrl, testOptions, function (err, result) {
+            err.should.eql(null);
+            result.value.options.vAxis.title.should.eql('Price');
+            done();
+        });
+    })
+    it('getChartDataTableById', function (done) {
+        var friendlyUrl = fixtures.chart_collection[0].friendlyUrl;
+        chartModule.getChartDataTableById(friendlyUrl, function (err, docs) {
+            err.should.eql(null);
+            docs.length.should.eql(1);
+            docs[0].datatables.should.be.ok();
+            done();
+        });
+
+    })
+    it('updateChartDataTableById', function (done) {
+        var friendlyUrl = fixtures.chart_collection[0].friendlyUrl;
+        var testDataTable = {
+            "cols": [{
+                "type": "string",
+                "label": "Category"
+            }, {
+                "type": "number",
+                "label": "value1"
+            }, {
+                "type": "number",
+                "label": "value2"
+            }],
+            "rows": [{
+                "c": [{
+                    "v": "Apple"
+                }, {
+                    "v": 5
+                }, {
+                    "v": 9
+                }]
+            }, {
+                "c": [{
+                    "v": "Orange"
+                }, {
+                    "v": 7
+                }, {
+                    "v": 3
+                }]
+            }, {//add a new row
+                "c": [{
+                    "v": "Lemon"
+                }, {
+                    "v": 4
+                }, {
+                    "v": 5
+                }]
+            }]
+        };
+        chartModule.updateChartOptionById(friendlyUrl, testDataTable, function (err, result) {
+            err.should.eql(null);
+            result.value.datatables.rows.length.should.eql(3);
+            done();
+        });
     })
 });

@@ -122,7 +122,7 @@ describe('Model chart Tests', function () {
     })
 
     it('getChartOptionById', function (done) {
-        var friendlyUrl = fixtures.chart_collection[0].friendlyUrl;
+        var friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
         chartModule.getChartOptionById(friendlyUrl, function (err, docs) {
             err.should.eql(null);
             docs.length.should.eql(1);
@@ -132,7 +132,7 @@ describe('Model chart Tests', function () {
 
     })
     it('updateChartOptionById', function (done) {
-        var friendlyUrl = fixtures.chart_collection[0].friendlyUrl;
+        var friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
         var testOptions = {
             "title": "Fruits Overview",
             "hAxis": {
@@ -149,7 +149,7 @@ describe('Model chart Tests', function () {
         });
     })
     it('getChartDataTableById', function (done) {
-        var friendlyUrl = fixtures.chart_collection[0].friendlyUrl;
+        var friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
         chartModule.getChartDataTableById(friendlyUrl, function (err, docs) {
             err.should.eql(null);
             docs.length.should.eql(1);
@@ -159,7 +159,7 @@ describe('Model chart Tests', function () {
 
     })
     it('updateChartDataTableById', function (done) {
-        var friendlyUrl = fixtures.chart_collection[0].friendlyUrl;
+        var friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
         var testDataTable = {
             "cols": [{
                 "type": "string",

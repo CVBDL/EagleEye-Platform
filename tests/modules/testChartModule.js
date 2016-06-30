@@ -154,9 +154,7 @@ describe('Model chart Tests', function () {
     it('getChartDataTableById', function (done) {
         var friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
         chartModule.getChartDataTableById(friendlyUrl, function (err, docs) {
-            //err.should.eql(null);
             docs.length.should.eql(1);
-            //docs[0].datatable.should.be.ok();
             done();
         });
 

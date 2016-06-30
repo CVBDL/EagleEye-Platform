@@ -1,6 +1,8 @@
+[![Build Status](https://travis-ci.org/CVBDL/EagleEye-Platform.svg?branch=master)](https://travis-ci.org/CVBDL/EagleEye-Platform)
+
 # EagleEye Platform
 
-[![Build Status](https://travis-ci.org/CVBDL/EagleEye-Platform.svg?branch=master)](https://travis-ci.org/CVBDL/EagleEye-Platform)
+[![Join the chat at https://gitter.im/CVBDL](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/CVBDL)
 
 
 ## Install required softwares

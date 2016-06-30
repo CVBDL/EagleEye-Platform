@@ -200,9 +200,9 @@ describe('Model chart Tests', function () {
                 }]
             }]
         };
-        chartModule.updateChartOptionById(friendlyUrl, testDataTable, function (err, result) {
+        chartModule.updateChartDataTableById(friendlyUrl, testDataTable, function (err, result) {
             chartModule.getOne(friendlyUrl, function (err, docs) {
-                docs[0].datatable.rows.length.should.eql(2);
+                docs[0].datatable.rows.length.should.eql(3);
                 done();
             });
         });

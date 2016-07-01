@@ -8,6 +8,16 @@ var DB = require('../helpers/dbHelper');
 
 var COLLECTION = "chart_set_collection";
 
+DB.DATABASE_KEYS.push({
+    COLLECTION : COLLECTION,
+    keys : [
+        {
+            key: {friendlyUrl: 1},
+            option : {unique: true, sparse: true}
+        }
+    ]
+});
+
 exports.create = function(chartSetData, callback) {
     let db = DB.get();
 

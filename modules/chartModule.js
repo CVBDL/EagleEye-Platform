@@ -7,6 +7,17 @@ var ObjectId = require('mongodb').ObjectId;
 var DB = require('../helpers/dbHelper');
 
 var COLLECTION = "chart_collection";
+
+DB.DATABASE_KEYS.push({
+    COLLECTION : COLLECTION,
+    keys : [
+        {
+            key: {friendlyUrl: 1},
+            option : {unique: true, sparse: true}
+        }
+    ]
+});
+
 exports.create = function (chartData, callback) {
     let db = DB.get()
     db.collection(COLLECTION).insert(chartData, function (err, result) {

@@ -4,25 +4,42 @@
 var MongoClient = require('mongodb').MongoClient,
     async = require('async');
 
-var PRODUCTION_URI = 'mongodb://localhost:27017/mydatabase',
-    TEST_URI = 'mongodb://localhost:27017/testMydatabase';
+var PRODUCTION_URI = 'mongodb://localhost:27017/eagleEyeDatabase',
+    TEST_URI = 'mongodb://localhost:27017/testEagleEyeDatabase';
 
 exports.MODE_TEST = 'mode_test'
 exports.MODE_PRODUCTION = 'mode_production'
+
+exports.DATABASE_KEYS = [];
 
 var state = {
     db: null,
     mode: null,
 }
 
+var ensureIndex = function(keyObject, collection) {
+    keyObject.keys.forEach(function(keyConfig) {
+        collection.ensureIndex(keyConfig.key, keyConfig.option);
+    });
+}
 exports.connect = function(mode, done) {
     if (state.db != null) return done();
     var uri = mode === exports.MODE_TEST ? TEST_URI : PRODUCTION_URI
     
     MongoClient.connect(uri, function(err, db) {
         if (err) return done(err)
-        state.db = db
-        state.mode = mode
+        state.db = db;
+        state.mode = mode;
+        exports.DATABASE_KEYS.forEach(function(keyObject) {
+            var collection = db.collection[keyObject.COLLECTION];
+            if (!collection) {
+                db.createCollection(keyObject.COLLECTION, function(err, collection) {
+                    ensureIndex(keyObject, collection);
+                });
+            } else {
+                ensureIndex(keyObject, collection);
+            }
+        });
         done()
     })
 }

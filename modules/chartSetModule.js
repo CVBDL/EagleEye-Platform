@@ -18,9 +18,11 @@ DB.DATABASE_KEYS.push({
     ]
 });
 
+var getTimeStamp = () => new Date().valueOf();
+
 exports.create = function(chartSetData, callback) {
     let db = DB.get();
-
+    chartSetData.timestamp = getTimeStamp();
     db.collection(COLLECTION).insert(chartSetData, function(err, result) {
         if (err) return callback(err);
 
@@ -64,10 +66,15 @@ exports.remove = function(_id, callback) {
 exports.updateOne = function(_id, updateData, callback) {
     let db = DB.get();
     db.collection(COLLECTION).update({"_id":ObjectId(_id)}
-        ,{"$set":{"title":updateData.title,
-                  "description":updateData.description,
-                  "friendlyUrl":updateData.friendlyUrl,
-                  "charts":updateData.charts}}
+        ,{
+            "$set": {
+                "title":updateData.title,
+                "description":updateData.description,
+                "friendlyUrl":updateData.friendlyUrl,
+                "charts":updateData.charts,
+                lastUpdateTimestamp: getTimeStamp()
+            }
+        }
         ,false,true, function(err, result) {
         callback(err);
     });

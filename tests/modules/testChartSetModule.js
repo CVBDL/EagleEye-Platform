@@ -13,7 +13,7 @@ describe('Model chart set tests', function() {
     var chart = {
       "title": "Chart set sample",
       "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-      "friendlyUrl": "s-eagleeye-chart-set",
+      "friendlyUrl": "s-eagleeye-chart-set-three",
       "charts": []
     };
 

@@ -18,8 +18,11 @@ DB.DATABASE_KEYS.push({
     ]
 });
 
+var getTimeStamp = () => new Date().valueOf();
+
 exports.create = function (chartData, callback) {
-    let db = DB.get()
+    let db = DB.get();
+    chartData.timestamp = getTimeStamp();
     db.collection(COLLECTION).insert(chartData, function (err, result) {
         if (err) return callback(err);
         callback(null, result.insertedIds[0]);
@@ -61,6 +64,8 @@ exports.updateOne = function (_id, updateData, callback) {
     let db = DB.get();
     let regExp = /^c-/g;
 
+    updateData.lastUpdateTimestamp = getTimeStamp();
+
     if (regExp.test(_id)) {
         db.collection(COLLECTION).updateOne({"friendlyUrl": _id}, updateData, function (err, result) {
             callback(err);
@@ -89,9 +94,9 @@ exports.updateChartOptionById = function (_id, updateData, callback) {
     let regExp = /^c-/g;
 
     if (regExp.test(_id)) {
-        db.collection(COLLECTION).findOneAndUpdate({"friendlyUrl": _id}, {$set: {options: updateData}}, callback);
+        db.collection(COLLECTION).findOneAndUpdate({"friendlyUrl": _id}, {$set: {options: updateData, lastUpdateTimestamp: getTimeStamp()}}, callback);
     } else {
-        db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {options: updateData}}, callback);
+        db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {options: updateData, lastUpdateTimestamp: getTimeStamp()}}, callback);
     }
 }
 
@@ -112,8 +117,8 @@ exports.updateChartDataTableById = function (_id, updateData, callback) {
     let regExp = /^c-/g;
 
     if (regExp.test(_id)) {
-        db.collection(COLLECTION).findOneAndUpdate({"friendlyUrl": _id}, {$set: {datatable: updateData}}, callback);
+        db.collection(COLLECTION).findOneAndUpdate({"friendlyUrl": _id}, {$set: {datatable: updateData, lastUpdateTimestamp: getTimeStamp()}}, callback);
     } else {
-        db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {datatable: updateData}}, callback);
+        db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {datatable: updateData, lastUpdateTimestamp: getTimeStamp()}}, callback);
     }
 }

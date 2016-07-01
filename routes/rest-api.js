@@ -13,7 +13,11 @@ let chartSetModule = require('../modules/chartSetModule');
 
 router.post('/v1/charts', function (req, res, next) {
     chartModule.create(req.body, function (err, result) {
-        res.send(result);
+        if (err) {
+            res.send(err.message);
+        } else {
+            res.send(result);
+        }
     });
 });
 
@@ -52,7 +56,11 @@ router.delete('/v1/charts/:id', function (req, res, next) {
 
 router.post('/v1/chart-sets', function (req, res, next) {
     chartSetModule.create(req.body, function (err, result) {
-        res.send(result);
+        if (err) {
+            res.send(err.message);
+        } else {
+            res.send(result);
+        }
     });
 });
 

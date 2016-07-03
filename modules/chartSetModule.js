@@ -3,30 +3,32 @@
  */
 'use strict';
 
-var ObjectId = require('mongodb').ObjectId;
-var DB = require('../helpers/dbHelper');
+let ObjectId = require('mongodb').ObjectId;
+let DB = require('../helpers/dbHelper');
 
-var COLLECTION = "chart_set_collection";
+let COLLECTION = "chart_set_collection";
 
 DB.DATABASE_KEYS.push({
-    COLLECTION : COLLECTION,
-    keys : [
-        {
-            key: {friendlyUrl: 1},
-            option : {unique: true, sparse: true}
-        }
-    ]
+    COLLECTION: COLLECTION,
+    keys: [{
+        key: { friendlyUrl: 1 },
+        option: { unique: true, sparse: true }
+    }]
 });
 
-var getTimeStamp = () => new Date().valueOf();
+let getTimeStamp = () => new Date().valueOf();
 
 exports.create = function(chartSetData, callback) {
     let db = DB.get();
-    chartSetData.timestamp = getTimeStamp();
-    db.collection(COLLECTION).insert(chartSetData, function(err, result) {
-        if (err) return callback(err);
 
-        callback(null, result.insertedIds[0]);
+    chartSetData.timestamp = getTimeStamp();
+
+    db.collection(COLLECTION).insert(chartSetData, function(err, result) {
+        if (err) {
+            return callback(err);
+        }
+
+        callback(null, result.ops[0]);
     });
 };
 
@@ -78,4 +80,4 @@ exports.updateOne = function(_id, updateData, callback) {
         ,false,true, function(err, result) {
         callback(err);
     });
-}
+};

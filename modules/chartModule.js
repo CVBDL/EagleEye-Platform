@@ -85,7 +85,6 @@ exports.updateOne = function (_id, updateData, callback) {
 
 exports.getChartOptionById = function (_id, callback) {
     let db = DB.get();
-    // console.log(db);
     let regExp = /^c-/g;
 
     if (regExp.test(_id)) {

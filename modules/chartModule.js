@@ -22,10 +22,14 @@ exports.create = function (chartData, callback) {
     let db = DB.get();
 
     chartData.timestamp = getTimeStamp();
+    chartData.lastUpdateTimestamp = chartData.timestamp;
 
     db.collection(COLLECTION).insert(chartData, function (err, result) {
-        if (err) return callback(err);
-        callback(null, result.insertedIds[0]);
+        if (err) {
+            return callback(err);
+        }
+
+        callback(null, result.ops[0]);
     });
 };
 

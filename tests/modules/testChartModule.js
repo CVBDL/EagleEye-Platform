@@ -70,7 +70,7 @@ describe('Model chart Tests', function () {
     });
 
     it('create', function (done) {
-        chartModule.create(chart, function (err, id) {
+        chartModule.create(chart, function (err, newChart) {
             chartModule.all(function (err, docs) {
                 docs.length.should.eql(3);
 
@@ -84,7 +84,9 @@ describe('Model chart Tests', function () {
     });
 
     it('getOne: id', function (done) {
-        chartModule.create(chart, function (err, id) {
+        chartModule.create(chart, function (err, newChart) {
+            let id = newChart._id;
+
             chartModule.getOne(id, function (err, docs) {
                 docs.length.should.eql(1);
 

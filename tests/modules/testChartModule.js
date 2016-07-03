@@ -1,16 +1,16 @@
 /**
  * Created by MMo2 on 6/15/2016.
  */
+'use strict';
 
-var should = require('should')
-    , DB = require('../../helpers/dbHelper')
-    , fixtures = require('../fixtures/chartModule');
+let should = require('should'),
+    DB = require('../../helpers/dbHelper'),
+    fixtures = require('../fixtures/chartModule');
 
-var chartModule = require('../../modules/chartModule');
+let chartModule = require('../../modules/chartModule');
 
 describe('Model chart Tests', function () {
-
-    var chart = {
+    let chart = {
         "timestamp": 1465891633478,
         "lastUpdateTimestamp": 1465891842059,
         "chartType": "LineChart",
@@ -41,64 +41,73 @@ describe('Model chart Tests', function () {
 
     before(function (done) {
         DB.connect(DB.MODE_TEST, done);
-    })
+    });
 
     beforeEach(function (done) {
         DB.drop(function (err) {
-            if (err) return done(err)
+            if (err) {
+                return done(err);
+            }
+
             DB.fixtures(fixtures, done);
-        })
-    })
+        });
+    });
 
     it('all', function (done) {
         chartModule.all(function (err, docs) {
             docs.length.should.eql(2);
             done();
-        })
-    })
+        });
+    });
 
     it('clear', function (done) {
-        chartModule.clearCollection(function (err) {
+        chartModule.clearCollection(function (err, result) {
             chartModule.all(function (err, result) {
                 result.length.should.eql(0);
                 done();
-            })
-        })
-    })
+            });
+        });
+    });
 
     it('create', function (done) {
         chartModule.create(chart, function (err, id) {
             chartModule.all(function (err, docs) {
                 docs.length.should.eql(3);
-                for (var key in fixtures.collections.chart_collection[0]) {
+
+                for (let key in fixtures.collections.chart_collection[0]) {
                     docs[2][key].should.eql(chart[key]);
                 }
+
                 done();
-            })
-        })
-    })
+            });
+        });
+    });
 
     it('getOne: id', function (done) {
         chartModule.create(chart, function (err, id) {
             chartModule.getOne(id, function (err, docs) {
                 docs.length.should.eql(1);
-                for (var key in fixtures.collections.chart_collection[0]) {
+
+                for (let key in fixtures.collections.chart_collection[0]) {
                     docs[0][key].should.eql(chart[key]);
                 }
+
                 done();
-            })
-        })
-    })
+            });
+        });
+    });
 
     it('getOne: friendlyUrl', function (done) {
         chartModule.getOne(fixtures.collections.chart_collection[0].friendlyUrl, function (err, docs) {
             docs.length.should.eql(1);
-            for (var key in fixtures.collections.chart_collection[0]) {
+
+            for (let key in fixtures.collections.chart_collection[0]) {
                 docs[0][key].should.eql(fixtures.collections.chart_collection[0][key]);
             }
+
             done();
-        })
-    })
+        });
+    });
 
     it('updateOne', function (done) {
         chartModule.updateOne(fixtures.collections.chart_collection[0].friendlyUrl, {friendlyUrl: "c-friendlyUrl"}, function (err, result) {
@@ -107,7 +116,7 @@ describe('Model chart Tests', function () {
                 done();
             });
         });
-    })
+    });
 
     it('remove', function (done) {
         chartModule.all(function (err, docs) {
@@ -116,24 +125,24 @@ describe('Model chart Tests', function () {
                     result.length.should.eql(1);
                     result[0]._id.should.not.eql(docs[0]._id);
                     done();
-                })
-            })
-        })
-    })
+                });
+            });
+        });
+    });
 
     it('getChartOptionById', function (done) {
-        var friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
+        let friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
+
         chartModule.getChartOptionById(friendlyUrl, function (err, docs) {
-            //err.should.eql(null);
             docs.length.should.eql(1);
             should(docs[0].options).have.property("title","Fruits Overview");
             done();
         });
+    });
 
-    })
     it('updateChartOptionById', function (done) {
-        var friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
-        var testOptions = {
+        let friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
+        let testOptions = {
             "title": "Fruits Overview",
             "hAxis": {
                 "title": "CategoryAAA"
@@ -142,6 +151,7 @@ describe('Model chart Tests', function () {
                 "title": "Price"// update it
             }
         };
+
         chartModule.updateChartOptionById(friendlyUrl, testOptions, function (err, result) {
             chartModule.getOne(friendlyUrl, function (err, docs) {
                 docs.length.should.eql(1);
@@ -149,19 +159,20 @@ describe('Model chart Tests', function () {
                 done();
             });
         });
-    })
+    });
 
     it('getChartDataTableById', function (done) {
-        var friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
+        let friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
+
         chartModule.getChartDataTableById(friendlyUrl, function (err, docs) {
             docs.length.should.eql(1);
             done();
         });
+    });
 
-    })
     it('updateChartDataTableById', function (done) {
-        var friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
-        var testDataTable = {
+        let friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
+        let testDataTable = {
             "cols": [{
                 "type": "string",
                 "label": "Category"
@@ -198,11 +209,12 @@ describe('Model chart Tests', function () {
                 }]
             }]
         };
+
         chartModule.updateChartDataTableById(friendlyUrl, testDataTable, function (err, result) {
             chartModule.getOne(friendlyUrl, function (err, docs) {
                 docs[0].datatable.rows.length.should.eql(3);
                 done();
             });
         });
-    })
+    });
 });

@@ -3,62 +3,64 @@
  */
 'use strict';
 
-var ObjectId = require('mongodb').ObjectId;
-var DB = require('../helpers/dbHelper');
+let ObjectId = require('mongodb').ObjectId;
+let DB = require('../helpers/dbHelper');
 
-var COLLECTION = "chart_collection";
+let COLLECTION = "chart_collection";
 
 DB.DATABASE_KEYS.push({
-    COLLECTION : COLLECTION,
-    keys : [
-        {
-            key: {friendlyUrl: 1},
-            option : {unique: true, sparse: true}
-        }
-    ]
+    COLLECTION: COLLECTION,
+    keys: [{
+        key: { friendlyUrl: 1 },
+        option: { unique: true, sparse: true }
+    }]
 });
 
-var getTimeStamp = () => new Date().valueOf();
+let getTimeStamp = () => new Date().valueOf();
 
 exports.create = function (chartData, callback) {
     let db = DB.get();
+
     chartData.timestamp = getTimeStamp();
+
     db.collection(COLLECTION).insert(chartData, function (err, result) {
         if (err) return callback(err);
         callback(null, result.insertedIds[0]);
     });
-}
+};
 
 exports.all = function (callback) {
     let db = DB.get();
+
     db.collection(COLLECTION).find().toArray(callback);
-}
+};
 
 exports.getOne = function (_id, callback) {
     let db = DB.get();
-    // console.log(db);
     let regExp = /^c-/g;
 
     if (regExp.test(_id)) {
         db.collection(COLLECTION).find({"friendlyUrl": _id}).toArray(callback);
+
     } else {
         db.collection(COLLECTION).find({"_id": ObjectId(_id)}).toArray(callback);
     }
-}
+};
 
 exports.clearCollection = function (callback) {
     let db = DB.get();
+
     db.collection(COLLECTION).remove({}, function (err, result) {
         callback(err);
     });
-}
+};
 
 exports.remove = function (_id, callback) {
     let db = DB.get();
     db.collection(COLLECTION).removeOne({_id: ObjectId(_id)}, function (err, result) {
         callback(err);
     });
-}
+};
 
 exports.updateOne = function (_id, updateData, callback) {
     let db = DB.get();
@@ -75,7 +77,7 @@ exports.updateOne = function (_id, updateData, callback) {
             callback(err);
         });
     }
-}
+};
 
 exports.getChartOptionById = function (_id, callback) {
     let db = DB.get();
@@ -87,7 +89,7 @@ exports.getChartOptionById = function (_id, callback) {
     } else {
         db.collection(COLLECTION).find({"_id": ObjectId(_id)}).toArray(callback);
     }
-}
+};
 
 exports.updateChartOptionById = function (_id, updateData, callback) {
     let db = DB.get();
@@ -98,7 +100,7 @@ exports.updateChartOptionById = function (_id, updateData, callback) {
     } else {
         db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {options: updateData, lastUpdateTimestamp: getTimeStamp()}}, callback);
     }
-}
+};
 
 exports.getChartDataTableById = function (_id, callback) {
     let db = DB.get();
@@ -110,7 +112,7 @@ exports.getChartDataTableById = function (_id, callback) {
     } else {
         db.collection(COLLECTION).find({"_id": ObjectId(_id)}).toArray(callback);
     }
-}
+};
 
 exports.updateChartDataTableById = function (_id, updateData, callback) {
     let db = DB.get();
@@ -121,4 +123,4 @@ exports.updateChartDataTableById = function (_id, updateData, callback) {
     } else {
         db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {datatable: updateData, lastUpdateTimestamp: getTimeStamp()}}, callback);
     }
-}
+};

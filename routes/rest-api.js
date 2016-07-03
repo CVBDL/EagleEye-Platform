@@ -27,9 +27,9 @@ router.get('/v1/charts', function (reg, res, next) {
     });
 });
 
-router.get('/v1/charts/clear', function (reg, res, next) {
+router.delete('/v1/charts', function (reg, res, next) {
     chartModule.clearCollection(function (err, result) {
-        res.send("success");
+        res.status(204).send('No Content');
     });
 });
 
@@ -79,9 +79,9 @@ router.get('/v1/chart-sets/:id', function (req, res, next) {
     });
 });
 
-router.get('/v1/chart-sets/clear', function (reg, res, next) {
+router.delete('/v1/chart-sets', function (reg, res, next) {
     chartSetModule.clearCollection(function (err, result) {
-        res.send("success");
+        res.status(204).send('No Content');
     });
 });
 

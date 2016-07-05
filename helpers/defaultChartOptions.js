@@ -4,12 +4,12 @@ var LineChartOptions = {
         duration: 1500,
         easing: 'inAndOut'
     },
-    backgroundColor:{
+    backgroundColor: {
         stroke: '#666',
         strokeWidth: 0,
         fill: '#ffffff'
     },
-    chartArea:{
+    chartArea: {
         backgroundColor: {
             stroke: '#666',
             strokeWidth: 2
@@ -22,18 +22,17 @@ var LineChartOptions = {
         orientation: 'horizontal',
         trigger: 'both'
     },
-    hAxis:{
-        gridlines:{
+    hAxis: {
+        gridlines: {
             color: '#DDDDDD'
         },
         viewWindow: {}
     },
     vAxis: {
-        gridlines:{
+        gridlines: {
             color: '#DDDDDD'
         },
-        viewWindow:{
-        }
+        viewWindow: {}
     },
     legend: {
         alignment: 'start',
@@ -61,31 +60,30 @@ var ColumnChartOptions = {
         duration: 1500,
         easing: 'inAndOut'
     },
-
-    backgroundColor:{
+    backgroundColor: {
         stroke: '#666',
         strokeWidth: 0,
         fill: '#ffffff'
     },
-    chartArea:{
+    bar: {groupWidth: "75%"},
+    chartArea: {
         backgroundColor: {
             stroke: '#666',
             strokeWidth: 2
         },
         left: 100
     },
-    hAxis:{
-        gridlines:{
+    hAxis: {
+        gridlines: {
             color: '#DDDDDD'
         },
         viewWindow: {}
     },
     vAxis: {
-        gridlines:{
+        gridlines: {
             color: '#DDDDDD'
         },
-        viewWindow:{
-        }
+        viewWindow: {}
     },
     legend: {
         alignment: 'start',
@@ -111,30 +109,30 @@ var BarChartOptions = {
         easing: 'inAndOut'
     },
 
-    backgroundColor:{
+    backgroundColor: {
         stroke: '#666',
         strokeWidth: 0,
         fill: '#ffffff'
     },
-    chartArea:{
+    bar: {groupWidth: "75%"},
+    chartArea: {
         backgroundColor: {
             stroke: '#666',
             strokeWidth: 2
         },
         left: 100
     },
-    hAxis:{
-        gridlines:{
+    hAxis: {
+        gridlines: {
             color: '#DDDDDD'
         },
         viewWindow: {}
     },
     vAxis: {
-        gridlines:{
+        gridlines: {
             color: '#DDDDDD'
         },
-        viewWindow:{
-        }
+        viewWindow: {}
     },
     legend: {
         alignment: 'start',

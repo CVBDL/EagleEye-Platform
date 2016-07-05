@@ -11,8 +11,6 @@ let chartModule = require('../../modules/chartModule');
 
 describe('Model chart Tests', function () {
     let chart = {
-        "timestamp": 1465891633478,
-        "lastUpdateTimestamp": 1465891842059,
         "chartType": "LineChart",
         "domainDataType": "string",
         "friendlyUrl": "c-eagleeye",

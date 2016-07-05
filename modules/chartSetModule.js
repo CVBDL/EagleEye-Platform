@@ -7,6 +7,7 @@ let ObjectId = require('mongodb').ObjectId;
 let DB = require('../helpers/dbHelper');
 
 let COLLECTION = "chart_set_collection";
+let CHART_SET_TYPE = "chartset";
 
 DB.DATABASE_KEYS.push({
     COLLECTION: COLLECTION,
@@ -21,7 +22,9 @@ let getTimeStamp = () => new Date().valueOf();
 exports.create = function(chartSetData, callback) {
     let db = DB.get();
 
+    chartSetData.type = CHART_SET_TYPE;
     chartSetData.timestamp = getTimeStamp();
+    chartSetData.lastUpdateTimestamp = chartSetData.timestamp;
 
     db.collection(COLLECTION).insert(chartSetData, function(err, result) {
         if (err) {

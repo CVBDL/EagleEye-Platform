@@ -8,6 +8,7 @@ let DB = require('../helpers/dbHelper');
 let chartOptionsHelper = require('../helpers/chartOptionsHelper');
 
 let COLLECTION = "chart_collection";
+let CHART_TYPE = "chart";
 
 DB.DATABASE_KEYS.push({
     COLLECTION: COLLECTION,
@@ -21,9 +22,12 @@ let getTimeStamp = () => new Date().valueOf();
 
 exports.create = function (chartData, callback) {
     let db = DB.get();
+
+    chartData.type = CHART_TYPE;
     chartData.timestamp = getTimeStamp();
     chartData.lastUpdateTimestamp = chartData.timestamp;
     chartData.options = chartOptionsHelper.ChartOptionsAdapter(chartData.chartType ,chartData.options);
+
     db.collection(COLLECTION).insert(chartData, function (err, result) {
         if (err) {
             return callback(err);

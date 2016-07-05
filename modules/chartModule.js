@@ -5,7 +5,7 @@
 
 let ObjectId = require('mongodb').ObjectId;
 let DB = require('../helpers/dbHelper');
-let defaultOptions = require('../helpers/defaultChartOptions');
+let chartOptionsHelper = require('../helpers/chartOptionsHelper');
 
 let COLLECTION = "chart_collection";
 
@@ -21,12 +21,9 @@ let getTimeStamp = () => new Date().valueOf();
 
 exports.create = function (chartData, callback) {
     let db = DB.get();
-    let defaultChartTypeOption = defaultOptions.chartOptions[chartData.chartType];
-
     chartData.timestamp = getTimeStamp();
     chartData.lastUpdateTimestamp = chartData.timestamp;
-    chartData.options = Object.assign(chartData.options,defaultChartTypeOption);
-
+    chartData.options = chartOptionsHelper.ChartOptionsAdapter(chartData.chartType ,chartData.options);
     db.collection(COLLECTION).insert(chartData, function (err, result) {
         if (err) {
             return callback(err);

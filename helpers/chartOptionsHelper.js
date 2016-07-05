@@ -18,10 +18,14 @@ function _ChartOptionsAdapter(type, originalOption) {
     };
     this._columnChart = function () {
         //TODO
+        this.default_options.hAxis = Object.assign(this.default_options.hAxis, this.options.hAxis);
+        this.default_options.vAxis = Object.assign(this.default_options.vAxis, this.options.vAxis);
         this.assignOptions();
     };
     this._barChart = function () {
         //TODO
+        this.default_options.hAxis = Object.assign(this.default_options.hAxis, this.options.hAxis);
+        this.default_options.vAxis = Object.assign(this.default_options.vAxis, this.options.vAxis);
         this.assignOptions();
     };
 }

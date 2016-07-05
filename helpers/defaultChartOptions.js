@@ -1,8 +1,8 @@
 var LineChartOptions = {
     animation: {
-        "startup": true,
-        "duration": 1500,
-        "easing": 'inAndOut'
+        startup: true,
+        duration: 1500,
+        easing: 'inAndOut'
     },
     backgroundColor:{
         stroke: '#666',
@@ -56,17 +56,101 @@ var LineChartOptions = {
 };
 
 var ColumnChartOptions = {
-    "animation": {
-        "startup": true,
-        "duration": 1000,
-        "easing": 'out'
+    animation: {
+        startup: true,
+        duration: 1500,
+        easing: 'inAndOut'
+    },
+
+    backgroundColor:{
+        stroke: '#666',
+        strokeWidth: 0,
+        fill: '#ffffff'
+    },
+    chartArea:{
+        backgroundColor: {
+            stroke: '#666',
+            strokeWidth: 2
+        },
+        left: 100
+    },
+    hAxis:{
+        gridlines:{
+            color: '#DDDDDD'
+        },
+        viewWindow: {}
+    },
+    vAxis: {
+        gridlines:{
+            color: '#DDDDDD'
+        },
+        viewWindow:{
+        }
+    },
+    legend: {
+        alignment: 'start',
+        position: 'right',
+        textStyle: {
+            italic: true
+        }
+    },
+    tooltip: {
+        ignoreBounds: false,
+        isHtml: false,
+        textStyle: {
+            color: '#66CC66',
+            fontSize: 12,
+            italic: true
+        }
     }
 };
 var BarChartOptions = {
-    "animation": {
-        "startup": true,
-        "duration": 1000,
-        "easing": 'out'
+    animation: {
+        startup: true,
+        duration: 1500,
+        easing: 'inAndOut'
+    },
+
+    backgroundColor:{
+        stroke: '#666',
+        strokeWidth: 0,
+        fill: '#ffffff'
+    },
+    chartArea:{
+        backgroundColor: {
+            stroke: '#666',
+            strokeWidth: 2
+        },
+        left: 100
+    },
+    hAxis:{
+        gridlines:{
+            color: '#DDDDDD'
+        },
+        viewWindow: {}
+    },
+    vAxis: {
+        gridlines:{
+            color: '#DDDDDD'
+        },
+        viewWindow:{
+        }
+    },
+    legend: {
+        alignment: 'start',
+        position: 'right',
+        textStyle: {
+            italic: true
+        }
+    },
+    tooltip: {
+        ignoreBounds: false,
+        isHtml: false,
+        textStyle: {
+            color: '#66CC66',
+            fontSize: 12,
+            italic: true
+        }
     }
 };
 exports.chartOptions = {

@@ -80,7 +80,7 @@ exports.updateOne = function(_id, updateData, callback) {
                 lastUpdateTimestamp: getTimeStamp()
             }
         }
-        ,false,true, function(err, result) {
+        ,false, function(err, result) {
         callback(err);
     });
 };

@@ -25,6 +25,9 @@ exports.create = function(chartSetData, callback) {
     chartSetData.type = CHART_SET_TYPE;
     chartSetData.timestamp = getTimeStamp();
     chartSetData.lastUpdateTimestamp = chartSetData.timestamp;
+    if (chartSetData.friendlyUrl == "") {
+        delete chartSetData.friendlyUrl;
+    }
 
     db.collection(COLLECTION).insert(chartSetData, function(err, result) {
         if (err) {

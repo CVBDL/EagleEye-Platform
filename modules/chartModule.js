@@ -29,6 +29,9 @@ exports.create = function (chartData, callback) {
     chartData.lastUpdateTimestamp = chartData.timestamp;
     chartData.options = chartOptionsHelper.ChartOptionsAdapter(chartData.chartType ,chartData.options);
 
+    if (chartData.friendlyUrl == "") {
+        delete chartData.friendlyUrl;
+    }
     db.collection(COLLECTION).insert(chartData, function (err, result) {
         if (err) {
             return callback(err);

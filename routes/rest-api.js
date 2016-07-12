@@ -37,7 +37,7 @@ router.get('/v1/charts/:id', function (req, res, next) {
     let id = req.params.id;
 
     chartModule.getOne(id, function (err, docs) {
-        console.log(docs);
+        // console.log(docs);
         res.send(docs[0]);
     });
 });
@@ -46,7 +46,7 @@ router.delete('/v1/charts/:id', function (req, res, next) {
     let id = req.params.id;
 
     chartModule.remove(id, function (err, result) {
-        console.log("Delete one chart,Result is:" + result);
+        console.log("Delete one chart, Result is:" + result);
         res.send(result);
     });
 });
@@ -74,7 +74,7 @@ router.get('/v1/chart-sets/:id', function (req, res, next) {
     let id = req.params.id;
 
     chartSetModule.getOne(id, function (err, docs) {
-        console.log(docs);
+        //console.log(docs);
         res.send(docs[0]);
     });
 });
@@ -96,8 +96,8 @@ router.delete('/v1/chart-sets/:id', function (req, res, next) {
 
 router.put('/v1/chart-sets/:id', function (req, res, next) {
     let id = req.params.id;
-    console.log("JoryTest" + id);
-    console.log(req.body);
+    // console.log("JoryTest" + id);
+    // console.log(req.body);
     chartSetModule.updateOne(id, req.body, function (err, result) {
         console.log("Update one chart-set,Result is:" + result);
         res.send(result);

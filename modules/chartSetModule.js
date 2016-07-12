@@ -28,7 +28,7 @@ exports.create = function(chartSetData, callback) {
 
     db.collection(COLLECTION).insert(chartSetData, function(err, result) {
         if (err) {
-            return callback(err);
+            return callback(err, result);
         }
 
         callback(null, result.ops[0]);
@@ -81,6 +81,11 @@ exports.updateOne = function(_id, updateData, callback) {
             }
         }
         ,false, function(err, result) {
-        callback(err);
+        callback(err, result);
     });
 };
+
+exports.removeChartFromCharts = function(_id) {
+    let db = DB.get();
+    db.collection(COLLECTION).update( { "charts": _id }, { $pullAll: { "charts": [_id] } } );
+}

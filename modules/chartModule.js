@@ -6,6 +6,7 @@
 let ObjectId = require('mongodb').ObjectId;
 let DB = require('../helpers/dbHelper');
 let chartOptionsHelper = require('../helpers/chartOptionsHelper');
+let chartSetModule = require('../modules/chartSetModule');
 
 let COLLECTION = "chart_collection";
 let CHART_TYPE = "chart";
@@ -67,6 +68,7 @@ exports.remove = function (_id, callback) {
     let db = DB.get();
     db.collection(COLLECTION).removeOne({_id: ObjectId(_id)}, function (err, result) {
         callback(err);
+        chartSetModule.removeChartFromCharts(_id);
     });
 };
 

@@ -37,7 +37,10 @@ exports.create = function(chartSetData, callback) {
 
 exports.all = function(option, callback) {
     let db = DB.get();
-
+    if (arguments.length == 1) {
+        callback = option;
+        option = {};
+    }
     db.collection(COLLECTION).find({}, false, option).toArray(callback);
 };
 

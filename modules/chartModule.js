@@ -40,8 +40,11 @@ exports.create = function (chartData, callback) {
 
 exports.all = function (option, callback) {
     let db = DB.get();
-
-    let cursor = db.collection(COLLECTION).find({}, false, option).toArray(callback);
+    if (arguments.length == 1) {
+        callback = option;
+        option = {};
+    }
+    db.collection(COLLECTION).find({}, false, option).toArray(callback);
     // another implement
     // if (option.sort) {
     //     cursor.sort(option.sort);

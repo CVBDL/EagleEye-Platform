@@ -35,10 +35,10 @@ exports.create = function(chartSetData, callback) {
     });
 };
 
-exports.all = function(callback) {
+exports.all = function(option, callback) {
     let db = DB.get();
 
-    db.collection(COLLECTION).find().toArray(callback);
+    db.collection(COLLECTION).find({}, false, option).toArray(callback);
 };
 
 exports.getOne = function(_id, callback) {

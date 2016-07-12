@@ -38,10 +38,21 @@ exports.create = function (chartData, callback) {
     });
 };
 
-exports.all = function (callback) {
+exports.all = function (option, callback) {
     let db = DB.get();
 
-    db.collection(COLLECTION).find().toArray(callback);
+    let cursor = db.collection(COLLECTION).find({}, false, option).toArray(callback);
+    // another implement
+    // if (option.sort) {
+    //     cursor.sort(option.sort);
+    // }
+    // if (option.skip) {
+    //     cursor.skip(option.skip);
+    // }
+    // if (option.limit) {
+    //     cursor.limit(option.limit);
+    // }
+    // cursor.toArray(callback);
 };
 
 exports.getOne = function (_id, callback) {

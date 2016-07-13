@@ -19,13 +19,16 @@ var state = {
 
 var ensureIndex = function(keyObject, collection) {
     keyObject.keys.forEach(function(keyConfig) {
-        collection.ensureIndex(keyConfig.key, keyConfig.option);
+        if (keyConfig.option)
+            collection.ensureIndex(keyConfig.key, keyConfig.option);
+        else
+            collection.ensureIndex(keyConfig);
     });
 }
 exports.connect = function(mode, done) {
     if (state.db != null) return done();
     var uri = mode === exports.MODE_TEST ? TEST_URI : PRODUCTION_URI
-    
+
     MongoClient.connect(uri, function(err, db) {
         if (err) return done(err)
         state.db = db;
@@ -77,7 +80,7 @@ exports.fixtures = function(data, done) {
     if (!db) {
         return done(new Error('Missing database connection.'))
     }
-    
+
     var names = Object.keys(data.collections);
 
     async.each(names, function(name, cb) {

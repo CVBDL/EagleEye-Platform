@@ -11,10 +11,12 @@ let CHART_SET_TYPE = "chartset";
 
 DB.DATABASE_KEYS.push({
     COLLECTION: COLLECTION,
-    keys: [{
-        key: { friendlyUrl: 1 },
-        option: { unique: true, sparse: true }
-    }]
+    keys: [
+        {
+            key: { friendlyUrl: 1 },
+            option: { unique: true, sparse: true }
+        },
+        {"options.title": "text", friendlyUrl: "text", description: "text"}]
 });
 
 let getTimeStamp = () => new Date().valueOf();
@@ -40,11 +42,19 @@ exports.create = function(chartSetData, callback) {
 
 exports.all = function(option, callback) {
     let db = DB.get();
+    let query = {};
     if (arguments.length == 1) {
         callback = option;
         option = {};
     }
-    db.collection(COLLECTION).find({}, false, option).toArray(callback);
+    if (option.skip) {
+        option.skip--;
+    }
+    if (option.query) {
+        query["$text"] = { "$search": "" + option.query };
+        delete option.query;
+    }
+    db.collection(COLLECTION).find(query, false, option).toArray(callback);
 };
 
 exports.getOne = function(_id, callback) {

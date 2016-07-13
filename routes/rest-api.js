@@ -9,21 +9,9 @@ let router = express.Router();
 let chartModule = require('../modules/chartModule');
 let chartSetModule = require('../modules/chartSetModule');
 
-// CHART ROUTES
-
-router.post('/v1/charts', function (req, res, next) {
-    chartModule.create(req.body, function (err, result) {
-        if (err) {
-            res.send(err.message);
-        } else {
-            res.send(result);
-        }
-    });
-});
-
-router.get('/v1/charts', function (req, res, next) {
+function getChartParameter(req) {
     let para = {};
-    ["sort", "order", "limit", "start"].forEach((key) => (req.query[key] ? (para[key] = isNaN(req.query[key]) ? req.query[key] : parseInt(req.query[key])) : null));
+    ["sort", "order", "limit", "start", "q"].forEach((key) => (req.query[key] ? (para[key] = isNaN(req.query[key]) ? req.query[key] : parseInt(req.query[key])) : null));
     let queryOption = {};
 
     if (!para.sort || !new Set(["timestamp", "lastUpdateTimestamp", "chartType"]).has(para.sort)) {
@@ -41,8 +29,53 @@ router.get('/v1/charts', function (req, res, next) {
     if (para.limit) {
         queryOption.limit = para.limit;
     }
+    if (para.q) {
+        queryOption.query = para.q;
+    }
+    return queryOption;
+}
 
-    chartModule.all(queryOption, function (err, docs) {
+function getChartSetParameter(req) {
+    let para = {};
+    ["sort", "order", "limit", "start", "q"].forEach((key) => (req.query[key] ? (para[key] = isNaN(req.query[key]) ? req.query[key] : parseInt(req.query[key])) : null));
+
+    let queryOption = {};
+
+    if (!para.sort || !new Set(["timestamp", "lastUpdateTimestamp"]).has(para.sort)) {
+        para.sort = "timestamp";
+    }
+    if (!para.order || !new Set(["asc", "desc"]).has(para.order.toLowerCase() )) {
+        para.order = "desc";
+    }
+    queryOption.sort = [];
+    queryOption.sort.push([para.sort, para.order.toLowerCase()]);
+
+    if (para.start) {
+        queryOption.skip = para.start;
+    }
+    if (para.limit) {
+        queryOption.limit = para.limit;
+    }
+    if (para.q) {
+        queryOption.query = para.q;
+    }
+    return queryOption;
+}
+
+// CHART ROUTES
+
+router.post('/v1/charts', function (req, res, next) {
+    chartModule.create(req.body, function (err, result) {
+        if (err) {
+            res.send(err.message);
+        } else {
+            res.send(result);
+        }
+    });
+});
+
+router.get('/v1/charts', function (req, res, next) {
+    chartModule.all(getChartParameter(req), function (err, docs) {
         res.send(docs);
     });
 });
@@ -85,28 +118,7 @@ router.post('/v1/chart-sets', function (req, res, next) {
 });
 
 router.get('/v1/chart-sets', function (req, res, next) {
-    let para = {};
-    ["sort", "order", "limit", "start"].forEach((key) => (req.query[key] ? (para[key] = isNaN(req.query[key]) ? req.query[key] : parseInt(req.query[key])) : null));
-
-    let queryOption = {};
-
-    if (!para.sort || !new Set(["timestamp", "lastUpdateTimestamp"]).has(para.sort)) {
-        para.sort = "timestamp";
-    }
-    if (!para.order || !new Set(["asc", "desc"]).has(para.order.toLowerCase() )) {
-        para.order = "desc";
-    }
-    queryOption.sort = [];
-    queryOption.sort.push([para.sort, para.order.toLowerCase()]);
-
-    if (para.start) {
-        queryOption.skip = para.start;
-    }
-    if (para.limit) {
-        queryOption.limit = para.limit;
-    }
-
-    chartSetModule.all(queryOption, function (err, docs) {
+    chartSetModule.all(getChartSetParameter(req), function (err, docs) {
         res.send(docs);
     });
 });
@@ -180,6 +192,26 @@ router.post('/v1/charts/:id/datatable', function (req, res, next) {
         } else {
             res.send(err);
         }
+    });
+});
+
+router.get('/v1/search', function (req, res, next) {
+    chartModule.all(getChartParameter(req), function (err, chartDocs) {
+        chartSetModule.all(getChartSetParameter(req), function (err, chartSetDocs) {
+            res.send(chartSetDocs.concat(chartDocs));
+        });
+    });
+});
+
+router.get('/v1/search/charts', function (req, res, next) {
+    chartModule.all(getChartParameter(req), function (err, docs) {
+        res.send(docs);
+    });
+});
+
+router.get('/v1/search/chart-sets', function (req, res, next) {
+    chartSetModule.all(getChartSetParameter(req), function (err, docs) {
+        res.send(docs);
     });
 });
 

@@ -82,7 +82,7 @@ router.get('/v1/charts', function (req, res, next) {
 
 router.delete('/v1/charts', function (reg, res, next) {
     chartModule.clearCollection(function (err, result) {
-        res.status(204).send('No Content');
+        res.status(204).send('');
     });
 });
 
@@ -91,7 +91,7 @@ router.get('/v1/charts/:id', function (req, res, next) {
 
     chartModule.getOne(id, function (err, docs) {
         if (docs[0] === undefined) {
-            res.status(404).send('Not Found');
+            res.status(404).send('');
         } else {
             res.send(docs[0]);
         }
@@ -131,7 +131,7 @@ router.get('/v1/chart-sets/:id', function (req, res, next) {
 
     chartSetModule.getOne(id, function (err, docs) {
         if (docs[0] === undefined) {
-            res.status(404).send('Not Found');
+            res.status(404).send('');
         } else {
             res.send(docs[0]);
         }
@@ -140,7 +140,7 @@ router.get('/v1/chart-sets/:id', function (req, res, next) {
 
 router.delete('/v1/chart-sets', function (reg, res, next) {
     chartSetModule.clearCollection(function (err, result) {
-        res.status(204).send('No Content');
+        res.status(204).send('');
     });
 });
 

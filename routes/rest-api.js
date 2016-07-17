@@ -90,8 +90,11 @@ router.get('/v1/charts/:id', function (req, res, next) {
     let id = req.params.id;
 
     chartModule.getOne(id, function (err, docs) {
-        // console.log(docs);
-        res.send(docs[0]);
+        if (docs[0] === undefined) {
+            res.status(404).send('Not Found');
+        } else {
+            res.send(docs[0]);
+        }
     });
 });
 
@@ -127,8 +130,11 @@ router.get('/v1/chart-sets/:id', function (req, res, next) {
     let id = req.params.id;
 
     chartSetModule.getOne(id, function (err, docs) {
-        //console.log(docs);
-        res.send(docs[0]);
+        if (docs[0] === undefined) {
+            res.status(404).send('Not Found');
+        } else {
+            res.send(docs[0]);
+        }
     });
 });
 

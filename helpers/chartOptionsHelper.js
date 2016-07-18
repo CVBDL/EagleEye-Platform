@@ -34,6 +34,12 @@ function _ChartOptionsAdapter(type, originalOption) {
         this.default_options.vAxis = Object.assign(this.default_options.vAxis, this.options.vAxis);
         this.assignOptions();
     };
+    this._comboChart = function () {
+        //TODO
+        this.default_options.hAxis = Object.assign(this.default_options.hAxis, this.options.hAxis);
+        this.default_options.vAxis = Object.assign(this.default_options.vAxis, this.options.vAxis);
+        this.assignOptions();
+    };
 }
 _ChartOptionsAdapter.prototype.adapterOptions = function () {
     try {
@@ -49,6 +55,9 @@ _ChartOptionsAdapter.prototype.adapterOptions = function () {
                 break;
             case "BarChart":
                 this._barChart();
+                break;
+            case "ComboChart":
+                this._comboChart();
                 break;
             default :
                 console.log("Can not find defined Chart type.");

@@ -150,8 +150,57 @@ var BarChartOptions = {
     //     }
     // }
 };
+var ComboChartOptions = {
+    animation: {
+        startup: true,
+        duration: 500,
+        easing: 'linear'
+    }
+    // backgroundColor: {
+    //     stroke: '#666',
+    //     strokeWidth: 0,
+    //     fill: '#ffffff'
+    // },
+    // bar: {groupWidth: "75%"},
+    // chartArea: {
+    //     backgroundColor: {
+    //         stroke: '#666',
+    //         strokeWidth: 2
+    //     },
+    //     left: 100
+    // },
+    // hAxis: {
+    //     gridlines: {
+    //         color: '#DDDDDD'
+    //     },
+    //     viewWindow: {}
+    // },
+    // vAxis: {
+    //     gridlines: {
+    //         color: '#DDDDDD'
+    //     },
+    //     viewWindow: {}
+    // },
+    // legend: {
+    //     alignment: 'start',
+    //     position: 'right',
+    //     textStyle: {
+    //         italic: true
+    //     }
+    // },
+    // tooltip: {
+    //     ignoreBounds: false,
+    //     isHtml: false,
+    //     textStyle: {
+    //         color: '#66CC66',
+    //         fontSize: 12,
+    //         italic: true
+    //     }
+    // }
+};
 exports.chartOptions = {
     LineChart: LineChartOptions,
     ColumnChart: ColumnChartOptions,
-    BarChart: BarChartOptions
+    BarChart: BarChartOptions,
+    ComboChart: ComboChartOptions
 };

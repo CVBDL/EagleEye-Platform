@@ -7,6 +7,8 @@ let excelHelper = require('../helpers/excelHelper');
 let express = require('express');
 let chartModule = require('../modules/chartModule');
 let excelModule = require('../modules/excelModule');
+let fs = require('fs');
+
 var multipart = require('connect-multiparty'),
      multipartyMiddleware = multipart();
 let router = express.Router();
@@ -70,14 +72,44 @@ router.post('/upload', function(req, multipartyMiddleware) {
         excelModule.updateFromFileToDB(docs[0], {filename: fileName, worksheet: "Data"}, function (result) {
             //console.log(result);
             multipartyMiddleware.send('ok');
+            if (fs.existsSync(file.path)) {
+                fs.unlinkSync(file.path);
+            }
         });
     });
+});
 
+router.post('/uploadImage', function(req, multipartyMiddleware) {
+    let file = req.files.file;
+    let fileName = "";
+    if (file.path.indexOf("/") > -1) {
+        let pathArray = file.path.split("/");
+        fileName = pathArray[pathArray.length - 1];
+    } else {
+        let pathArray = file.path.split("\\");
+        fileName = pathArray[pathArray.length - 1];
+    }
+
+    let targetFileName = 'IC_' + Math.ceil(Math.random()*1000000) + fileName;
+    let targetPath = './public/uploadChartImages/' + targetFileName;
+
+    chartModule.updateImageChartFile(req.body.id, targetFileName, function(err, result) {
+        if (err) {
+            multipartyMiddleware.send('failed');
+            return;
+        } else
+            multipartyMiddleware.send('ok');
+
+        let stream = fs.createReadStream(file.path).pipe(fs.createWriteStream(targetPath));
+        stream.on('finish', () => {
+            if (fs.existsSync(file.path)) {
+                fs.unlinkSync(file.path);
+            }
+        });
+    });
 });
 
 router.get('/downloadExcel/:id', function(req, res, next) {
-
-
     let id = req.params.id;
 
     chartModule.getOne(req.params.id, function(err, docs) {

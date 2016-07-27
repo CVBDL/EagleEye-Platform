@@ -10,6 +10,7 @@ let chartSetModule = require('../modules/chartSetModule');
 
 let COLLECTION = "chart_collection";
 let CHART_TYPE = "chart";
+let IMAGE_CHART_TYPE = "ImageChart";
 
 DB.DATABASE_KEYS.push({
     COLLECTION: COLLECTION,
@@ -26,7 +27,7 @@ let getTimeStamp = () => new Date().valueOf();
 exports.create = function (chartData, callback) {
     let db = DB.get();
 
-    chartData.type = CHART_TYPE;
+    chartData.type =  IMAGE_CHART_TYPE == chartData.chartType ? IMAGE_CHART_TYPE : CHART_TYPE;
     chartData.timestamp = getTimeStamp();
     chartData.lastUpdateTimestamp = chartData.timestamp;
     chartData.options = chartOptionsHelper.ChartOptionsAdapter(chartData.chartType ,chartData.options);
@@ -160,3 +161,14 @@ exports.updateChartDataTableById = function (_id, updateData, callback) {
         db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {datatable: updateData, lastUpdateTimestamp: getTimeStamp()}}, callback);
     }
 };
+
+exports.updateImageChartFile = function(_id, fileName, callback) {
+    let db = DB.get();
+    let regExp = /^c-/g;
+
+    if (regExp.test(_id)) {
+        db.collection(COLLECTION).findOneAndUpdate({"friendlyUrl": _id}, {$set: {image_file_name: fileName, lastUpdateTimestamp: getTimeStamp()}}, callback);
+    } else {
+        db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {image_file_name: fileName, lastUpdateTimestamp: getTimeStamp()}}, callback);
+    }
+}

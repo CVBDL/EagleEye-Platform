@@ -31,6 +31,14 @@ var ComboChartOptions = {
     }
 };
 
+var AreaChartOptions = {
+    animation: {
+        startup: true,
+        duration: 500,
+        easing: 'linear'
+    }
+};
+
 var ImageChartOptions = {};
 
 exports.chartOptions = {
@@ -38,5 +46,6 @@ exports.chartOptions = {
     ColumnChart: ColumnChartOptions,
     BarChart: BarChartOptions,
     ComboChart: ComboChartOptions,
+    AreaChart: AreaChartOptions,
     ImageChart: ImageChartOptions
 };

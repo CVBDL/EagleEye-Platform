@@ -40,6 +40,12 @@ function _ChartOptionsAdapter(type, originalOption) {
         this.default_options.vAxis = Object.assign(this.default_options.vAxis, this.options.vAxis);
         this.assignOptions();
     };
+    this._areaChart = function () {
+        //TODO
+        this.default_options.hAxis = Object.assign(this.default_options.hAxis, this.options.hAxis);
+        this.default_options.vAxis = Object.assign(this.default_options.vAxis, this.options.vAxis);
+        this.assignOptions();
+    };
     this._imageChart = function () {
         //TODO
         this.assignOptions();
@@ -62,6 +68,9 @@ _ChartOptionsAdapter.prototype.adapterOptions = function () {
                 break;
             case "ComboChart":
                 this._comboChart();
+                break;
+            case "AreaChart":
+                this._areaChart();
                 break;
             case "ImageChart":
                 this._imageChart();

@@ -14,7 +14,7 @@ exports.create = function (taskData, callback) {
     let db = DB.get();
 
     taskData.timestamp = getTimeStamp();
-    taskData.lastUpdateTimestamp = chartData.timestamp;
+    taskData.lastUpdateTimestamp = taskData.timestamp;
     taskData.enable = true;
 
     db.collection(COLLECTION).insert(taskData, function (err, result) {

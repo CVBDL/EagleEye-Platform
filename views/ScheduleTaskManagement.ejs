@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <script type="text/javascript" src="/javascript/jquery-min.js"></script>
+    <script type="text/javascript">
+        function saveTask(id) {
+            var task = $("#" + id + "-name").val();
+            var time = $("#" + id + "-time").val();
+            var enable = $("#" + id + "-enable")[0].checked;
+            $.post("/schedule/updateTask",
+                {
+                    id: id,
+                    task: task,
+                    time: time,
+                    enable: enable
+                },
+                function(data, status){
+                    location.reload();
+            });
+        }
+        function deleteTask(id) {
+            $.post("/schedule/removeTask",
+                {
+                    id: id
+                },
+                function(data, status){
+                    location.reload();
+            });
+        }
+        function createTask() {
+            var taskName = $("#new-task-name").val();
+            var time = $("#new-task-time").val();
+            $.post("/schedule/newTask",
+            {
+                task: taskName,
+                time: time
+            },
+            function(data, status){
+                location.reload();
+            });
+        }
+    </script>
+</head>
+<body>
+<h1><%= title %></h1>
+The cron format(Time)<br />
+*__*__*__*__*__*<br />
+┬    ┬    ┬    ┬    ┬    ┬<br />
+│    │    │    │    │    |<br />
+│    │    │    │    │    └ day of week (0 - 7) (0 or 7 is Sun)<br />
+│    │    │    │    └───── month (1 - 12)<br />
+│    │    │    └────────── day of month (1 - 31)<br />
+│    │    └─────────────── hour (0 - 23)<br />
+│    └──────────────────── minute (0 - 59)<br />
+└───────────────────────── second (0 - 59, OPTIONAL)<br />
+<table>
+    <head>
+        <th>Enable</th>
+        <th>Task name</th>
+        <th>Time</th>
+    </head>
+    <% for(var i=0; i<tasks.length; i++) {%>
+    <tr>
+        <td><input type="checkbox" id="<%= tasks[i].id %>-enable" <% if (tasks[i].enable) { %> checked="checked" <% } %> /></td>
+        <td>
+        <select id="<%= tasks[i].id %>-name">
+            <% for(var j=0; j<codes.length; j++) {%>
+            <option value="<%= codes[j] %>" <% if (tasks[i].name == codes[j]) { %> selected <% } %>> <%= codes[j] %></option>
+            <% } %>
+        </select>
+        </td>
+        <td><input type="text" id="<%= tasks[i].id %>-time" value="<%= tasks[i].time %>" /></td>
+        <td><input type="button" id="<%= tasks[i].id %>-save" value="Save" onclick="saveTask('<%= tasks[i].id %>')" /></td>
+        <td><input type="button" id="<%= tasks[i].id %>-delete" value="Delete"  onclick="deleteTask('<%= tasks[i].id %>')" /></td>
+    </tr>
+    <% } %>
+</table>
+<h2>Create a new task</h2>
+<table>
+    <tr>
+        <td>Task name:</td>
+        <td>
+            <select id="new-task-name">
+                <% for(var j=0; j<codes.length; j++) {%>
+                    <option value="<%= codes[j] %>"><%= codes[j] %></option>
+                <% } %>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>Time:</td>
+        <td><input type="text" id="new-task-time" value="0 0 0 * * 0" /></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><input type="button" value="Create new task"  onclick="createTask()" /></td>
+    </tr>
+</table>
+</body>
+</html>

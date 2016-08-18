@@ -50,7 +50,7 @@ exports.enableOneTask = function (_id, enable, callback) {
     db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {enable: enable, lastUpdateTimestamp: getTimeStamp()}}, callback);
 };
 
-exports.updateOneTask = function(_id, taskName, time, enable) {
+exports.updateOneTask = function(_id, taskName, time, enable, callback) {
     let db = DB.get();
     db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {taskName: taskName, scheduleTimeString: time, enable: enable, lastUpdateTimestamp: getTimeStamp()}}, callback);
 

@@ -69,7 +69,7 @@ exports.disableTask = function(id) {
     }
 }
 
-exports.updateTask = function(id, taskName, cronString, enable) {
+exports.updateTask = function(id, taskName, cronString, enable, callback) {
     if (taskMappingTable[id].job) {
         taskMappingTable[id].job.cancel();
     }
@@ -79,29 +79,32 @@ exports.updateTask = function(id, taskName, cronString, enable) {
         exports.enableTask(id);
     }
 
-    scheduleTaskModule.updateOne(id, taskName, cronString, enable);
+    scheduleTaskModule.updateOneTask(id, taskName, cronString, enable, callback);
 }
 
-exports.removeTask = function(id) {
+exports.removeTask = function(id, callback) {
     if (taskMappingTable[id]) {
-        taskMappingTable[id].job.cancel();
+        if (taskMappingTable[id].job) {
+            taskMappingTable[id].job.cancel();
+        }
+
+        scheduleTaskModule.remove(taskMappingTable[id].taskId, callback);
         delete taskMappingTable[id];
-        scheduleTaskModule.remove(taskMappingTable[id].taskId);
     }
 }
 
-exports.createTask = function(taskName, cronString) {
-    scheduleTaskModule.create({
-        "taskName" : taskName,
-        "scheduleTimeString" : cronString,
-        "enable" : true
-    }, (err, result) => {
-        if (err) {
+exports.createTask = function(taskName, cronString, callback) {
+    scheduleTaskModule.create(
+        taskName,
+        cronString,
+        (err, result) => {
+            if (err) {
 
-        } else {
-            console.log(result._id);
-            enableTask(result._id, taskName, cronString);
-        }
+            } else {
+                console.log(result._id);
+                enableTask(result._id, taskName, cronString);
+                callback();
+            }
     });
 }
 

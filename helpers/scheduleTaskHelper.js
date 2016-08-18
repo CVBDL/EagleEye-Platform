@@ -69,6 +69,19 @@ exports.disableTask = function(id) {
     }
 }
 
+exports.updateTask = function(id, taskName, cronString, enable) {
+    if (taskMappingTable[id].job) {
+        taskMappingTable[id].job.cancel();
+    }
+    taskMappingTable[id].taskName = taskName;
+    taskMappingTable[id].time = cronString;
+    if (enable) {
+        exports.enableTask(id);
+    }
+
+    scheduleTaskModule.updateOne(id, taskName, cronString, enable);
+}
+
 exports.removeTask = function(id) {
     if (taskMappingTable[id]) {
         taskMappingTable[id].job.cancel();

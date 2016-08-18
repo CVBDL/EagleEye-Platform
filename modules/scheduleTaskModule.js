@@ -10,12 +10,14 @@ const COLLECTION = "schedule_task_collection";
 
 let getTimeStamp = () => new Date().valueOf();
 
-exports.create = function (taskData, callback) {
+exports.create = function (taskName, time, callback) {
     let db = DB.get();
-
+    let taskData = {};
     taskData.timestamp = getTimeStamp();
     taskData.lastUpdateTimestamp = taskData.timestamp;
     taskData.enable = true;
+    taskData.taskName = taskName;
+    taskData.scheduleTimeString = time;
 
     db.collection(COLLECTION).insert(taskData, function (err, result) {
         if (err) {
@@ -43,17 +45,13 @@ exports.remove = function (_id, callback) {
     });
 };
 
-exports.updateOne = function (_id, updateData, callback) {
-    let db = DB.get();
-
-    updateData.lastUpdateTimestamp = getTimeStamp();
-
-    db.collection(COLLECTION).updateOne({_id: ObjectId(_id)}, updateData, function (err, result) {
-        callback(err);
-    });
-};
-
 exports.enableOneTask = function (_id, enable, callback) {
     let db = DB.get();
     db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {enable: enable, lastUpdateTimestamp: getTimeStamp()}}, callback);
 };
+
+exports.updateOneTask = function(_id, taskName, time, enable) {
+    let db = DB.get();
+    db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {taskName: taskName, scheduleTimeString: time, enable: enable, lastUpdateTimestamp: getTimeStamp()}}, callback);
+
+}

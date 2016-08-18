@@ -10,8 +10,10 @@ var users = require('./routes/users');
 var dbLearn = require('./routes/dbLearn');
 var restAPI = require('./routes/rest-api');
 var chartFile = require('./routes/chartFile');
+var scheduleTask = require('./routes/scheduleManagement');
 
 var multipart = require('connect-multiparty');
+
 var db = require('./helpers/dbHelper');
 
 var app = express();
@@ -45,6 +47,7 @@ app.use('/users', users);
 app.use('/dbLearn', dbLearn);
 app.use('/api', restAPI);
 app.use('/chartFile', chartFile);
+app.use('/schedule', scheduleTask);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -80,6 +83,7 @@ app.use(function(err, req, res, next) {
 module.exports = app;
 
 db.get();
+
 var port = process.env.PORT || 3000;
 console.log('Listening on port 3000');
 app.listen(port);

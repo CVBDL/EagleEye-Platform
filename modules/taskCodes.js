@@ -10,7 +10,7 @@ const statisticsModule = require('../modules/statisticsModule');
 let taskCodeMap = {};
 
 taskCodeMap['hello world'] = function() {
-    console.log('hello world!');
+    console.log('hello world! ' + new Date());
 }
 
 taskCodeMap['Count Chart'] = function() {

@@ -10,12 +10,13 @@ const COLLECTION = "schedule_task_collection";
 
 let getTimeStamp = () => new Date().valueOf();
 
-exports.create = function (taskName, time, callback) {
+exports.create = function (taskName, time, para, callback) {
     let db = DB.get();
     let taskData = {};
     taskData.timestamp = getTimeStamp();
     taskData.lastUpdateTimestamp = taskData.timestamp;
     taskData.enable = true;
+    taskData.para = para;
     taskData.taskName = taskName;
     taskData.scheduleTimeString = time;
 
@@ -50,8 +51,8 @@ exports.enableOneTask = function (_id, enable, callback) {
     db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {enable: enable, lastUpdateTimestamp: getTimeStamp()}}, callback);
 };
 
-exports.updateOneTask = function(_id, taskName, time, enable, callback) {
+exports.updateOneTask = function(_id, taskName, time, enable, para, callback) {
     let db = DB.get();
-    db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {taskName: taskName, scheduleTimeString: time, enable: enable, lastUpdateTimestamp: getTimeStamp()}}, callback);
+    db.collection(COLLECTION).findOneAndUpdate({_id: ObjectId(_id)}, {$set: {taskName: taskName, scheduleTimeString: time, enable: enable, para: para, lastUpdateTimestamp: getTimeStamp()}}, callback);
 
 }

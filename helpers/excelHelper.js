@@ -87,7 +87,7 @@ exports.writeXlsx = function(setting, data, done, mode) {
 
 exports.readFile = function(setting, done, mode) {
     var workbook = new Excel.Workbook();
-    
+
     if (setting.filename) {
         mode = typeof mode !== 'undefined' ?  mode : exports.MODE_PRODUCTION;
         var path = mode === exports.MODE_TEST ? TEST_PATH : PRODUCTION_PATH;

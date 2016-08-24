@@ -22,13 +22,14 @@ const taskCodes = require('../modules/taskCodes').getAllTasks();
 
 let taskMappingTable;
 
-function enableTask(id, taskName, cronString) {
+function enableTask(id, taskName, cronString, para) {
     taskMappingTable[id] = {
         taskId: id,
         taskName: taskName,
         time: cronString,
         enable: true,
-        job: schedule.scheduleJob(cronString, taskCodes[taskName])
+        para: para,
+        job: schedule.scheduleJob(cronString, function() {taskCodes[taskName]("" + para)})
     };
 }
 
@@ -49,7 +50,8 @@ exports.getTaskList = function() {
             id: job.taskId,
             name: job.taskName,
             time: job.time,
-            enable: job.enable
+            enable: job.enable,
+            para: job.para
         });
     }
     return taskList;
@@ -57,7 +59,7 @@ exports.getTaskList = function() {
 
 exports.enableTask = function(id) {
     if (taskMappingTable[id]) {
-        enableTask(id, taskMappingTable[id].taskName, taskMappingTable[id].time);
+        enableTask(id, taskMappingTable[id].taskName, taskMappingTable[id].time, taskMappingTable[id].para);
     }
 }
 
@@ -69,17 +71,18 @@ exports.disableTask = function(id) {
     }
 }
 
-exports.updateTask = function(id, taskName, cronString, enable, callback) {
+exports.updateTask = function(id, taskName, cronString, enable, para, callback) {
     if (taskMappingTable[id].job) {
         taskMappingTable[id].job.cancel();
     }
     taskMappingTable[id].taskName = taskName;
     taskMappingTable[id].time = cronString;
+    taskMappingTable[id].para = para;
     if (enable) {
         exports.enableTask(id);
     }
 
-    scheduleTaskModule.updateOneTask(id, taskName, cronString, enable, callback);
+    scheduleTaskModule.updateOneTask(id, taskName, cronString, enable, para, callback);
 }
 
 exports.removeTask = function(id, callback) {
@@ -93,16 +96,17 @@ exports.removeTask = function(id, callback) {
     }
 }
 
-exports.createTask = function(taskName, cronString, callback) {
+exports.createTask = function(taskName, cronString, para, callback) {
     scheduleTaskModule.create(
         taskName,
         cronString,
+        para,
         (err, result) => {
             if (err) {
 
             } else {
                 console.log(result._id);
-                enableTask(result._id, taskName, cronString);
+                enableTask(result._id, taskName, cronString, para);
                 callback();
             }
     });
@@ -114,7 +118,7 @@ exports.initSchedueTasks = function() {
         console.log("Subscribe schedule tasks.");
         schedules.forEach(function (item, index, array) {
             if (item.enable) {
-                enableTask(item._id, item.taskName, item.scheduleTimeString);
+                enableTask(item._id, item.taskName, item.scheduleTimeString, item.para);
             }
         });
     });

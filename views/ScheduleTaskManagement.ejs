@@ -8,12 +8,14 @@
             var task = $("#" + id + "-name").val();
             var time = $("#" + id + "-time").val();
             var enable = $("#" + id + "-enable")[0].checked;
+            var para = $("#" + id + "-para").val();
             $.post("/schedule/updateTask",
                 {
                     id: id,
                     task: task,
                     time: time,
-                    enable: enable
+                    enable: enable,
+                    para: para
                 },
                 function(data, status){
                     location.reload();
@@ -31,10 +33,12 @@
         function createTask() {
             var taskName = $("#new-task-name").val();
             var time = $("#new-task-time").val();
+            var para = $("#new-task-para").val();
             $.post("/schedule/newTask",
             {
                 task: taskName,
-                time: time
+                time: time,
+                para: para
             },
             function(data, status){
                 location.reload();
@@ -59,6 +63,9 @@ The cron format(Time)<br />
         <th>Enable</th>
         <th>Task name</th>
         <th>Time</th>
+        <th>Parameter</th>
+        <th>Save</th>
+        <th>Delete</th>
     </head>
     <% for(var i=0; i<tasks.length; i++) {%>
     <tr>
@@ -71,6 +78,7 @@ The cron format(Time)<br />
         </select>
         </td>
         <td><input type="text" id="<%= tasks[i].id %>-time" value="<%= tasks[i].time %>" /></td>
+        <td><input type="text" id="<%= tasks[i].id %>-para" value="<%= tasks[i].para %>" /></td>
         <td><input type="button" id="<%= tasks[i].id %>-save" value="Save" onclick="saveTask('<%= tasks[i].id %>')" /></td>
         <td><input type="button" id="<%= tasks[i].id %>-delete" value="Delete"  onclick="deleteTask('<%= tasks[i].id %>')" /></td>
     </tr>
@@ -91,6 +99,10 @@ The cron format(Time)<br />
     <tr>
         <td>Time:</td>
         <td><input type="text" id="new-task-time" value="0 0 0 * * 0" /></td>
+    </tr>
+    <tr>
+        <td>Parameter:</td>
+        <td><input type="text" id="new-task-para" value="" /></td>
     </tr>
     <tr>
         <td></td>

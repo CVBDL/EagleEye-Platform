@@ -7,6 +7,9 @@ function _ChartOptionsAdapter(type, originalOption) {
     this.type = type;
     this.options = originalOption;
     this.default_options = require('../helpers/defaultChartOptions').chartOptions[type];
+    if (!this.default_options) {
+        this.default_options = {}
+    }
     if (!this.default_options.hAxis) {
         this.default_options.hAxis = {};
     }

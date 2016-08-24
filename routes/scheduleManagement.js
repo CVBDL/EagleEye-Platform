@@ -25,7 +25,8 @@ router.get('/tasks', function(req, res, next) {
 router.post('/newTask', function(req, res, next) {
     let task = req.body.task;
     let time = req.body.time;
-    scheduleTaskHelper.createTask(task, time, () => {
+    let para = req.body.para;
+    scheduleTaskHelper.createTask(task, time, para, () => {
         res.send('ok');
     });
 });
@@ -42,7 +43,8 @@ router.post('/updateTask', function(req, res, next){
     let task = req.body.task;
     let time = req.body.time;
     let enable = req.body.enable;
-    scheduleTaskHelper.updateTask(id, task, time, enable, () => {
+    let para = req.body.para;
+    scheduleTaskHelper.updateTask(id, task, time, enable, para, () => {
         res.send('ok');
     });
 });

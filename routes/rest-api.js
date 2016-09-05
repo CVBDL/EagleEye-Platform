@@ -17,7 +17,7 @@ function getChartParameter(req) {
     if (!para.sort || !new Set(["timestamp", "lastUpdateTimestamp", "chartType"]).has(para.sort)) {
         para.sort = "timestamp";
     }
-    if (!para.order || !new Set(["asc", "desc"]).has(para.order.toLowerCase() )) {
+    if (!para.order || !new Set(["asc", "desc"]).has(para.order.toLowerCase())) {
         para.order = "desc";
     }
     queryOption.sort = [];
@@ -44,7 +44,7 @@ function getChartSetParameter(req) {
     if (!para.sort || !new Set(["timestamp", "lastUpdateTimestamp"]).has(para.sort)) {
         para.sort = "timestamp";
     }
-    if (!para.order || !new Set(["asc", "desc"]).has(para.order.toLowerCase() )) {
+    if (!para.order || !new Set(["asc", "desc"]).has(para.order.toLowerCase())) {
         para.order = "desc";
     }
     queryOption.sort = [];
@@ -62,10 +62,13 @@ function getChartSetParameter(req) {
     return queryOption;
 }
 
-// CHART ROUTES
 
-router.post('/v1/charts', function (req, res, next) {
-    chartModule.create(req.body, function (err, result) {
+/**
+ * Chart APIs
+ */
+
+router.post('/v1/charts', function(req, res, next) {
+    chartModule.create(req.body, function(err, result) {
         if (err) {
             res.send(err.message);
         } else {
@@ -74,30 +77,30 @@ router.post('/v1/charts', function (req, res, next) {
     });
 });
 
-router.get('/v1/charts', function (req, res, next) {
-    chartModule.all(getChartParameter(req), function (err, docs) {
+router.get('/v1/charts', function(req, res, next) {
+    chartModule.all(getChartParameter(req), function(err, docs) {
         res.send(docs);
     });
 });
 
-router.delete('/v1/charts/:id', function (req, res, next) {
+router.delete('/v1/charts/:id', function(req, res, next) {
     let id = req.params.id;
 
-    chartModule.remove(id, function (err, result) {
+    chartModule.remove(id, function(err, result) {
         res.status(204).send('');
     });
 });
 
-router.delete('/v1/charts', function (reg, res, next) {
-    chartModule.clearCollection(function (err, result) {
+router.delete('/v1/charts', function(reg, res, next) {
+    chartModule.clearCollection(function(err, result) {
         res.status(204).send('');
     });
 });
 
-router.get('/v1/charts/:id', function (req, res, next) {
+router.get('/v1/charts/:id', function(req, res, next) {
     let id = req.params.id;
 
-    chartModule.getOne(id, function (err, docs) {
+    chartModule.getOne(id, function(err, docs) {
         if (docs[0] === undefined) {
             res.status(404).send('');
         } else {
@@ -107,10 +110,12 @@ router.get('/v1/charts/:id', function (req, res, next) {
 });
 
 
-// CHART SET ROUTES
+/**
+ * Chart Set APIs
+ */
 
-router.post('/v1/chart-sets', function (req, res, next) {
-    chartSetModule.create(req.body, function (err, result) {
+router.post('/v1/chart-sets', function(req, res, next) {
+    chartSetModule.create(req.body, function(err, result) {
         if (err) {
             res.send(err.message);
         } else {
@@ -119,16 +124,16 @@ router.post('/v1/chart-sets', function (req, res, next) {
     });
 });
 
-router.get('/v1/chart-sets', function (req, res, next) {
-    chartSetModule.all(getChartSetParameter(req), function (err, docs) {
+router.get('/v1/chart-sets', function(req, res, next) {
+    chartSetModule.all(getChartSetParameter(req), function(err, docs) {
         res.send(docs);
     });
 });
 
-router.get('/v1/chart-sets/:id', function (req, res, next) {
+router.get('/v1/chart-sets/:id', function(req, res, next) {
     let id = req.params.id;
 
-    chartSetModule.getOne(id, function (err, docs) {
+    chartSetModule.getOne(id, function(err, docs) {
         if (docs[0] === undefined) {
             res.status(404).send('');
         } else {
@@ -137,42 +142,43 @@ router.get('/v1/chart-sets/:id', function (req, res, next) {
     });
 });
 
-router.delete('/v1/chart-sets', function (reg, res, next) {
-    chartSetModule.clearCollection(function (err, result) {
+router.delete('/v1/chart-sets', function(reg, res, next) {
+    chartSetModule.clearCollection(function(err, result) {
         res.status(204).send('');
     });
 });
 
-router.delete('/v1/chart-sets/:id', function (req, res, next) {
+router.delete('/v1/chart-sets/:id', function(req, res, next) {
     let id = req.params.id;
 
-    chartSetModule.remove(id, function (err, result) {
-        console.log("Delete one chart-set,Result is:" + result);
-        res.send(result);
+    chartSetModule.remove(id, function(err, result) {
+        res.status(204).send('');
     });
 });
 
-router.put('/v1/chart-sets/:id', function (req, res, next) {
+router.put('/v1/chart-sets/:id', function(req, res, next) {
     let id = req.params.id;
     // console.log("JoryTest" + id);
     // console.log(req.body);
-    chartSetModule.updateOne(id, req.body, function (err, result) {
+    chartSetModule.updateOne(id, req.body, function(err, result) {
         console.log("Update one chart-set,Result is:" + result);
         res.send(result);
     });
 });
-//T-P-007 REST API: Get one chart's options	Owen
-router.get('/v1/charts/:id/options', function (req, res, next) {
+
+//T-P-007 REST API: Get one chart's options Owen
+router.get('/v1/charts/:id/options', function(req, res, next) {
     let id = req.params.id;
-    chartModule.getChartOptionById(id, function (err, docs) {
+    chartModule.getChartOptionById(id, function(err, docs) {
         res.send(docs[0].options);
     });
 });
+
 //T-P-008 REST API: Update one chart's options Owen
-router.post('/v1/charts/:id/options', function (req, res, next) {
+router.post('/v1/charts/:id/options', function(req, res, next) {
     let id = req.params.id;
     //var test = {"title": "AAAA", "hAxis": {"title": "TTT"}, "vAxis": {"title": "SSS"}};
-    chartModule.updateChartOptionById(id, req.body, function (err, result) {
+    chartModule.updateChartOptionById(id, req.body, function(err, result) {
         if (!err) {
             res.send("success");
         } else {
@@ -181,17 +187,18 @@ router.post('/v1/charts/:id/options', function (req, res, next) {
     });
 });
 
-//T-P-009 REST API: Get one chart's datatable	Owen
-router.get('/v1/charts/:id/datatable', function (req, res, next) {
+//T-P-009 REST API: Get one chart's datatable   Owen
+router.get('/v1/charts/:id/datatable', function(req, res, next) {
     let id = req.params.id;
-    chartModule.getChartDataTableById(id, function (err, docs) {
+    chartModule.getChartDataTableById(id, function(err, docs) {
         res.send(docs[0].datatables);
     });
 });
+
 //T-P-010 REST API: Update one chart's datatable Owen
-router.post('/v1/charts/:id/datatable', function (req, res, next) {
+router.post('/v1/charts/:id/datatable', function(req, res, next) {
     let id = req.params.id;
-    chartModule.updateChartDataTableById(id, req.body, function (err, result) {
+    chartModule.updateChartDataTableById(id, req.body, function(err, result) {
         if (!err) {
             res.send("success");
         } else {
@@ -200,23 +207,43 @@ router.post('/v1/charts/:id/datatable', function (req, res, next) {
     });
 });
 
-router.get('/v1/search', function (req, res, next) {
-    chartModule.all(getChartParameter(req), function (err, chartDocs) {
-        chartSetModule.all(getChartSetParameter(req), function (err, chartSetDocs) {
-            res.send(chartSetDocs.concat(chartDocs));
+
+/**
+ * Search APIs
+ *
+ * TODO: Total could limit to 100
+ */
+
+// {@link https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#search-both-charts-and-chart-sets}
+router.get('/v1/search', function(req, res, next) {
+    chartModule.all(getChartParameter(req), function(err, chartDocs) {
+        chartSetModule.all(getChartSetParameter(req), function(err, chartSetDocs) {
+            var totalCount = chartDocs.length + chartSetDocs.length;
+            var items = chartSetDocs.concat(chartDocs);
+
+            res.send({
+                total_count: totalCount,
+                items: items
+            });
         });
     });
 });
 
-router.get('/v1/search/charts', function (req, res, next) {
-    chartModule.all(getChartParameter(req), function (err, docs) {
-        res.send(docs);
+router.get('/v1/search/charts', function(req, res, next) {
+    chartModule.all(getChartParameter(req), function(err, docs) {
+        res.send({
+            total_count: docs.length,
+            items: docs
+        });
     });
 });
 
-router.get('/v1/search/chart-sets', function (req, res, next) {
-    chartSetModule.all(getChartSetParameter(req), function (err, docs) {
-        res.send(docs);
+router.get('/v1/search/chart-sets', function(req, res, next) {
+    chartSetModule.all(getChartSetParameter(req), function(err, docs) {
+        res.send({
+            total_count: docs.length,
+            items: docs
+        });
     });
 });
 

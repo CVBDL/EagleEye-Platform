@@ -6,8 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
-var dbLearn = require('./routes/dbLearn');
 var restAPI = require('./routes/rest-api');
 var chartFile = require('./routes/chartFile');
 var scheduleTask = require('./routes/scheduleManagement');
@@ -43,8 +41,6 @@ app.use(multipart({
 
 
 app.use('/', routes);
-app.use('/users', users);
-app.use('/dbLearn', dbLearn);
 app.use('/api', restAPI);
 app.use('/chartFile', chartFile);
 app.use('/schedule', scheduleTask);

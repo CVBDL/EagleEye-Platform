@@ -80,6 +80,14 @@ router.get('/v1/charts', function (req, res, next) {
     });
 });
 
+router.delete('/v1/charts/:id', function (req, res, next) {
+    let id = req.params.id;
+
+    chartModule.remove(id, function (err, result) {
+        res.status(204).send('');
+    });
+});
+
 router.delete('/v1/charts', function (reg, res, next) {
     chartModule.clearCollection(function (err, result) {
         res.status(204).send('');
@@ -95,15 +103,6 @@ router.get('/v1/charts/:id', function (req, res, next) {
         } else {
             res.send(docs[0]);
         }
-    });
-});
-
-router.delete('/v1/charts/:id', function (req, res, next) {
-    let id = req.params.id;
-
-    chartModule.remove(id, function (err, result) {
-        console.log("Delete one chart, Result is:" + result);
-        res.send(result);
     });
 });
 

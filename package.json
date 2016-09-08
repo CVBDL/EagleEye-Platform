@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "start node_modules\\.bin\\_mocha tests\\modules\\fullSuitTests.js"
+    "test": "node node_modules/.bin/_mocha tests/modules/fullSuitTests.js"
   },
   "dependencies": {
     "async": "~2.0.0-rc.6",

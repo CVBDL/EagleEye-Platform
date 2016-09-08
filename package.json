@@ -3,7 +3,8 @@
   "version": "1.0.0-beta.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "node app.js",
+    "start-mongo": "mongod",
     "test": "node_modules/.bin/mocha tests/modules/fullSuitTests.js"
   },
   "dependencies": {

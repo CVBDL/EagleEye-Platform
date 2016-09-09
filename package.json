@@ -4,8 +4,12 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "start-mongo": "mongod",
-    "test": "node_modules/.bin/mocha tests/modules/fullSuitTests.js"
+    "test": "node_modules/.bin/mocha tests/modules/fullSuitTests.js",
+    "start-mongodb": "mongod",
+    "install-mongodb-service": "mongod --dbpath=C:\\data\\db --logpath=C:\\data\\db\\log.txt --install --port 27017",
+    "uninstall-mongodb-service": "mongod --remove",
+    "install-express-win-service": "node start-express",
+    "uninstall-express-win-service": "node terminate-express"
   },
   "dependencies": {
     "async": "~2.0.0-rc.6",
@@ -27,5 +31,8 @@
     "chai-immutable": "^1.6.0",
     "mocha": "^1.21.5",
     "should": "~4.0.4"
+  },
+  "optionalDependencies": {
+    "node-windows": "^0.1.11"
   }
 }

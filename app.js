@@ -41,7 +41,7 @@ app.use(multipart({
 
 
 app.use('/', routes);
-app.use('/api', restAPI);
+app.use('/api/v1', restAPI);
 app.use('/chartFile', chartFile);
 app.use('/schedule', scheduleTask);
 

@@ -5,7 +5,7 @@
 
 let ObjectId = require('mongodb').ObjectId;
 let DB = require('../helpers/dbHelper');
-let chartOptionsHelper = require('../helpers/chartOptionsHelper');
+let chartOptionsHelper = require('../helpers/chart-options-helper');
 let chartSetModule = require('../modules/chartSetModule');
 
 let COLLECTION = "chart_collection";

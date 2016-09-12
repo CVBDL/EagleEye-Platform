@@ -8,6 +8,7 @@ let express = require('express');
 let chartModule = require('../modules/chartModule');
 let excelModule = require('../modules/excelModule');
 let fs = require('fs');
+var path = require('path');
 
 var multipart = require('connect-multiparty'),
      multipartyMiddleware = multipart();
@@ -91,7 +92,7 @@ router.post('/uploadImage', function(req, multipartyMiddleware) {
     }
 
     let targetFileName = 'IC_' + Math.ceil(Math.random()*1000000) + fileName;
-    let targetPath = './public/uploadChartImages/' + targetFileName;
+    let targetPath = path.join(__dirname, '../public/uploadChartImages/' + targetFileName)
 
     chartModule.updateImageChartFile(req.body.id, targetFileName, function(err, result) {
         if (err) {

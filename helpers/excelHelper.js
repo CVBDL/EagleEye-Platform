@@ -6,6 +6,7 @@
 
 var Excel = require('exceljs');
 var fs = require('fs');
+var path = require('path');
 
 var defaultSetting = {
     creator: "EagleEye-Platform",
@@ -13,8 +14,8 @@ var defaultSetting = {
     worksheet: "Chart data"
 };
 
-var PRODUCTION_PATH = './excelPath/prod',
-    TEST_PATH = './excelPath/test';
+var PRODUCTION_PATH = path.join(__dirname, '../excelPath/prod'),
+    TEST_PATH = path.join(__dirname, '../excelPath/test');
 
 exports.MODE_TEST = 'mode_test'
 exports.MODE_PRODUCTION = 'mode_production'

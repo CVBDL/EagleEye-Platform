@@ -11,7 +11,7 @@ var router = express.Router();
 setTimeout(scheduleTaskHelper.initSchedueTasks, 3000);
 
 router.get('/taskmanage', function(req, res, next) {
-    res.render('ScheduleTaskManagement', { title: 'Schedule task management', tasks: scheduleTaskHelper.getTaskList(), codes: scheduleTaskHelper.getCodeList() });
+    res.render('cron', { title: 'Schedule task management', tasks: scheduleTaskHelper.getTaskList(), codes: scheduleTaskHelper.getCodeList() });
 });
 
 router.get('/codes', function(req, res, next) {

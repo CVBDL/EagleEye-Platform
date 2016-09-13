@@ -8,8 +8,8 @@
     "start-mongodb": "mongod",
     "install-mongodb-service": "mongod --dbpath=C:\\data\\db --logpath=C:\\data\\db\\log.txt --install --port 27017",
     "uninstall-mongodb-service": "mongod --remove",
-    "install-express-win-service": "node start-express",
-    "uninstall-express-win-service": "node terminate-express"
+    "install-express-win-service": "node ./tools/start-express",
+    "uninstall-express-win-service": "node ./tools/terminate-express"
   },
   "dependencies": {
     "async": "~2.0.0-rc.6",

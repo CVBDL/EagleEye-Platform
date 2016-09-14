@@ -3,11 +3,15 @@
  */
 'use strict';
 
-let express = require('express');
-let router = express.Router();
+let express  = require('express');
+let router   = express.Router();
+let fs       = require('fs');
+var path     = require('path');
 
-let chartModule = require('../modules/chartModule');
-let chartSetModule = require('../modules/chartSetModule');
+let chartModule     = require('../modules/chartModule');
+let chartSetModule  = require('../modules/chartSetModule');
+let excelHelper     = require('../helpers/excelHelper');
+let excelModule     = require('../modules/excelModule');
 
 function getChartParameter(req) {
     let para = {};
@@ -244,6 +248,82 @@ router.get('/search/chart-sets', function(req, res, next) {
             total_count: docs.length,
             items: docs
         });
+    });
+});
+
+
+/**
+ * Upload & Download assets APIs
+ */
+
+router.post('/upload/excels', function(req, multipartyMiddleware) {
+    let file = req.files.file;
+    let fileName = "";
+    if (file.path.indexOf("/") > -1) {
+        let pathArray = file.path.split("/");
+        fileName = pathArray[pathArray.length - 1];
+    } else {
+        let pathArray = file.path.split("\\");
+        fileName = pathArray[pathArray.length - 1];
+    }
+    // console.log(req.body.id);
+    chartModule.getOne(req.body.id, function(err, docs) {
+        if (docs.length < 1) {
+            multipartyMiddleware.send('failed');
+            return;
+        }
+        excelModule.updateFromFileToDB(docs[0], {filename: fileName, worksheet: "Data"}, function (result) {
+            //console.log(result);
+            multipartyMiddleware.send('ok');
+            if (fs.existsSync(file.path)) {
+                fs.unlinkSync(file.path);
+            }
+        });
+    });
+});
+
+router.post('/upload/images', function(req, multipartyMiddleware) {
+    let file = req.files.file;
+    let fileName = "";
+    if (file.path.indexOf("/") > -1) {
+        let pathArray = file.path.split("/");
+        fileName = pathArray[pathArray.length - 1];
+    } else {
+        let pathArray = file.path.split("\\");
+        fileName = pathArray[pathArray.length - 1];
+    }
+
+    let targetFileName = 'IC_' + Math.ceil(Math.random()*1000000) + fileName;
+    let targetPath = path.join(__dirname, '../public/uploadChartImages/' + targetFileName)
+
+    chartModule.updateImageChartFile(req.body.id, targetFileName, function(err, result) {
+        if (err) {
+            multipartyMiddleware.send('failed');
+            return;
+        } else
+            multipartyMiddleware.send('ok');
+
+        let stream = fs.createReadStream(file.path).pipe(fs.createWriteStream(targetPath));
+        stream.on('finish', () => {
+            if (fs.existsSync(file.path)) {
+                fs.unlinkSync(file.path);
+            }
+        });
+    });
+});
+
+router.get('/download/excels/:id', function(req, res, next) {
+    let id = req.params.id;
+
+    chartModule.getOne(req.params.id, function(err, docs) {
+        if (docs.length > 0) {
+            res.setHeader('Content-disposition', 'attachment; filename=' + (docs[0]._id) + '.xlsx');
+            res.setHeader('Content-type', 'application/vnd.ms-excel');
+            excelModule.writeOne(docs[0], {
+                "outStream": res,
+                "worksheet": "Data",
+            }, ()=>console.log());
+        }
     });
 });
 

@@ -39,7 +39,8 @@ app.use(multipart({
 
 app.use('/', routes);
 app.use('/api/v1', restAPI);
-app.use('/chartFile', chartFile);
+// TODO: Remove 'routes/chart-file.js'
+// app.use('/chartFile', chartFile);
 app.use('/schedule', scheduleTask);
 
 // catch 404 and forward to error handler

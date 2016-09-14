@@ -1,3 +1,12 @@
+<a name="1.0.0-beta.2"></a>
+# 1.0.0-beta.2 (2016-09-14)
+
+## Features
+
+* Refactor upload excel and image REST APIs.
+* Lint code.
+
+
 <a name="1.0.0-beta.1"></a>
 # 1.0.0-beta.1 (2016-09-12)
 
@@ -6,6 +15,7 @@
 * Fix uploading file path issue
 * Clean up build scripts
 
+
 <a name="1.0.0-beta.0"></a>
 # 1.0.0-beta.0 (2016-09-08)
 
@@ -13,6 +23,7 @@
 
 * Style UI
 * Refactor
+
 
 <a name="1.0.0-alpha.0"></a>
 # 1.0.0-alpha.0 (2016-08-10)

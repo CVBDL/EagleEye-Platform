@@ -30,7 +30,7 @@ taskCodeMap['download and import'] = function(url) {
     var http = require('http');
     var fs = require('fs');
     var fileName = new Date().valueOf() + Math.random() + ".xlsx";
-    var file = fs.createWriteStream("./excelPath/prod/" + fileName);
+    var file = fs.createWriteStream(path.join(__dirname, './excelPath/prod/') + fileName);
     var request = http.get(url, function(response) {
         var stream = response.pipe(file);
         stream.on('finish', function () {
@@ -47,8 +47,8 @@ taskCodeMap['download and import'] = function(url) {
                     excelModule.updateFromFileToDB(docs[0], {filename: fileName, worksheet: "Data"}, function (result) {
                         //console.log(result);
                         console.log('ok');
-                        if (fs.existsSync("./excelPath/prod/" + fileName)) {
-                            fs.unlinkSync("./excelPath/prod/" + fileName);
+                        if (fs.existsSync(path.join(__dirname, './excelPath/prod/') + fileName)) {
+                            fs.unlinkSync(path.join(__dirname, './excelPath/prod/') + fileName);
                         }
                     });
                 });

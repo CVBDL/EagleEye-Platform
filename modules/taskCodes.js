@@ -7,6 +7,7 @@ const chartModule = require('../modules/chartModule');
 const chartSetModule = require('../modules/chartSetModule');
 const statisticsModule = require('../modules/statisticsModule');
 const excelModule = require('../modules/excelModule');
+const ncp = require('ncp').ncp;
 const path         = require('path');
 
 let taskCodeMap = {};
@@ -58,6 +59,29 @@ taskCodeMap['download and import'] = function(url) {
         });
 
     });
+}
+
+taskCodeMap['backup database'] = function(sourcePath) {
+  const exec = require('child_process').exec;
+  const targetPath = sourcePath + "/" + new Date().valueOf() + "_" + Math.random().toString().slice(2) + "/";
+  const command = "mongodump -d eagleEyeDatabase --out " + targetPath;
+  console.log("run: " + command);
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      console.error('exec error: ' + error);
+      return;
+    }
+    console.log('stdout: ' + stdout);
+    console.log('stderr: ' + stderr);
+
+    ncp(path.join(__dirname, '../public/uploadChartImages/'), targetPath + "uploadChartImages/", function (err) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Copy all images successfully.");
+      }
+    });
+  });
 }
 
 exports.getAllTasks = function() {

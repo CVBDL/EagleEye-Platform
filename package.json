@@ -23,6 +23,7 @@
     "immutable": "^3.8.1",
     "mongodb": "~2.1.18",
     "morgan": "~1.6.1",
+    "ncp": "^2.0.0",
     "node-schedule": "^1.1.1",
     "serve-favicon": "~2.3.0"
   },

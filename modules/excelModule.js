@@ -33,14 +33,15 @@ exports.updateFromFileToDB = function(doc, setting, done, mode) {
         //     [ 'Banana', 9, 5, 14 ]
         // ]
         let updateData = doc;
+        var column = result[0];
         doc.datatable = {
             "cols": [{
                 "type": "string",
-                "label": "Category"
+                "label": column[0] ? column[0] : "Category"
             }],
             "rows": []
         };
-        var column = result[0];
+
         for (let i = 1; i < column.length; i++) {
             updateData.datatable.cols.push({"label": column[i], "type": "number"});
         }

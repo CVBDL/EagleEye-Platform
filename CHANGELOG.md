@@ -1,3 +1,12 @@
+<a name="1.0.0-beta.3"></a>
+# 1.0.0-beta.3 (2016-09-16)
+
+## Bug Fixes
+
+* Fix import header bug.
+* Fix upload main domain type missing bug.
+
+
 <a name="1.0.0-beta.2"></a>
 # 1.0.0-beta.2 (2016-09-14)
 

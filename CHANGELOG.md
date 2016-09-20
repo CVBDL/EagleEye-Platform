@@ -1,9 +1,17 @@
+<a name="1.0.0-beta.5"></a>
+# 1.0.0-beta.5 (2016-09-20)
+
+## Bug Fixes
+
+* Fix update chart set duplicate friendlyUrl error.
+
+
 <a name="1.0.0-beta.4"></a>
 # 1.0.0-beta.4 (2016-09-20)
 
 ## Bug Fixes
 
-* Fix update chart set duplicate friendlyUrl error.
+* Fix update chart set duplicate friendlyUrl error. (Not fixed.)
 
 
 <a name="1.0.0-beta.3"></a>

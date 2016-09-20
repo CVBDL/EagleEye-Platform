@@ -166,7 +166,11 @@ router.put('/chart-sets/:id', function(req, res, next) {
     // console.log(req.body);
     chartSetModule.updateOne(id, req.body, function(err, result) {
         console.log("Update one chart-set,Result is:" + result);
-        res.send(result);
+        if (err) {
+          res.send(err);
+        } else {
+          res.send(result);
+        }
     });
 });
 

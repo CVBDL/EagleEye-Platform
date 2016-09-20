@@ -91,7 +91,7 @@ exports.updateOne = function(_id, updateData, callback) {
             "$set": {
                 "title":updateData.title,
                 "description":updateData.description,
-                "friendlyUrl":updateData.friendlyUrl,
+                "friendlyUrl":updateData.friendlyUrl === "" ? null : updateData.friendlyUrl,
                 "charts":updateData.charts,
                 lastUpdateTimestamp: getTimeStamp()
             }

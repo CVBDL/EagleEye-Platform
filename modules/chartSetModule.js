@@ -95,7 +95,7 @@ exports.updateOne = function(_id, updateData, callback) {
     }
   };
 
-  if (updateData.friendlyUrl === "") {
+  if (!updateData.friendlyUrl) {
     instruction.$unset = {
       "friendlyUrl" : ""
     }

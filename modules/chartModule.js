@@ -133,9 +133,10 @@ exports.updateOne = function(_id, updateData, callback) {
     update.$set.friendlyUrl = updateData.friendlyUrl;
   }
 
-  db.collection(COLLECTION).update({
-    "_id": ObjectId(_id)
-  }, update, false, function(err, result) {
+  db.collection(COLLECTION).findAndModify({
+    _id: ObjectId(_id)
+
+  }, [], update, { new: true }, function(err, result) {
     callback(err, result);
   });
 };

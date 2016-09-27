@@ -101,26 +101,26 @@ exports.remove = function(_id, callback) {
 
 exports.updateOne = function(_id, updateData, callback) {
   let db = DB.get();
-  let instruction = {
-    "$set": {
-      "title": updateData.title,
-      "description": updateData.description,
-      "charts": updateData.charts,
-      "lastUpdateTimestamp": getTimeStamp()
-    }
+  let update = {
+    "$set": updateData
   };
 
+  updateData.lastUpdateTimestamp = getTimeStamp();
+
   if (!updateData.friendlyUrl) {
-    instruction.$unset = {
+    delete updateData.friendlyUrl;
+    update.$unset = {
       "friendlyUrl": ""
-    }
+    };
+
   } else {
-    instruction.$set.friendlyUrl = updateData.friendlyUrl;
+    update.$set.friendlyUrl = updateData.friendlyUrl;
   }
 
-  db.collection(COLLECTION).update({
+  db.collection(COLLECTION).findAndModify({
     "_id": ObjectId(_id)
-  }, instruction, false, function(err, result) {
+
+  }, [], update, { new: true }, function(err, result) {
     callback(err, result);
   });
 };

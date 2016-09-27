@@ -66,6 +66,13 @@ function getChartSetParameter(req) {
   return queryOption;
 }
 
+function handleError(err, res) {
+  res.status(400).send({
+    "message": err.message,
+    "errors": [err]
+  });
+}
+
 
 /**
  * Chart APIs
@@ -116,8 +123,8 @@ router.get('/charts/:id', function(req, res, next) {
 router.put('/charts/:id', function(req, res, next) {
   let id = req.params.id;
 
-  chartModule.updateOne(id, req.body, function(err, result) {
-    return err ? res.send(err) : res.send(result);
+  chartModule.updateOne(id, req.body, function(err, doc) {
+    return err ? handleError(err, res) : res.send(doc.value);
   });
 });
 
@@ -171,13 +178,8 @@ router.delete('/chart-sets/:id', function(req, res, next) {
 router.put('/chart-sets/:id', function(req, res, next) {
   let id = req.params.id;
 
-  chartSetModule.updateOne(id, req.body, function(err, result) {
-    console.log("Update one chart-set,Result is:" + result);
-    if (err) {
-      res.send(err);
-    } else {
-      res.send(result);
-    }
+  chartSetModule.updateOne(id, req.body, function(err, doc) {
+    return err ? handleError(err, res) : res.send(doc.value);
   });
 });
 

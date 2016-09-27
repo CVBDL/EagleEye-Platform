@@ -1,3 +1,11 @@
+<a name="1.0.0-beta.6"></a>
+# 1.0.0-beta.6 (2016-09-27)
+
+## Features
+
+* Support edit a single chart
+
+
 <a name="1.0.0-beta.5"></a>
 # 1.0.0-beta.5 (2016-09-20)
 

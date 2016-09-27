@@ -10,45 +10,51 @@ const COLLECTION = "statistics_collection";
 
 let getTimeStamp = () => new Date().valueOf();
 
-exports.create = function (taskData, callback) {
-    let db = DB.get();
+exports.create = function(taskData, callback) {
+  let db = DB.get();
 
-    taskData.timestamp = getTimeStamp();
-    taskData.lastUpdateTimestamp = taskData.timestamp;
-    taskData.enable = true;
+  taskData.timestamp = getTimeStamp();
+  taskData.lastUpdateTimestamp = taskData.timestamp;
+  taskData.enable = true;
 
-    db.collection(COLLECTION).insert(taskData, function (err, result) {
-        if (err) {
-            return callback(err);
-        }
+  db.collection(COLLECTION).insert(taskData, function(err, result) {
+    if (err) {
+      return callback(err);
+    }
 
-        callback(null, result.ops[0]);
-    });
+    callback(null, result.ops[0]);
+  });
 };
 
-exports.all = function (callback) {
-    let db = DB.get();
-    db.collection(COLLECTION).find().toArray(callback);
+exports.all = function(callback) {
+  let db = DB.get();
+  db.collection(COLLECTION).find().toArray(callback);
 };
 
-exports.getOne = function (_id, callback) {
-    let db = DB.get();
-    db.collection(COLLECTION).find({"_id": ObjectId(_id)}).toArray(callback);
+exports.getOne = function(_id, callback) {
+  let db = DB.get();
+  db.collection(COLLECTION).find({
+    "_id": ObjectId(_id)
+  }).toArray(callback);
 };
 
-exports.remove = function (_id, callback) {
-    let db = DB.get();
-    db.collection(COLLECTION).removeOne({_id: ObjectId(_id)}, function (err, result) {
-        callback(err);
-    });
+exports.remove = function(_id, callback) {
+  let db = DB.get();
+  db.collection(COLLECTION).removeOne({
+    _id: ObjectId(_id)
+  }, function(err, result) {
+    callback(err);
+  });
 };
 
-exports.updateOne = function (_id, updateData, callback) {
-    let db = DB.get();
+exports.updateOne = function(_id, updateData, callback) {
+  let db = DB.get();
 
-    updateData.lastUpdateTimestamp = getTimeStamp();
+  updateData.lastUpdateTimestamp = getTimeStamp();
 
-    db.collection(COLLECTION).updateOne({_id: ObjectId(_id)}, updateData, function (err, result) {
-        callback(err);
-    });
+  db.collection(COLLECTION).updateOne({
+    _id: ObjectId(_id)
+  }, updateData, function(err, result) {
+    callback(err);
+  });
 };

@@ -2,14 +2,27 @@
   "setting": {
     "filename": "test.xlsx",
     "worksheet": "Test",
-    "columns": [
-      { "header": "Id",     "key": "id",    "width": 10 },
-      { "header": "Name",   "key": "name",  "width": 32 },
-      { "header": "D.O.B.", "key": "DOB",   "width": 10 }
-    ]
+    "columns": [{
+      "header": "Id",
+      "key": "id",
+      "width": 10
+    }, {
+      "header": "Name",
+      "key": "name",
+      "width": 32
+    }, {
+      "header": "D.O.B.",
+      "key": "DOB",
+      "width": 10
+    }]
   },
-  "data": [
-    {"id": 1, "name": "John Doe", "DOB": "1970-1-1T00:00:00Z"},
-    {"id": 2, "name": "Jane Doe", "DOB": "1965-1-7T00:00:00Z"}
-  ]
+  "data": [{
+    "id": 1,
+    "name": "John Doe",
+    "DOB": "1970-1-1T00:00:00Z"
+  }, {
+    "id": 2,
+    "name": "Jane Doe",
+    "DOB": "1965-1-7T00:00:00Z"
+  }]
 }

@@ -12,11 +12,18 @@ let CHART_SET_TYPE = "chartset";
 DB.DATABASE_KEYS.push({
   COLLECTION: COLLECTION,
   keys: [{
-      key: { friendlyUrl: 1 },
-      option: { unique: true, sparse: true }
+    key: {
+      friendlyUrl: 1
     },
-    { "options.title": "text", friendlyUrl: "text", description: "text" }
-  ]
+    option: {
+      unique: true,
+      sparse: true
+    }
+  }, {
+    "options.title": "text",
+    friendlyUrl: "text",
+    description: "text"
+  }]
 });
 
 let getTimeStamp = () => new Date().valueOf();
@@ -51,7 +58,9 @@ exports.all = function(option, callback) {
     option.skip--;
   }
   if (option.query) {
-    query["$text"] = { "$search": "" + option.query };
+    query["$text"] = {
+      "$search": "" + option.query
+    };
     delete option.query;
   }
   db.collection(COLLECTION).find(query, false, option).toArray(callback);
@@ -62,9 +71,13 @@ exports.getOne = function(_id, callback) {
   let regExp = /^s-/g;
 
   if (regExp.test(_id)) {
-    db.collection(COLLECTION).find({ "friendlyUrl": _id }).toArray(callback);
+    db.collection(COLLECTION).find({
+      "friendlyUrl": _id
+    }).toArray(callback);
   } else {
-    db.collection(COLLECTION).find({ "_id": ObjectId(_id) }).toArray(callback);
+    db.collection(COLLECTION).find({
+      "_id": ObjectId(_id)
+    }).toArray(callback);
   }
 };
 
@@ -79,7 +92,9 @@ exports.clearCollection = function(callback) {
 exports.remove = function(_id, callback) {
   let db = DB.get();
 
-  db.collection(COLLECTION).removeOne({ _id: ObjectId(_id) }, function(err, result) {
+  db.collection(COLLECTION).removeOne({
+    _id: ObjectId(_id)
+  }, function(err, result) {
     callback(err);
   });
 };
@@ -97,18 +112,26 @@ exports.updateOne = function(_id, updateData, callback) {
 
   if (!updateData.friendlyUrl) {
     instruction.$unset = {
-      "friendlyUrl" : ""
+      "friendlyUrl": ""
     }
   } else {
     instruction.$set.friendlyUrl = updateData.friendlyUrl;
   }
 
-  db.collection(COLLECTION).update({ "_id": ObjectId(_id) }, instruction, false, function(err, result) {
+  db.collection(COLLECTION).update({
+    "_id": ObjectId(_id)
+  }, instruction, false, function(err, result) {
     callback(err, result);
   });
 };
 
 exports.removeChartFromCharts = function(_id) {
   let db = DB.get();
-  db.collection(COLLECTION).update({ "charts": _id }, { $pullAll: { "charts": [_id] } });
-}
+  db.collection(COLLECTION).update({
+    "charts": _id
+  }, {
+    $pullAll: {
+      "charts": [_id]
+    }
+  });
+};

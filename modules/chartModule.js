@@ -15,11 +15,18 @@ let IMAGE_CHART_TYPE = "ImageChart";
 DB.DATABASE_KEYS.push({
   COLLECTION: COLLECTION,
   keys: [{
-      key: { friendlyUrl: 1 },
-      option: { unique: true, sparse: true }
+    key: {
+      friendlyUrl: 1
     },
-    { "options.title": "text", friendlyUrl: "text", description: "text" }
-  ]
+    option: {
+      unique: true,
+      sparse: true
+    }
+  }, {
+    "options.title": "text",
+    friendlyUrl: "text",
+    description: "text"
+  }]
 });
 
 let getTimeStamp = () => new Date().valueOf();
@@ -55,7 +62,9 @@ exports.all = function(option, callback) {
     option.skip--;
   }
   if (option.query) {
-    query["$text"] = { "$search": option.query };
+    query["$text"] = {
+      "$search": option.query
+    };
     delete option.query;
   }
   db.collection(COLLECTION).find(query, false, option).toArray(callback);
@@ -77,10 +86,14 @@ exports.getOne = function(_id, callback) {
   let regExp = /^c-/g;
 
   if (regExp.test(_id)) {
-    db.collection(COLLECTION).find({ "friendlyUrl": _id }).toArray(callback);
+    db.collection(COLLECTION).find({
+      "friendlyUrl": _id
+    }).toArray(callback);
 
   } else {
-    db.collection(COLLECTION).find({ "_id": ObjectId(_id) }).toArray(callback);
+    db.collection(COLLECTION).find({
+      "_id": ObjectId(_id)
+    }).toArray(callback);
   }
 };
 
@@ -94,7 +107,9 @@ exports.clearCollection = function(callback) {
 
 exports.remove = function(_id, callback) {
   let db = DB.get();
-  db.collection(COLLECTION).removeOne({ _id: ObjectId(_id) }, function(err, result) {
+  db.collection(COLLECTION).removeOne({
+    _id: ObjectId(_id)
+  }, function(err, result) {
     callback(err);
     chartSetModule.removeChartFromCharts(_id);
   });
@@ -110,13 +125,17 @@ exports.updateOne = function(_id, updateData, callback) {
 
   if (!updateData.friendlyUrl) {
     delete updateData.friendlyUrl;
-    update.$unset = { "friendlyUrl" : "" };
+    update.$unset = {
+      "friendlyUrl": ""
+    };
 
   } else {
     update.$set.friendlyUrl = updateData.friendlyUrl;
   }
 
-  db.collection(COLLECTION).update({ "_id": ObjectId(_id) }, update, false, function(err, result) {
+  db.collection(COLLECTION).update({
+    "_id": ObjectId(_id)
+  }, update, false, function(err, result) {
     callback(err, result);
   });
 };
@@ -126,9 +145,13 @@ exports.getChartOptionById = function(_id, callback) {
   let regExp = /^c-/g;
 
   if (regExp.test(_id)) {
-    db.collection(COLLECTION).find({ "friendlyUrl": _id }).toArray(callback);
+    db.collection(COLLECTION).find({
+      "friendlyUrl": _id
+    }).toArray(callback);
   } else {
-    db.collection(COLLECTION).find({ "_id": ObjectId(_id) }).toArray(callback);
+    db.collection(COLLECTION).find({
+      "_id": ObjectId(_id)
+    }).toArray(callback);
   }
 };
 
@@ -137,9 +160,23 @@ exports.updateChartOptionById = function(_id, updateData, callback) {
   let regExp = /^c-/g;
 
   if (regExp.test(_id)) {
-    db.collection(COLLECTION).findOneAndUpdate({ "friendlyUrl": _id }, { $set: { options: updateData, lastUpdateTimestamp: getTimeStamp() } }, callback);
+    db.collection(COLLECTION).findOneAndUpdate({
+      "friendlyUrl": _id
+    }, {
+      $set: {
+        options: updateData,
+        lastUpdateTimestamp: getTimeStamp()
+      }
+    }, callback);
   } else {
-    db.collection(COLLECTION).findOneAndUpdate({ _id: ObjectId(_id) }, { $set: { options: updateData, lastUpdateTimestamp: getTimeStamp() } }, callback);
+    db.collection(COLLECTION).findOneAndUpdate({
+      _id: ObjectId(_id)
+    }, {
+      $set: {
+        options: updateData,
+        lastUpdateTimestamp: getTimeStamp()
+      }
+    }, callback);
   }
 };
 
@@ -149,9 +186,13 @@ exports.getChartDataTableById = function(_id, callback) {
   let regExp = /^c-/g;
 
   if (regExp.test(_id)) {
-    db.collection(COLLECTION).find({ "friendlyUrl": _id }).toArray(callback);
+    db.collection(COLLECTION).find({
+      "friendlyUrl": _id
+    }).toArray(callback);
   } else {
-    db.collection(COLLECTION).find({ "_id": ObjectId(_id) }).toArray(callback);
+    db.collection(COLLECTION).find({
+      "_id": ObjectId(_id)
+    }).toArray(callback);
   }
 };
 
@@ -160,9 +201,23 @@ exports.updateChartDataTableById = function(_id, updateData, callback) {
   let regExp = /^c-/g;
 
   if (regExp.test(_id)) {
-    db.collection(COLLECTION).findOneAndUpdate({ "friendlyUrl": _id }, { $set: { datatable: updateData, lastUpdateTimestamp: getTimeStamp() } }, callback);
+    db.collection(COLLECTION).findOneAndUpdate({
+      "friendlyUrl": _id
+    }, {
+      $set: {
+        datatable: updateData,
+        lastUpdateTimestamp: getTimeStamp()
+      }
+    }, callback);
   } else {
-    db.collection(COLLECTION).findOneAndUpdate({ _id: ObjectId(_id) }, { $set: { datatable: updateData, lastUpdateTimestamp: getTimeStamp() } }, callback);
+    db.collection(COLLECTION).findOneAndUpdate({
+      _id: ObjectId(_id)
+    }, {
+      $set: {
+        datatable: updateData,
+        lastUpdateTimestamp: getTimeStamp()
+      }
+    }, callback);
   }
 };
 
@@ -171,8 +226,22 @@ exports.updateImageChartFile = function(_id, fileName, callback) {
   let regExp = /^c-/g;
 
   if (regExp.test(_id)) {
-    db.collection(COLLECTION).findOneAndUpdate({ "friendlyUrl": _id }, { $set: { image_file_name: fileName, lastUpdateTimestamp: getTimeStamp() } }, callback);
+    db.collection(COLLECTION).findOneAndUpdate({
+      "friendlyUrl": _id
+    }, {
+      $set: {
+        image_file_name: fileName,
+        lastUpdateTimestamp: getTimeStamp()
+      }
+    }, callback);
   } else {
-    db.collection(COLLECTION).findOneAndUpdate({ _id: ObjectId(_id) }, { $set: { image_file_name: fileName, lastUpdateTimestamp: getTimeStamp() } }, callback);
+    db.collection(COLLECTION).findOneAndUpdate({
+      _id: ObjectId(_id)
+    }, {
+      $set: {
+        image_file_name: fileName,
+        lastUpdateTimestamp: getTimeStamp()
+      }
+    }, callback);
   }
-}
+};

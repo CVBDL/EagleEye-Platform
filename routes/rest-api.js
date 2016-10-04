@@ -4,14 +4,16 @@
 'use strict';
 
 let express = require('express');
-let router = express.Router();
-let fs = require('fs');
-var path = require('path');
+let router  = express.Router();
+let os      = require('os');
+let fs      = require('fs');
+var path    = require('path');
 
-let chartModule = require('../modules/chartModule');
+let chartModule    = require('../modules/chartModule');
 let chartSetModule = require('../modules/chartSetModule');
-let excelHelper = require('../helpers/excelHelper');
-let excelModule = require('../modules/excelModule');
+let excelHelper    = require('../helpers/excelHelper');
+let excelModule    = require('../modules/excelModule');
+let config         = require('../modules/config');
 
 function getChartParameter(req) {
   let para = {};
@@ -72,6 +74,37 @@ function handleError(err, res) {
     "errors": [err]
   });
 }
+
+
+/**
+ * List all the endpoint categories
+ */
+
+router.get('/', function(req, res, next) {
+  let protocol = 'http';
+  let baseUrl;
+  let port;
+
+  config.load().then(function(config) {
+    port = config.port || 3000;
+    baseUrl = protocol + '://' + os.hostname() + ':' + port + '/api/v1';
+
+  }, function(err) {
+    handleError(err, res);
+
+  }).then(function() {
+    res.send({
+      "charts_url":            baseUrl + '/charts/{chart_id}',
+      "chart_sets_url":        baseUrl + '/chart-sets/{chart_set_id}',
+      "search_url":            baseUrl + '/search',
+      "search_charts_url":     baseUrl + '/search/charts',
+      "search_chart_sets_url": baseUrl + '/search/chart-sets',
+      "upload_excels_url":     baseUrl + '/upload/excels',
+      "upload_images_url":     baseUrl + '/upload/images',
+      "download_excels_url":   baseUrl + '/download/excels/:id'
+    });
+  });
+});
 
 
 /**

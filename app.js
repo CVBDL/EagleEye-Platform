@@ -1,3 +1,5 @@
+'use strict';
+
 var bodyParser   = require('body-parser');
 var cookieParser = require('cookie-parser');
 var express      = require('express');
@@ -9,8 +11,9 @@ var path         = require('path');
 var chartFile    = require('./routes/chart-file');
 var db           = require('./helpers/dbHelper');
 var routes       = require('./routes/index');
-var restAPI      = require('./routes/rest-api');
+var restApi      = require('./routes/rest-api');
 var scheduleTask = require('./routes/schedule-management');
+var config       = require('./modules/config');
 
 var app = express();
 
@@ -38,7 +41,7 @@ app.use(multipart({
 
 
 app.use('/', routes);
-app.use('/api/v1', restAPI);
+app.use('/api/v1', restApi);
 // TODO: Remove 'routes/chart-file.js'
 // app.use('/chartFile', chartFile);
 app.use('/schedule', scheduleTask);
@@ -74,10 +77,13 @@ app.use(function(err, req, res, next) {
   });
 });
 
-module.exports = app;
-
 db.get();
 
-var port = process.env.PORT || 3000;
-console.log('Listening on port 3000');
-app.listen(port);
+config.load().then(function(config) {
+  var port = config.port || 3000;
+
+  app.listen(port);
+  console.log('Listening on port ' + port);
+});
+
+module.exports = app;

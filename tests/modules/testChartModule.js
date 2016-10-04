@@ -126,7 +126,6 @@ describe('Model chart Tests', function() {
     });
   });
 
-
   it('remove', function(done) {
     chartModule.all(function(err, docs) {
       chartModule.remove(docs[0]._id, function(err) {
@@ -139,91 +138,4 @@ describe('Model chart Tests', function() {
     });
   });
 
-  it('getChartOptionById', function(done) {
-    let friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
-
-    chartModule.getChartOptionById(friendlyUrl, function(err, docs) {
-      docs.length.should.eql(1);
-      should(docs[0].options).have.property("title", "Fruits Overview");
-      done();
-    });
-  });
-
-  it('updateChartOptionById', function(done) {
-    let friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
-    let testOptions = {
-      "title": "Fruits Overview",
-      "hAxis": {
-        "title": "CategoryAAA"
-      },
-      "vAxis": {
-        "title": "Price" // update it
-      }
-    };
-
-    chartModule.updateChartOptionById(friendlyUrl, testOptions, function(err, result) {
-      chartModule.getOne(friendlyUrl, function(err, docs) {
-        docs.length.should.eql(1);
-        should(docs[0].options.vAxis.title).eql('Price');
-        done();
-      });
-    });
-  });
-
-  it('getChartDataTableById', function(done) {
-    let friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
-
-    chartModule.getChartDataTableById(friendlyUrl, function(err, docs) {
-      docs.length.should.eql(1);
-      done();
-    });
-  });
-
-  it('updateChartDataTableById', function(done) {
-    let friendlyUrl = fixtures.collections.chart_collection[0].friendlyUrl;
-    let testDataTable = {
-      "cols": [{
-        "type": "string",
-        "label": "Category"
-      }, {
-        "type": "number",
-        "label": "value1"
-      }, {
-        "type": "number",
-        "label": "value2"
-      }],
-      "rows": [{
-        "c": [{
-          "v": "Apple"
-        }, {
-          "v": 5
-        }, {
-          "v": 9
-        }]
-      }, {
-        "c": [{
-          "v": "Orange"
-        }, {
-          "v": 7
-        }, {
-          "v": 3
-        }]
-      }, { //add a new row
-        "c": [{
-          "v": "Lemon"
-        }, {
-          "v": 4
-        }, {
-          "v": 5
-        }]
-      }]
-    };
-
-    chartModule.updateChartDataTableById(friendlyUrl, testDataTable, function(err, result) {
-      chartModule.getOne(friendlyUrl, function(err, docs) {
-        docs[0].datatable.rows.length.should.eql(3);
-        done();
-      });
-    });
-  });
 });

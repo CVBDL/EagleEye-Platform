@@ -29,15 +29,13 @@ DB.DATABASE_KEYS.push({
   }]
 });
 
-let getTimeStamp = () => new Date().valueOf();
-
 exports.create = function(chartData, callback) {
   let db = DB.get();
+  let now = new Date();
 
   chartData.type = IMAGE_CHART_TYPE == chartData.chartType ? IMAGE_CHART_TYPE : CHART_TYPE;
-  chartData.timestamp = getTimeStamp();
-  chartData.lastUpdateTimestamp = chartData.timestamp;
   chartData.options = chartOptionsHelper.ChartOptionsAdapter(chartData.chartType, chartData.options);
+  chartData.createdAt = chartData.updatedAt = now.toISOString();
 
   if (chartData.friendlyUrl == "") {
     delete chartData.friendlyUrl;
@@ -117,11 +115,12 @@ exports.remove = function(_id, callback) {
 
 exports.updateOne = function(_id, updateData, callback) {
   let db = DB.get();
+  let now = new Date();
   let update = {
     "$set": updateData
   };
 
-  updateData.lastUpdateTimestamp = getTimeStamp();
+  updateData.updatedAt = now.toISOString();
 
   if (!updateData.friendlyUrl) {
     delete updateData.friendlyUrl;
@@ -141,89 +140,9 @@ exports.updateOne = function(_id, updateData, callback) {
   });
 };
 
-exports.getChartOptionById = function(_id, callback) {
-  let db = DB.get();
-  let regExp = /^c-/g;
-
-  if (regExp.test(_id)) {
-    db.collection(COLLECTION).find({
-      "friendlyUrl": _id
-    }).toArray(callback);
-  } else {
-    db.collection(COLLECTION).find({
-      "_id": ObjectId(_id)
-    }).toArray(callback);
-  }
-};
-
-exports.updateChartOptionById = function(_id, updateData, callback) {
-  let db = DB.get();
-  let regExp = /^c-/g;
-
-  if (regExp.test(_id)) {
-    db.collection(COLLECTION).findOneAndUpdate({
-      "friendlyUrl": _id
-    }, {
-      $set: {
-        options: updateData,
-        lastUpdateTimestamp: getTimeStamp()
-      }
-    }, callback);
-  } else {
-    db.collection(COLLECTION).findOneAndUpdate({
-      _id: ObjectId(_id)
-    }, {
-      $set: {
-        options: updateData,
-        lastUpdateTimestamp: getTimeStamp()
-      }
-    }, callback);
-  }
-};
-
-exports.getChartDataTableById = function(_id, callback) {
-  let db = DB.get();
-  // console.log(db);
-  let regExp = /^c-/g;
-
-  if (regExp.test(_id)) {
-    db.collection(COLLECTION).find({
-      "friendlyUrl": _id
-    }).toArray(callback);
-  } else {
-    db.collection(COLLECTION).find({
-      "_id": ObjectId(_id)
-    }).toArray(callback);
-  }
-};
-
-exports.updateChartDataTableById = function(_id, updateData, callback) {
-  let db = DB.get();
-  let regExp = /^c-/g;
-
-  if (regExp.test(_id)) {
-    db.collection(COLLECTION).findOneAndUpdate({
-      "friendlyUrl": _id
-    }, {
-      $set: {
-        datatable: updateData,
-        lastUpdateTimestamp: getTimeStamp()
-      }
-    }, callback);
-  } else {
-    db.collection(COLLECTION).findOneAndUpdate({
-      _id: ObjectId(_id)
-    }, {
-      $set: {
-        datatable: updateData,
-        lastUpdateTimestamp: getTimeStamp()
-      }
-    }, callback);
-  }
-};
-
 exports.updateImageChartFile = function(_id, fileName, callback) {
   let db = DB.get();
+  let now = new Date();
   let regExp = /^c-/g;
 
   if (regExp.test(_id)) {
@@ -232,7 +151,7 @@ exports.updateImageChartFile = function(_id, fileName, callback) {
     }, {
       $set: {
         image_file_name: fileName,
-        lastUpdateTimestamp: getTimeStamp()
+        updatedAt: now.toISOString()
       }
     }, callback);
   } else {
@@ -241,7 +160,7 @@ exports.updateImageChartFile = function(_id, fileName, callback) {
     }, {
       $set: {
         image_file_name: fileName,
-        lastUpdateTimestamp: getTimeStamp()
+        updatedAt: now.toISOString()
       }
     }, callback);
   }

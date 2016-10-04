@@ -183,47 +183,6 @@ router.put('/chart-sets/:id', function(req, res, next) {
   });
 });
 
-//T-P-007 REST API: Get one chart's options Owen
-router.get('/charts/:id/options', function(req, res, next) {
-  let id = req.params.id;
-  chartModule.getChartOptionById(id, function(err, docs) {
-    res.send(docs[0].options);
-  });
-});
-
-//T-P-008 REST API: Update one chart's options Owen
-router.post('/charts/:id/options', function(req, res, next) {
-  let id = req.params.id;
-  //var test = {"title": "AAAA", "hAxis": {"title": "TTT"}, "vAxis": {"title": "SSS"}};
-  chartModule.updateChartOptionById(id, req.body, function(err, result) {
-    if (!err) {
-      res.send("success");
-    } else {
-      res.send(err);
-    }
-  });
-});
-
-//T-P-009 REST API: Get one chart's datatable   Owen
-router.get('/charts/:id/datatable', function(req, res, next) {
-  let id = req.params.id;
-  chartModule.getChartDataTableById(id, function(err, docs) {
-    res.send(docs[0].datatables);
-  });
-});
-
-//T-P-010 REST API: Update one chart's datatable Owen
-router.post('/charts/:id/datatable', function(req, res, next) {
-  let id = req.params.id;
-  chartModule.updateChartDataTableById(id, req.body, function(err, result) {
-    if (!err) {
-      res.send("success");
-    } else {
-      res.send(err);
-    }
-  });
-});
-
 
 /**
  * Search APIs

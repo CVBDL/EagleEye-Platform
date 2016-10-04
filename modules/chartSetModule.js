@@ -26,14 +26,13 @@ DB.DATABASE_KEYS.push({
   }]
 });
 
-let getTimeStamp = () => new Date().valueOf();
-
 exports.create = function(chartSetData, callback) {
   let db = DB.get();
+  let now = new Date();
 
   chartSetData.type = CHART_SET_TYPE;
-  chartSetData.timestamp = getTimeStamp();
-  chartSetData.lastUpdateTimestamp = chartSetData.timestamp;
+  chartSetData.createdAt = chartSetData.updatedAt = now.toISOString();
+
   if (chartSetData.friendlyUrl == "") {
     delete chartSetData.friendlyUrl;
   }
@@ -101,11 +100,12 @@ exports.remove = function(_id, callback) {
 
 exports.updateOne = function(_id, updateData, callback) {
   let db = DB.get();
+  let now = new Date();
   let update = {
     "$set": updateData
   };
 
-  updateData.lastUpdateTimestamp = getTimeStamp();
+  updateData.updatedAt = now.toISOString();
 
   if (!updateData.friendlyUrl) {
     delete updateData.friendlyUrl;
@@ -125,6 +125,7 @@ exports.updateOne = function(_id, updateData, callback) {
   });
 };
 
+// TODO: update `updatedAt`
 exports.removeChartFromCharts = function(_id) {
   let db = DB.get();
   db.collection(COLLECTION).update({

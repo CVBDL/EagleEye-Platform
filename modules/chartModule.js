@@ -35,14 +35,14 @@ exports.create = function(chartData, callback) {
   let id = ObjectId();
   let now = new Date();
 
-  utils.getRestApiRootEndpoint().then(function(baseUrl) {
+  utils.getRestApiRootEndpoint().then(function(rootEndpoint) {
     chartData._id = id;
     chartData.type = IMAGE_CHART_TYPE == chartData.chartType ? IMAGE_CHART_TYPE : CHART_TYPE;
     chartData.options = chartOptionsHelper.ChartOptionsAdapter(chartData.chartType, chartData.options);
     chartData.createdAt = chartData.updatedAt = now.toISOString();
 
     chartData.browserDownloadUrl = {
-      excel: chartData.chartType === IMAGE_CHART_TYPE ? null: baseUrl + '/download/excels/' + id
+      excel: chartData.chartType === IMAGE_CHART_TYPE ? null : rootEndpoint + '/download/excels/' + id
     };
 
     if (!chartData.friendlyUrl) delete chartData.friendlyUrl;

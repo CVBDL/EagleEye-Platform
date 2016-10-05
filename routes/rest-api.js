@@ -12,6 +12,7 @@ let chartModule    = require('../modules/chartModule');
 let chartSetModule = require('../modules/chartSetModule');
 let excelHelper    = require('../helpers/excelHelper');
 let excelModule    = require('../modules/excelModule');
+let etl            = require('../modules/etl');
 let utils          = require('../helpers/utils');
 
 let router  = express.Router();
@@ -94,6 +95,16 @@ router.get('/', function(req, res, next) {
       "download_excels_url":   baseUrl + '/download/excels/:id'
     });
   });
+});
+
+
+/**
+ * ETL
+ */
+
+router.get('/etl', function(req, res, next) {
+  etl.start();
+  res.status(204).send('');
 });
 
 

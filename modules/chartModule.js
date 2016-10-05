@@ -3,10 +3,11 @@
  */
 'use strict';
 
-let ObjectId = require('mongodb').ObjectId;
-let DB = require('../helpers/dbHelper');
+let DB                 = require('../helpers/dbHelper');
+let ObjectId           = require('mongodb').ObjectId;
 let chartOptionsHelper = require('../helpers/chart-options-helper');
-let chartSetModule = require('../modules/chartSetModule');
+let chartSetModule     = require('./chartSetModule');
+let utils              = require('../helpers/utils');
 
 let COLLECTION = "chart_collection";
 let CHART_TYPE = "chart";
@@ -31,21 +32,28 @@ DB.DATABASE_KEYS.push({
 
 exports.create = function(chartData, callback) {
   let db = DB.get();
+  let id = ObjectId();
   let now = new Date();
 
-  chartData.type = IMAGE_CHART_TYPE == chartData.chartType ? IMAGE_CHART_TYPE : CHART_TYPE;
-  chartData.options = chartOptionsHelper.ChartOptionsAdapter(chartData.chartType, chartData.options);
-  chartData.createdAt = chartData.updatedAt = now.toISOString();
+  utils.getRestApiRootEndpoint().then(function(baseUrl) {
+    chartData._id = id;
+    chartData.type = IMAGE_CHART_TYPE == chartData.chartType ? IMAGE_CHART_TYPE : CHART_TYPE;
+    chartData.options = chartOptionsHelper.ChartOptionsAdapter(chartData.chartType, chartData.options);
+    chartData.createdAt = chartData.updatedAt = now.toISOString();
 
-  if (chartData.friendlyUrl == "") {
-    delete chartData.friendlyUrl;
-  }
-  db.collection(COLLECTION).insert(chartData, function(err, result) {
-    if (err) {
-      return callback(err);
-    }
+    chartData.browserDownloadUrl = {
+      excel: chartData.chartType === IMAGE_CHART_TYPE ? null: baseUrl + '/download/excels/' + id
+    };
 
-    callback(null, result.ops[0]);
+    if (!chartData.friendlyUrl) delete chartData.friendlyUrl;
+
+    db.collection(COLLECTION).insert(chartData, function(err, result) {
+      if (err) {
+        return callback(err);
+      }
+
+      callback(null, result.ops[0]);
+    });
   });
 };
 

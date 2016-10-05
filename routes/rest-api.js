@@ -4,7 +4,6 @@
 'use strict';
 
 let express = require('express');
-let router  = express.Router();
 let os      = require('os');
 let fs      = require('fs');
 var path    = require('path');
@@ -13,7 +12,9 @@ let chartModule    = require('../modules/chartModule');
 let chartSetModule = require('../modules/chartSetModule');
 let excelHelper    = require('../helpers/excelHelper');
 let excelModule    = require('../modules/excelModule');
-let config         = require('../modules/config');
+let utils          = require('../helpers/utils');
+
+let router  = express.Router();
 
 function getChartParameter(req) {
   let para = {};
@@ -81,18 +82,7 @@ function handleError(err, res) {
  */
 
 router.get('/', function(req, res, next) {
-  let protocol = 'http';
-  let baseUrl;
-  let port;
-
-  config.load().then(function(config) {
-    port = config.port || 3000;
-    baseUrl = protocol + '://' + os.hostname() + ':' + port + '/api/v1';
-
-  }, function(err) {
-    handleError(err, res);
-
-  }).then(function() {
+  utils.getRestApiRootEndpoint().then(function(baseUrl) {
     res.send({
       "charts_url":            baseUrl + '/charts/{chart_id}',
       "chart_sets_url":        baseUrl + '/chart-sets/{chart_set_id}',

@@ -21,8 +21,8 @@ function getChartParameter(req) {
   ["sort", "order", "limit", "start", "q"].forEach((key) => (req.query[key] ? (para[key] = isNaN(req.query[key]) ? req.query[key] : parseInt(req.query[key])) : null));
   let queryOption = {};
 
-  if (!para.sort || !new Set(["timestamp", "lastUpdateTimestamp", "chartType"]).has(para.sort)) {
-    para.sort = "timestamp";
+  if (!para.sort || !new Set(["createdAt", "updatedAt", "chartType"]).has(para.sort)) {
+    para.sort = "createdAt";
   }
   if (!para.order || !new Set(["asc", "desc"]).has(para.order.toLowerCase())) {
     para.order = "desc";
@@ -48,8 +48,8 @@ function getChartSetParameter(req) {
 
   let queryOption = {};
 
-  if (!para.sort || !new Set(["timestamp", "lastUpdateTimestamp"]).has(para.sort)) {
-    para.sort = "timestamp";
+  if (!para.sort || !new Set(["createdAt", "updatedAt"]).has(para.sort)) {
+    para.sort = "createdAt";
   }
   if (!para.order || !new Set(["asc", "desc"]).has(para.order.toLowerCase())) {
     para.order = "desc";

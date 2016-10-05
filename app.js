@@ -8,7 +8,6 @@ var logger       = require('morgan');
 var multipart    = require('connect-multiparty');
 var path         = require('path');
 
-var chartFile    = require('./routes/chart-file');
 var db           = require('./helpers/dbHelper');
 var routes       = require('./routes/index');
 var restApi      = require('./routes/rest-api');
@@ -42,8 +41,6 @@ app.use(multipart({
 
 app.use('/', routes);
 app.use('/api/v1', restApi);
-// TODO: Remove 'routes/chart-file.js'
-// app.use('/chartFile', chartFile);
 app.use('/schedule', scheduleTask);
 
 // catch 404 and forward to error handler

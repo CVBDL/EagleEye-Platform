@@ -1,3 +1,15 @@
+<a name="1.0.0-beta.7"></a>
+# 1.0.0-beta.7 (2016-10-06)
+
+## Features
+
+* Improve edit api response
+* Use ISO 8601 date format instead of timestamp
+* Add list all endpoint categories api
+* Add `browserDownloadUrl` field in chart
+* Add ETL api
+
+
 <a name="1.0.0-beta.6"></a>
 # 1.0.0-beta.6 (2016-09-27)
 

@@ -81,18 +81,17 @@ function handleError(err, res) {
 /**
  * List all the endpoint categories
  */
-
 router.get('/', function(req, res, next) {
-  utils.getRestApiRootEndpoint().then(function(baseUrl) {
+  utils.getRestApiRootEndpoint().then(function(rootEndpoint) {
     res.send({
-      "charts_url":            baseUrl + '/charts/{chart_id}',
-      "chart_sets_url":        baseUrl + '/chart-sets/{chart_set_id}',
-      "search_url":            baseUrl + '/search',
-      "search_charts_url":     baseUrl + '/search/charts',
-      "search_chart_sets_url": baseUrl + '/search/chart-sets',
-      "upload_excels_url":     baseUrl + '/upload/excels',
-      "upload_images_url":     baseUrl + '/upload/images',
-      "download_excels_url":   baseUrl + '/download/excels/:id'
+      "charts_url":            rootEndpoint + '/charts/{chart_id}',
+      "chart_sets_url":        rootEndpoint + '/chart-sets/{chart_set_id}',
+      "search_url":            rootEndpoint + '/search',
+      "search_charts_url":     rootEndpoint + '/search/charts',
+      "search_chart_sets_url": rootEndpoint + '/search/chart-sets',
+      "upload_excels_url":     rootEndpoint + '/upload/excels',
+      "upload_images_url":     rootEndpoint + '/upload/images',
+      "download_excels_url":   rootEndpoint + '/download/excels/:id'
     });
   });
 });
@@ -101,7 +100,6 @@ router.get('/', function(req, res, next) {
 /**
  * ETL
  */
-
 router.get('/etl', function(req, res, next) {
   etl.start();
   res.status(204).send('');

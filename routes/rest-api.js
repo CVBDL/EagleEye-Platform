@@ -184,11 +184,12 @@ router.get('/chart-sets', function(req, res, next) {
 router.get('/chart-sets/:id', function(req, res, next) {
   let id = req.params.id;
 
-  chartSetModule.getOne(id, function(err, docs) {
-    if (docs[0] === undefined) {
-      res.status(404).send('');
+  chartSetModule.getOne(id).then(function(doc) {
+    if (doc) {
+      res.send(doc);
+
     } else {
-      res.send(docs[0]);
+      res.status(404).send('');
     }
   });
 });

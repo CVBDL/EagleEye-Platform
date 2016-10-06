@@ -5,8 +5,10 @@
 
 let ObjectId = require('mongodb').ObjectId;
 let DB = require('../helpers/dbHelper');
+let q = require('q');
 
 let COLLECTION = "chart_set_collection";
+let CHART_COLLECTION = "chart_collection";
 let CHART_SET_TYPE = "chartset";
 
 DB.DATABASE_KEYS.push({
@@ -65,19 +67,36 @@ exports.all = function(option, callback) {
   db.collection(COLLECTION).find(query, false, option).toArray(callback);
 };
 
-exports.getOne = function(_id, callback) {
+exports.getOne = function(_id) {
   let db = DB.get();
   let regExp = /^s-/g;
+  let query = {};
+  let promiseQueue = [];
 
   if (regExp.test(_id)) {
-    db.collection(COLLECTION).find({
-      "friendlyUrl": _id
-    }).toArray(callback);
+    query = { 'friendlyUrl': _id };
+
   } else {
-    db.collection(COLLECTION).find({
-      "_id": ObjectId(_id)
-    }).toArray(callback);
+    query = { '_id': ObjectId(_id) };
   }
+
+  return db.collection(COLLECTION).findOne(query).then(function(doc) {
+
+    if (doc) {
+      doc.charts.forEach(function(chartId, index) {
+        promiseQueue.push(db.collection(CHART_COLLECTION).findOne({ _id: ObjectId(chartId) }));
+      });
+
+      return q.all(promiseQueue).then(function(docs) {
+        doc.charts = docs;
+
+        return doc;
+      });
+
+    } else {
+      return null;
+    }
+  });
 };
 
 exports.clearCollection = function(callback) {

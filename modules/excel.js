@@ -3,7 +3,7 @@
  */
 'use strict';
 
-let chartModule = require('../modules/chartModule');
+let charts = require('../modules/charts');
 let excelHelper = require('../helpers/excelHelper');
 
 exports.writeOne = function(doc, setting, done, mode) {
@@ -61,7 +61,7 @@ exports.updateFromFileToDB = function(doc, setting, done, mode) {
       }
       updateData.datatable.rows.push(row);
     }
-    chartModule.updateOne(doc._id, updateData, done);
+    charts.updateOne(doc._id, updateData, done);
   }, mode);
 }
 

@@ -4,16 +4,16 @@
 'use strict';
 
 let express = require('express');
-let os      = require('os');
 let fs      = require('fs');
+let os      = require('os');
 var path    = require('path');
 
-let chartModule    = require('../modules/chartModule');
-let chartSetModule = require('../modules/chartSetModule');
-let excelHelper    = require('../helpers/excelHelper');
-let excelModule    = require('../modules/excelModule');
-let etl            = require('../modules/etl');
-let utils          = require('../helpers/utils');
+let charts      = require('../modules/charts');
+let chartSets   = require('../modules/chart-sets');
+let excelHelper = require('../helpers/excelHelper');
+let excel       = require('../modules/excel');
+let etl         = require('../modules/etl');
+let utils       = require('../helpers/utils');
 
 let router  = express.Router();
 
@@ -111,7 +111,7 @@ router.get('/etl', function(req, res, next) {
  */
 
 router.post('/charts', function(req, res, next) {
-  chartModule.create(req.body, function(err, result) {
+  charts.create(req.body, function(err, result) {
     if (err) {
       res.send(err.message);
     } else {
@@ -121,7 +121,7 @@ router.post('/charts', function(req, res, next) {
 });
 
 router.get('/charts', function(req, res, next) {
-  chartModule.all(getChartParameter(req), function(err, docs) {
+  charts.all(getChartParameter(req), function(err, docs) {
     res.send(docs);
   });
 });
@@ -129,13 +129,13 @@ router.get('/charts', function(req, res, next) {
 router.delete('/charts/:id', function(req, res, next) {
   let id = req.params.id;
 
-  chartModule.remove(id, function(err, result) {
+  charts.remove(id, function(err, result) {
     res.status(204).send('');
   });
 });
 
 router.delete('/charts', function(reg, res, next) {
-  chartModule.clearCollection(function(err, result) {
+  charts.clearCollection(function(err, result) {
     res.status(204).send('');
   });
 });
@@ -143,7 +143,7 @@ router.delete('/charts', function(reg, res, next) {
 router.get('/charts/:id', function(req, res, next) {
   let id = req.params.id;
 
-  chartModule.getOne(id, function(err, docs) {
+  charts.getOne(id, function(err, docs) {
     if (docs[0] === undefined) {
       res.status(404).send('');
     } else {
@@ -155,7 +155,7 @@ router.get('/charts/:id', function(req, res, next) {
 router.put('/charts/:id', function(req, res, next) {
   let id = req.params.id;
 
-  chartModule.updateOne(id, req.body, function(err, doc) {
+  charts.updateOne(id, req.body, function(err, doc) {
     return err ? handleError(err, res) : res.send(doc.value);
   });
 });
@@ -166,7 +166,7 @@ router.put('/charts/:id', function(req, res, next) {
  */
 
 router.post('/chart-sets', function(req, res, next) {
-  chartSetModule.create(req.body, function(err, result) {
+  chartSets.create(req.body, function(err, result) {
     if (err) {
       res.send(err.message);
     } else {
@@ -176,7 +176,7 @@ router.post('/chart-sets', function(req, res, next) {
 });
 
 router.get('/chart-sets', function(req, res, next) {
-  chartSetModule.all(getChartSetParameter(req), function(err, docs) {
+  chartSets.all(getChartSetParameter(req), function(err, docs) {
     res.send(docs);
   });
 });
@@ -184,7 +184,7 @@ router.get('/chart-sets', function(req, res, next) {
 router.get('/chart-sets/:id', function(req, res, next) {
   let id = req.params.id;
 
-  chartSetModule.getOne(id).then(function(doc) {
+  chartSets.getOne(id).then(function(doc) {
     if (doc) {
       res.send(doc);
 
@@ -195,7 +195,7 @@ router.get('/chart-sets/:id', function(req, res, next) {
 });
 
 router.delete('/chart-sets', function(reg, res, next) {
-  chartSetModule.clearCollection(function(err, result) {
+  chartSets.clearCollection(function(err, result) {
     res.status(204).send('');
   });
 });
@@ -203,7 +203,7 @@ router.delete('/chart-sets', function(reg, res, next) {
 router.delete('/chart-sets/:id', function(req, res, next) {
   let id = req.params.id;
 
-  chartSetModule.remove(id, function(err, result) {
+  chartSets.remove(id, function(err, result) {
     res.status(204).send('');
   });
 });
@@ -211,7 +211,7 @@ router.delete('/chart-sets/:id', function(req, res, next) {
 router.put('/chart-sets/:id', function(req, res, next) {
   let id = req.params.id;
 
-  chartSetModule.updateOne(id, req.body, function(err, doc) {
+  chartSets.updateOne(id, req.body, function(err, doc) {
     return err ? handleError(err, res) : res.send(doc.value);
   });
 });
@@ -225,8 +225,8 @@ router.put('/chart-sets/:id', function(req, res, next) {
 
 // {@link https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#search-both-charts-and-chart-sets}
 router.get('/search', function(req, res, next) {
-  chartModule.all(getChartParameter(req), function(err, chartDocs) {
-    chartSetModule.all(getChartSetParameter(req), function(err, chartSetDocs) {
+  charts.all(getChartParameter(req), function(err, chartDocs) {
+    chartSets.all(getChartSetParameter(req), function(err, chartSetDocs) {
       var totalCount = chartDocs.length + chartSetDocs.length;
       var items = chartSetDocs.concat(chartDocs);
 
@@ -239,7 +239,7 @@ router.get('/search', function(req, res, next) {
 });
 
 router.get('/search/charts', function(req, res, next) {
-  chartModule.all(getChartParameter(req), function(err, docs) {
+  charts.all(getChartParameter(req), function(err, docs) {
     res.send({
       total_count: docs.length,
       items: docs
@@ -248,7 +248,7 @@ router.get('/search/charts', function(req, res, next) {
 });
 
 router.get('/search/chart-sets', function(req, res, next) {
-  chartSetModule.all(getChartSetParameter(req), function(err, docs) {
+  chartSets.all(getChartSetParameter(req), function(err, docs) {
     res.send({
       total_count: docs.length,
       items: docs
@@ -272,12 +272,12 @@ router.post('/upload/excels', function(req, multipartyMiddleware) {
     fileName = pathArray[pathArray.length - 1];
   }
   // console.log(req.body.id);
-  chartModule.getOne(req.body.id, function(err, docs) {
+  charts.getOne(req.body.id, function(err, docs) {
     if (docs.length < 1) {
       multipartyMiddleware.send('failed');
       return;
     }
-    excelModule.updateFromFileToDB(docs[0], { filename: fileName, worksheet: "Data" }, function(result) {
+    excel.updateFromFileToDB(docs[0], { filename: fileName, worksheet: "Data" }, function(result) {
       //console.log(result);
       multipartyMiddleware.send('ok');
       if (fs.existsSync(file.path)) {
@@ -301,7 +301,7 @@ router.post('/upload/images', function(req, multipartyMiddleware) {
   let targetFileName = 'IC_' + Math.ceil(Math.random() * 1000000) + fileName;
   let targetPath = path.join(__dirname, '../public/uploadChartImages/' + targetFileName)
 
-  chartModule.updateImageChartFile(req.body.id, targetFileName, function(err, result) {
+  charts.updateImageChartFile(req.body.id, targetFileName, function(err, result) {
     if (err) {
       multipartyMiddleware.send('failed');
       return;
@@ -320,11 +320,11 @@ router.post('/upload/images', function(req, multipartyMiddleware) {
 router.get('/download/excels/:id', function(req, res, next) {
   let id = req.params.id;
 
-  chartModule.getOne(req.params.id, function(err, docs) {
+  charts.getOne(req.params.id, function(err, docs) {
     if (docs.length > 0) {
       res.setHeader('Content-disposition', 'attachment; filename=' + (docs[0]._id) + '.xlsx');
       res.setHeader('Content-type', 'application/vnd.ms-excel');
-      excelModule.writeOne(docs[0], {
+      excel.writeOne(docs[0], {
         "outStream": res,
         "worksheet": "Data",
       }, () => console.log());

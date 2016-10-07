@@ -8,7 +8,7 @@ let DB    = require('../helpers/dbHelper');
 let utils = require('../helpers/utils');
 
 let CHART_COLLECTION = 'chart_collection';
-let CHART_SET_COLLECTION = 'chart_set_collection'
+let CHART_SET_COLLECTION = 'chart_set_collection';
 let IMAGE_CHART_TYPE = 'ImageChart';
 
 /**
@@ -26,7 +26,7 @@ exports.start = function() {
       // `browserDownloadUrl`
       doc.browserDownloadUrl = {
         excel: doc.chartType === IMAGE_CHART_TYPE ? null : rootEndpoint + '/download/excels/' + doc._id
-      }
+      };
 
       // `timestamp` to `createdAt`
       if (!doc.createdAt) {

@@ -2,10 +2,10 @@
  * Created by MMo2 on 8/18/2016.
  */
 'use strict';
-const chartModule = require('../modules/chartModule');
-const chartSetModule = require('../modules/chartSetModule');
-const statisticsModule = require('../modules/statisticsModule');
-const excelModule = require('../modules/excelModule');
+const charts = require('../modules/charts');
+const chartSets = require('../modules/chart-sets');
+const excel = require('../modules/excel');
+const statistics = require('../modules/statistics');
 const ncp = require('ncp').ncp;
 const path = require('path');
 
@@ -16,13 +16,13 @@ taskCodeMap['hello world'] = function() {
 };
 
 taskCodeMap['Count Chart'] = function() {
-  chartModule.all({}, function(err, charts) {
-    chartSetModule.all({}, function(err, chartSets) {
+  charts.all({}, function(err, charts) {
+    chartSets.all({}, function(err, chartSets) {
       var countInfoData = {
         "chartCount": charts.length,
         "chartSetCount": chartSets.length
       };
-      statisticsModule.create(countInfoData, () => console.log("Doc count task success at: " + new Date()));
+      statistics.create(countInfoData, () => console.log("Doc count task success at: " + new Date()));
     });
   });
 };
@@ -39,15 +39,15 @@ taskCodeMap['download and import'] = function(url) {
       // excelHelper.readFile({filename: fileName}, function(result) {
       //     console.log("import");
       // }, excelHelper.MODE_PRODUCTION);
-      chartModule.create({
+      charts.create({
         default_options: {}
       }, function(err, doc) {
-        chartModule.getOne(doc._id, function(err, docs) {
+        charts.getOne(doc._id, function(err, docs) {
           if (docs.length < 1) {
             console.log('failed');
             return;
           }
-          excelModule.updateFromFileToDB(docs[0], {
+          excel.updateFromFileToDB(docs[0], {
             filename: fileName,
             worksheet: "Data"
           }, function(result) {

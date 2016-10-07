@@ -3,11 +3,11 @@
  */
 'use strict';
 
-let should = require('should'),
-  DB = require('../../helpers/dbHelper'),
-  fixtures = require('../fixtures/chartModule');
+let should = require('should');
 
-let chartModule = require('../../modules/chartModule');
+let charts   = require('../../modules/charts');
+let DB       = require('../../helpers/dbHelper');
+let fixtures = require('../fixtures/chartModule');
 
 describe('Model chart Tests', function() {
   let chart = {
@@ -52,15 +52,15 @@ describe('Model chart Tests', function() {
   });
 
   it('all', function(done) {
-    chartModule.all(function(err, docs) {
+    charts.all(function(err, docs) {
       docs.length.should.eql(2);
       done();
     });
   });
 
   it('clear', function(done) {
-    chartModule.clearCollection(function(err, result) {
-      chartModule.all(function(err, result) {
+    charts.clearCollection(function(err, result) {
+      charts.all(function(err, result) {
         result.length.should.eql(0);
         done();
       });
@@ -68,8 +68,8 @@ describe('Model chart Tests', function() {
   });
 
   it('create', function(done) {
-    chartModule.create(chart, function(err, newChart) {
-      chartModule.all(function(err, docs) {
+    charts.create(chart, function(err, newChart) {
+      charts.all(function(err, docs) {
         docs.length.should.eql(3);
 
         for (let key in fixtures.collections.chart_collection[0]) {
@@ -82,10 +82,10 @@ describe('Model chart Tests', function() {
   });
 
   it('getOne: id', function(done) {
-    chartModule.create(chart, function(err, newChart) {
+    charts.create(chart, function(err, newChart) {
       let id = newChart._id;
 
-      chartModule.getOne(id, function(err, docs) {
+      charts.getOne(id, function(err, docs) {
         docs.length.should.eql(1);
 
         for (let key in fixtures.collections.chart_collection[0]) {
@@ -98,7 +98,7 @@ describe('Model chart Tests', function() {
   });
 
   it('getOne: friendlyUrl', function(done) {
-    chartModule.getOne(fixtures.collections.chart_collection[0].friendlyUrl, function(err, docs) {
+    charts.getOne(fixtures.collections.chart_collection[0].friendlyUrl, function(err, docs) {
       docs.length.should.eql(1);
 
       for (let key in fixtures.collections.chart_collection[0]) {
@@ -110,14 +110,14 @@ describe('Model chart Tests', function() {
   });
 
   it('updateOne', function(done) {
-    chartModule.create(chart, function(err, newChart) {
+    charts.create(chart, function(err, newChart) {
       let id = newChart._id;
 
-      chartModule.updateOne(id, {
+      charts.updateOne(id, {
         'friendlyUrl': 'c-updated-friendly-url'
       }, function(err, docs) {
 
-        chartModule.getOne(id, function(err, docs) {
+        charts.getOne(id, function(err, docs) {
           docs.length.should.eql(1);
           docs[0].friendlyUrl.should.eql('c-updated-friendly-url');
           done();
@@ -127,9 +127,9 @@ describe('Model chart Tests', function() {
   });
 
   it('remove', function(done) {
-    chartModule.all(function(err, docs) {
-      chartModule.remove(docs[0]._id, function(err) {
-        chartModule.all(function(err, result) {
+    charts.all(function(err, docs) {
+      charts.remove(docs[0]._id, function(err) {
+        charts.all(function(err, result) {
           result.length.should.eql(1);
           result[0]._id.should.not.eql(docs[0]._id);
           done();

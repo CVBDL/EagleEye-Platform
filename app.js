@@ -8,11 +8,11 @@ var logger       = require('morgan');
 var multipart    = require('connect-multiparty');
 var path         = require('path');
 
+var apis         = require('./routes/apis');
+var config       = require('./modules/config');
 var db           = require('./helpers/dbHelper');
 var routes       = require('./routes/index');
-var restApi      = require('./routes/rest-api');
 var scheduleTask = require('./routes/schedule-management');
-var config       = require('./modules/config');
 
 var app = express();
 
@@ -39,7 +39,7 @@ app.use(multipart({
 }));
 
 app.use('/', routes);
-app.use('/api/v1', restApi);
+app.use('/api/v1', apis);
 app.use('/schedule', scheduleTask);
 
 // catch 404 and forward to error handler

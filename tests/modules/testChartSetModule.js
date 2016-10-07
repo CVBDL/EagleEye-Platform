@@ -3,14 +3,14 @@
  */
 'use strict';
 
-let should = require('should'),
-  DB = require('../../helpers/dbHelper'),
-  fixtures = require('../fixtures/chartSetModule');
+let should = require('should');
 
-let chartSetModule = require('../../modules/chartSetModule');
+let chartSets = require('../../modules/chart-sets');
+let DB = require('../../helpers/dbHelper');
+let fixtures = require('../fixtures/chartSetModule');
 
 describe('Model chart set tests', function() {
-  let chart = {
+  let chartSet = {
     "title": "Chart set sample",
     "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
     "friendlyUrl": "s-eagleeye-chart-set-three",
@@ -32,15 +32,15 @@ describe('Model chart set tests', function() {
   });
 
   it('all', function(done) {
-    chartSetModule.all(function(err, docs) {
+    chartSets.all(function(err, docs) {
       docs.length.should.eql(2);
       done();
     });
   });
 
   it('clear', function(done) {
-    chartSetModule.clearCollection(function(err) {
-      chartSetModule.all(function(err, result) {
+    chartSets.clearCollection(function(err) {
+      chartSets.all(function(err, result) {
         result.length.should.eql(0);
         done();
       });
@@ -48,12 +48,12 @@ describe('Model chart set tests', function() {
   });
 
   it('create', function(done) {
-    chartSetModule.create(chart, function(err, newChartSet) {
-      chartSetModule.all(function(err, docs) {
+    chartSets.create(chartSet, function(err, newChartSet) {
+      chartSets.all(function(err, docs) {
         docs.length.should.eql(3);
 
         for (let key in fixtures.collections.chart_set_collection[0]) {
-          docs[2][key].should.eql(chart[key]);
+          docs[2][key].should.eql(chartSet[key]);
         }
 
         done();
@@ -62,37 +62,37 @@ describe('Model chart set tests', function() {
   });
 
   it('getOne: id', function(done) {
-    chartSetModule.create(chart, function(err, newChartSet) {
+    chartSets.create(chartSet, function(err, newChartSet) {
       let id = newChartSet._id;
 
-      chartSetModule.getOne(id, function(err, docs) {
-        docs.length.should.eql(1);
-
+      chartSets.getOne(id).then(function(doc) {
         for (let key in fixtures.collections.chart_set_collection[0]) {
-          docs[0][key].should.eql(chart[key]);
+          doc[key].should.eql(chartSet[key]);
         }
 
         done();
-      });
+      })
     });
   });
 
   it('getOne: friendlyUrl', function(done) {
-    chartSetModule.getOne(fixtures.collections.chart_set_collection[0].friendlyUrl, function(err, docs) {
-      docs.length.should.eql(1);
+    chartSets.create(chartSet, function(err, newChartSet) {
+      let id = newChartSet._id;
 
-      for (let key in fixtures.collections.chart_set_collection[0]) {
-        docs[0][key].should.eql(fixtures.collections.chart_set_collection[0][key]);
-      }
+      chartSets.getOne(chartSet.friendlyUrl).then(function(doc) {
+        for (let key in fixtures.collections.chart_set_collection[0]) {
+          doc[key].should.eql(chartSet[key]);
+        }
 
-      done();
+        done();
+      })
     });
   });
 
   it('remove', function(done) {
-    chartSetModule.all(function(err, docs) {
-      chartSetModule.remove(docs[0]._id, function(err) {
-        chartSetModule.all(function(err, result) {
+    chartSets.all(function(err, docs) {
+      chartSets.remove(docs[0]._id, function(err) {
+        chartSets.all(function(err, result) {
           result.length.should.eql(1);
           result[0]._id.should.not.eql(docs[0]._id);
           done();

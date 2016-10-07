@@ -3,10 +3,11 @@
  */
 'use strict';
 
-let DB                 = require('../helpers/dbHelper');
 let ObjectId           = require('mongodb').ObjectId;
+
 let chartOptionsHelper = require('../helpers/chart-options-helper');
-let chartSetModule     = require('./chartSetModule');
+let chartSets          = require('./chart-sets');
+let DB                 = require('../helpers/dbHelper');
 let utils              = require('../helpers/utils');
 
 let COLLECTION = "chart_collection";
@@ -117,7 +118,7 @@ exports.remove = function(_id, callback) {
     _id: ObjectId(_id)
   }, function(err, result) {
     callback(err);
-    chartSetModule.removeChartFromCharts(_id);
+    chartSets.removeChartFromCharts(_id);
   });
 };
 

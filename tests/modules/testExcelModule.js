@@ -9,8 +9,8 @@ var should = require('should'),
   fixtures = require('../fixtures/chartModule'),
   writeFixtures = require('../fixtures/excelModule.json');
 
-var chartModule = require('../../modules/chartModule');
-var excelModule = require('../../modules/excelModule');
+var charts = require('../../modules/charts');
+var excel = require('../../modules/excel');
 
 describe('Model excel Tests', function() {
   before(function(done) {
@@ -25,14 +25,14 @@ describe('Model excel Tests', function() {
   });
 
   it('writeOne: id', function(done) {
-    chartModule.getOne("c-eagleeye-line-chart", function(err, docs) {
+    charts.getOne("c-eagleeye-line-chart", function(err, docs) {
       docs.length.should.eql(1);
       var setting = {
         //"outStream": outputStream,
         "filename": "testChartModule2Excel.xlsx",
         "worksheet": "Data",
       };
-      excelModule.writeOne(docs[0], setting, function() {
+      excel.writeOne(docs[0], setting, function() {
         excelHelper.readFile(setting, function(result) {
           result[0][0].should.eql(docs[0].datatable.cols[0].label);
           result[0][1].should.eql(docs[0].datatable.cols[1].label);
@@ -49,14 +49,14 @@ describe('Model excel Tests', function() {
   });
 
   it('updateFromFile', function(done) {
-    chartModule.getOne("c-eagleeye-line-chart", function(err, docs) {
+    charts.getOne("c-eagleeye-line-chart", function(err, docs) {
       docs.length.should.eql(1);
       excelHelper.writeXlsx(writeFixtures.setting, writeFixtures.data, function() {
         var setting = {
           filename: "testChartModule2ExcelRead.xlsx"
         };
-        excelModule.updateFromFileToDB(docs[0], setting, function(err) {
-          chartModule.getOne("c-eagleeye-line-chart", function(err, docs) {
+        charts.updateFromFileToDB(docs[0], setting, function(err) {
+          charts.getOne("c-eagleeye-line-chart", function(err, docs) {
             docs[0].datatable.cols[0].label.should.eql(fixtures.collections.chart_collection[0].datatable.cols[0].label);
             docs[0].datatable.cols[1].label.should.eql(writeFixtures.setting.columns[1].header);
             docs[0].datatable.cols[2].label.should.eql(writeFixtures.setting.columns[2].header);

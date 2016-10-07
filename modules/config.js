@@ -1,8 +1,8 @@
 'use strict';
 
+let fs   = require('fs');
 let path = require('path');
-let fs = require('fs');
-let q = require('q');
+let q    = require('q');
 
 let configFilePath = path.join(__dirname, '..', '/config.json');
 let config;
@@ -22,7 +22,8 @@ exports.load = function() {
         deferred.reject(new Error(err));
 
       } else {
-        config = JSON.parse(data)
+        config = JSON.parse(data);
+
         deferred.resolve(config);
       }
     });

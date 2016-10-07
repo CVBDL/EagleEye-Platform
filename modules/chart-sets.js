@@ -4,8 +4,9 @@
 'use strict';
 
 let ObjectId = require('mongodb').ObjectId;
+let q        = require('q');
+
 let DB = require('../helpers/dbHelper');
-let q = require('q');
 
 let COLLECTION = "chart_set_collection";
 let CHART_COLLECTION = "chart_collection";

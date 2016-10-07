@@ -82,21 +82,17 @@ exports.getOne = function(_id) {
   }
 
   return db.collection(COLLECTION).findOne(query).then(function(doc) {
+    if (!doc) return null;
 
-    if (doc) {
-      doc.charts.forEach(function(chartId, index) {
-        promiseQueue.push(db.collection(CHART_COLLECTION).findOne({ _id: ObjectId(chartId) }));
-      });
+    doc.charts.forEach(function(chartId, index) {
+      promiseQueue.push(db.collection(CHART_COLLECTION).findOne({ _id: ObjectId(chartId) }));
+    });
 
-      return q.all(promiseQueue).then(function(docs) {
-        doc.charts = docs;
+    return q.all(promiseQueue).then(function(docs) {
+      doc.charts = docs;
 
-        return doc;
-      });
-
-    } else {
-      return null;
-    }
+      return doc;
+    });
   });
 };
 

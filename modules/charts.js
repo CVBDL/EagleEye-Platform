@@ -43,7 +43,8 @@ exports.create = function(chartData, callback) {
     chartData.createdAt = chartData.updatedAt = now.toISOString();
 
     chartData.browserDownloadUrl = {
-      excel: chartData.chartType === IMAGE_CHART_TYPE ? null : rootEndpoint + '/download/excels/' + id
+      excel: chartData.chartType === IMAGE_CHART_TYPE ? null : rootEndpoint + '/download/excels/' + id,
+      image: null
     };
 
     if (!chartData.friendlyUrl) delete chartData.friendlyUrl;
@@ -75,17 +76,6 @@ exports.all = function(option, callback) {
     delete option.query;
   }
   db.collection(COLLECTION).find(query, false, option).toArray(callback);
-  // another implement
-  // if (option.sort) {
-  //     cursor.sort(option.sort);
-  // }
-  // if (option.skip) {
-  //     cursor.skip(option.skip);
-  // }
-  // if (option.limit) {
-  //     cursor.limit(option.limit);
-  // }
-  // cursor.toArray(callback);
 };
 
 exports.getOne = function(_id, callback) {
@@ -153,24 +143,23 @@ exports.updateImageChartFile = function(_id, fileName, callback) {
   let db = DB.get();
   let now = new Date();
   let regExp = /^c-/g;
+  let query = {};
 
   if (regExp.test(_id)) {
-    db.collection(COLLECTION).findOneAndUpdate({
-      "friendlyUrl": _id
-    }, {
-      $set: {
-        image_file_name: fileName,
-        updatedAt: now.toISOString()
-      }
-    }, callback);
+    query = { friendlyUrl: _id }
   } else {
-    db.collection(COLLECTION).findOneAndUpdate({
-      _id: ObjectId(_id)
-    }, {
+    query = { _id: ObjectId(_id) }
+  }
+
+  utils.getRootEndpoint().then(function(rootEndpoint) {
+    db.collection(COLLECTION).findOneAndUpdate(query, {
       $set: {
-        image_file_name: fileName,
+        browserDownloadUrl: {
+          excel: null,
+          image: rootEndpoint + '/uploadChartImages/' + fileName  // TODO: make path configurable
+        },
         updatedAt: now.toISOString()
       }
     }, callback);
-  }
+  })
 };

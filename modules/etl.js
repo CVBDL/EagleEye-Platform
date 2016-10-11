@@ -19,14 +19,27 @@ let IMAGE_CHART_TYPE = 'ImageChart';
 exports.start = function() {
   let db = DB.get();
 
-  // chart collection
-  utils.getRestApiRootEndpoint().then(function(rootEndpoint) {
+  /*****************************************************************************
+   *  CHART COLLECTION
+   ****************************************************************************/
+  utils.getRootEndpoint().then(function(rootEndpoint) {
     db.collection(CHART_COLLECTION).find({}).forEach(function(doc) {
 
+      if (!doc.browserDownloadUrl) {
+        doc.browserDownloadUrl = {};
+      }
+
       // `browserDownloadUrl`
-      doc.browserDownloadUrl = {
-        excel: doc.chartType === IMAGE_CHART_TYPE ? null : rootEndpoint + '/download/excels/' + doc._id
-      };
+      if (doc.chartType !== IMAGE_CHART_TYPE) {
+        doc.browserDownloadUrl.excel = rootEndpoint + '/api/v1/download/excels/' + doc._id;
+        doc.browserDownloadUrl.image = null;
+
+      } else {
+        if (!doc.browserDownloadUrl.image && doc.image_file_name) {
+          doc.browserDownloadUrl.image = rootEndpoint + '/uploadChartImages/' + doc.image_file_name;
+
+        }
+      }
 
       // `timestamp` to `createdAt`
       if (!doc.createdAt) {
@@ -46,7 +59,10 @@ exports.start = function() {
     });
   });
 
-  // chart set collection
+
+  /*****************************************************************************
+   *  CHART SET COLLECTION
+   ****************************************************************************/
   db.collection(CHART_SET_COLLECTION).find({}).forEach(function(doc) {
     // `timestamp` to `createdAt`
     if (!doc.createdAt) {

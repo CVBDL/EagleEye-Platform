@@ -1,3 +1,13 @@
+<a name="1.0.0-beta.8"></a>
+# 1.0.0-beta.8 (2016-10-11)
+
+## Features
+
+* `api/v1/chartsets/:id` now response detail chart set info.
+* Add `browserDownloadUrl.image` field to chart, if it's an image chart, it references to the static image file location.
+* Refactor
+
+
 <a name="1.0.0-beta.7"></a>
 # 1.0.0-beta.7 (2016-10-06)
 

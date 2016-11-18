@@ -60,7 +60,7 @@ npm install
 ## Running the application
 
 ```sh
-npm run start-mongo
+npm run start-mongodb
 npm start
 ```
 

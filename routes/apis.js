@@ -6,13 +6,14 @@
 let express = require('express');
 let fs      = require('fs');
 let os      = require('os');
-var path    = require('path');
+let path    = require('path');
 
 let charts      = require('../modules/charts');
 let chartSets   = require('../modules/chart-sets');
 let excelHelper = require('../helpers/excelHelper');
 let excel       = require('../modules/excel');
 let etl         = require('../modules/etl');
+let importData  = require('../modules/importData');
 let utils       = require('../helpers/utils');
 
 let router  = express.Router();
@@ -160,6 +161,15 @@ router.put('/charts/:id', function(req, res, next) {
   });
 });
 
+router.put('/charts/:id/datatable', function(req, res, next) {
+  let id = req.params.id;
+  // console.log(id);
+  // console.log(req.body);
+  importData.updateChartWithRawData(id, req.body, function(err, result) {
+    return err ? handleError(err, res) : res.send(result.value);
+  });
+  // res.send('ok');
+});
 
 /**
  * Chart Set APIs

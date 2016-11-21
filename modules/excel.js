@@ -41,8 +41,13 @@ exports.updateFromFileToDB = function(doc, setting, done, mode) {
       }],
       "rows": []
     };
-    if (doc.domainDataType) {
-      doc.datatable.cols[0].type = doc.domainDataType;
+
+    // remove this property
+    // if (doc.domainDataType) {
+    //   doc.datatable.cols[0].type = doc.domainDataType;
+    // }
+    if (result.length > 0) {
+        doc.datatable.cols[0].type = column_types.infer(result[1][0]);    
     }
     for (let i = 1; i < column.length; i++) {
       updateData.datatable.cols.push({

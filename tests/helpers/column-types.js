@@ -6,18 +6,27 @@ let columnTypes = require('../../helpers/column-types');
 
 it('should infer to `boolean` type', function(done) {
   columnTypes.infer('true').should.eql('boolean');
+  columnTypes.infer(true).should.eql('boolean');
   columnTypes.infer('false').should.eql('boolean');
+  columnTypes.infer(false).should.eql('boolean');
 
   done();
 });
 
 it('should infer to `number` type', function(done) {
   columnTypes.infer('3').should.eql('number');
+  columnTypes.infer(3).should.eql('number');
   columnTypes.infer('3.0').should.eql('number');
+  columnTypes.infer(3.0).should.eql('number');
   columnTypes.infer('3.14').should.eql('number');
+  columnTypes.infer(3.14).should.eql('number');
   columnTypes.infer('-71').should.eql('number');
+  columnTypes.infer(-71).should.eql('number');
   columnTypes.infer('-7.2').should.eql('number');
+  columnTypes.infer(-7.2).should.eql('number');
   columnTypes.infer('.6').should.eql('number');
+  columnTypes.infer(.6).should.eql('number');
+
 
   done();
 });
@@ -56,6 +65,8 @@ it('should infer to `string` type', function(done) {
   columnTypes.infer('12-00-00').should.eql('string');
   columnTypes.infer('11/11/2016').should.eql('string');
   columnTypes.infer('2016-11-11T12:00:00').should.eql('string');
+  columnTypes.infer(null).should.eql('string');
+  columnTypes.infer('null').should.eql('string');
 
   done();
 });

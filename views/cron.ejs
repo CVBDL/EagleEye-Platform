@@ -71,11 +71,7 @@ The cron format(Time)<br />
     <tr>
         <td><input type="checkbox" id="<%= tasks[i].id %>-enable" <% if (tasks[i].enable) { %> checked="checked" <% } %> /></td>
         <td>
-        <select id="<%= tasks[i].id %>-name">
-            <% for(var j=0; j<codes.length; j++) {%>
-            <option value="<%= codes[j] %>" <% if (tasks[i].name == codes[j]) { %> selected <% } %>> <%= codes[j] %></option>
-            <% } %>
-        </select>
+        <td><input type="text" id="<%= tasks[i].id %>-name" value="<%= tasks[i].name %>" /></td>
         </td>
         <td><input type="text" id="<%= tasks[i].id %>-time" value="<%= tasks[i].time %>" /></td>
         <td><input type="text" id="<%= tasks[i].id %>-para" value="<%= tasks[i].para %>" /></td>
@@ -88,21 +84,15 @@ The cron format(Time)<br />
 <table>
     <tr>
         <td>Task name:</td>
-        <td>
-            <select id="new-task-name">
-                <% for(var j=0; j<codes.length; j++) {%>
-                    <option value="<%= codes[j] %>"><%= codes[j] %></option>
-                <% } %>
-            </select>
-        </td>
+        <td><input type="text" id="new-task-name" placeholder="Take name" /></td>
     </tr>
     <tr>
         <td>Time:</td>
         <td><input type="text" id="new-task-time" value="0 0 0 * * 0" /></td>
     </tr>
     <tr>
-        <td>Parameter:</td>
-        <td><input type="text" id="new-task-para" value="" /></td>
+        <td>Path:</td>
+        <td><input type="text" id="new-task-para" placeholder="Path" /></td>
     </tr>
     <tr>
         <td></td>

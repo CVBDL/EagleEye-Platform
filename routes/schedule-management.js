@@ -13,14 +13,14 @@ setTimeout(scheduleTaskHelper.initSchedueTasks, 3000);
 router.get('/taskmanage', function(req, res, next) {
   res.render('cron', {
     title: 'Schedule task management',
-    tasks: scheduleTaskHelper.getTaskList(),
-    codes: scheduleTaskHelper.getCodeList()
+    tasks: scheduleTaskHelper.getTaskList()
+    // codes: scheduleTaskHelper.getCodeList()
   });
 });
 
-router.get('/codes', function(req, res, next) {
-  res.send(scheduleTaskHelper.getCodeList());
-});
+// router.get('/codes', function(req, res, next) {
+//   res.send(scheduleTaskHelper.getCodeList());
+// });
 
 router.get('/tasks', function(req, res, next) {
   res.send(scheduleTaskHelper.getTaskList());

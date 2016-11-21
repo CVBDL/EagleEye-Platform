@@ -65,6 +65,8 @@ it('should infer to `string` type', function(done) {
   columnTypes.infer('12-00-00').should.eql('string');
   columnTypes.infer('11/11/2016').should.eql('string');
   columnTypes.infer('2016-11-11T12:00:00').should.eql('string');
+  columnTypes.infer(null).should.eql('string');
+  columnTypes.infer('null').should.eql('string');
 
   done();
 });

@@ -165,7 +165,7 @@ router.put('/charts/:id/datatable', function(req, res, next) {
   let id = req.params.id;
   // console.log(id);
   // console.log(req.body);
-  importData.updateChartWithRawData(id, req.body, function(err, result) {
+  importData.updateChartWithRawData(id, req.body.datatable, function(err, result) {
     return err ? handleError(err, res) : res.send(result.value);
   });
   // res.send('ok');

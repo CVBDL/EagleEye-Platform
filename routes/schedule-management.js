@@ -3,52 +3,52 @@
  */
 'use strict';
 
-var scheduleTaskHelper = require('../helpers/scheduleTaskHelper');
+var scheduleJobHelper = require('../helpers/scheduleJobHelper');
 
 var express = require('express');
 var router = express.Router();
 
-setTimeout(scheduleTaskHelper.initSchedueTasks, 3000);
+setTimeout(scheduleJobHelper.initSchedueJobs, 3000);
 
-router.get('/taskmanage', function(req, res, next) {
+router.get('/jobmanage', function(req, res, next) {
   res.render('cron', {
-    title: 'Schedule task management',
-    tasks: scheduleTaskHelper.getTaskList()
-    // codes: scheduleTaskHelper.getCodeList()
+    title: 'Schedule job management',
+    jobs: scheduleJobHelper.getJobList()
+    // codes: scheduleJobHelper.getCodeList()
   });
 });
 
 // router.get('/codes', function(req, res, next) {
-//   res.send(scheduleTaskHelper.getCodeList());
+//   res.send(scheduleJobHelper.getCodeList());
 // });
 
-router.get('/tasks', function(req, res, next) {
-  res.send(scheduleTaskHelper.getTaskList());
+router.get('/Jobs', function(req, res, next) {
+  res.send(scheduleJobHelper.getJobList());
 });
 
-router.post('/newTask', function(req, res, next) {
-  let task = req.body.task;
+router.post('/newJob', function(req, res, next) {
+  let job = req.body.job;
   let time = req.body.time;
   let para = req.body.para;
-  scheduleTaskHelper.createTask(task, time, para, () => {
+  scheduleJobHelper.createJob(job, time, para, () => {
     res.send('ok');
   });
 });
 
-router.post('/removeTask', function(req, res, next) {
+router.post('/removeJob', function(req, res, next) {
   let id = req.body.id;
-  scheduleTaskHelper.removeTask(id, () => {
+  scheduleJobHelper.removeJob(id, () => {
     res.send('ok');
   });
 });
 
-router.post('/updateTask', function(req, res, next) {
+router.post('/updateJob', function(req, res, next) {
   let id = req.body.id;
-  let task = req.body.task;
+  let job = req.body.job;
   let time = req.body.time;
   let enable = req.body.enable;
   let para = req.body.para;
-  scheduleTaskHelper.updateTask(id, task, time, enable, para, () => {
+  scheduleJobHelper.updateJob(id, job, time, enable, para, () => {
     res.send('ok');
   });
 });

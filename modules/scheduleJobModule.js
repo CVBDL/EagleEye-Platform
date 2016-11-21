@@ -6,21 +6,21 @@
 let ObjectId = require('mongodb').ObjectId;
 let DB = require('../helpers/dbHelper');
 
-const COLLECTION = "schedule_task_collection";
+const COLLECTION = "schedule_job_collection";
 
 let getTimeStamp = () => new Date().valueOf();
 
-exports.create = function(taskName, time, para, callback) {
+exports.create = function(jobName, time, para, callback) {
   let db = DB.get();
-  let taskData = {};
-  taskData.timestamp = getTimeStamp();
-  taskData.lastUpdateTimestamp = taskData.timestamp;
-  taskData.enable = true;
-  taskData.para = para;
-  taskData.taskName = taskName;
-  taskData.scheduleTimeString = time;
+  let jobData = {};
+  jobData.timestamp = getTimeStamp();
+  jobData.lastUpdateTimestamp = jobData.timestamp;
+  jobData.enable = true;
+  jobData.para = para;
+  jobData.jobName = jobName;
+  jobData.scheduleTimeString = time;
 
-  db.collection(COLLECTION).insert(taskData, function(err, result) {
+  db.collection(COLLECTION).insert(jobData, function(err, result) {
     if (err) {
       return callback(err);
     }
@@ -50,7 +50,7 @@ exports.remove = function(_id, callback) {
   });
 };
 
-exports.enableOneTask = function(_id, enable, callback) {
+exports.enableOneJob = function(_id, enable, callback) {
   let db = DB.get();
   db.collection(COLLECTION).findOneAndUpdate({
     _id: ObjectId(_id)
@@ -62,13 +62,13 @@ exports.enableOneTask = function(_id, enable, callback) {
   }, callback);
 };
 
-exports.updateOneTask = function(_id, taskName, time, enable, para, callback) {
+exports.updateOneJob = function(_id, jobName, time, enable, para, callback) {
   let db = DB.get();
   db.collection(COLLECTION).findOneAndUpdate({
     _id: ObjectId(_id)
   }, {
     $set: {
-      taskName: taskName,
+      jobName: jobName,
       scheduleTimeString: time,
       enable: enable,
       para: para,

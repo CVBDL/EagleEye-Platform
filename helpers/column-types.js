@@ -18,7 +18,9 @@
 exports.infer = function(data) {
   let type = '';
 
-  data = data.trim();
+  if (typeof data === 'string') {
+    data = data.trim();
+  }
 
   if (isBoolean(data)) {
     type = 'boolean';
@@ -49,7 +51,7 @@ exports.infer = function(data) {
  * null
  */
 function isBoolean(data) {
-  return data === 'true' || data === 'false';
+  return data === 'true' || data === 'false' || data === true || data === false;
 }
 
 /**

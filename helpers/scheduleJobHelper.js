@@ -156,7 +156,7 @@ exports.createJob = function(jobName, cronString, para, callback) {
       if (err) {
         callback(err);
       } else {
-        console.log(result._id);
+        // console.log(result._id);
         enableJob(result._id, jobName, cronString, para);
         callback(null, result);
       }

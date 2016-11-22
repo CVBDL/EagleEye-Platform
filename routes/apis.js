@@ -375,10 +375,21 @@ router.post('/jobs', function(req, res, next) {
   });
 });
 
+router.delete('/jobs/:id', function(req, res, next) {
+  let id = req.params.id;
+  scheduleJobHelper.removeJob(id, function(err, result) {
+    if (err) {
+      res.status(500).send('');
+    } else {
+      res.send('ok');
+    }
+  });
+});
+
 router.get('/jobs/:id', function(req, res, next) {
   let id = req.params.id;
 
-  jobLog.getOne(id, function(err, docs) {
+  scheduleJobHelper.getOne(id, function(err, docs) {
     if (docs[0] === undefined) {
       res.status(404).send('');
     } else {
@@ -404,6 +415,7 @@ router.get('/jobs/:id/tasks', function(req, res, next) {
   let id = req.params.id;
 
   jobLog.getLogsByJob(id, function(err, docs) {
+    // console.log(docs);
     res.send({
       total_count: docs.length,
       items: docs

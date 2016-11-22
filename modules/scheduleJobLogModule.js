@@ -30,7 +30,7 @@ exports.all = function(callback) {
 
 exports.getLogsByJob = function(jobId, callback) {
   let db = DB.get();
-  db.collection(COLLECTION).find({'jobId': jobId}).toArray(callback);
+  db.collection(COLLECTION).find({'job._id': ObjectId(jobId)}).toArray(callback);
 };
 
 exports.getOne = function(_id, callback) {

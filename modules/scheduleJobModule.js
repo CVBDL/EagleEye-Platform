@@ -46,7 +46,7 @@ exports.remove = function(_id, callback) {
   db.collection(COLLECTION).removeOne({
     _id: ObjectId(_id)
   }, function(err, result) {
-    callback(err);
+    callback(err, result);
   });
 };
 

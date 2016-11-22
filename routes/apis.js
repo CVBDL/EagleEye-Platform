@@ -389,19 +389,12 @@ router.delete('/jobs/:id', function(req, res, next) {
 router.get('/jobs/:id', function(req, res, next) {
   let id = req.params.id;
 
-  scheduleJobHelper.getOne(id, function(err, docs) {
-    if (docs[0] === undefined) {
-      res.status(404).send('');
-    } else {
-      res.send({
-        '_id': docs[0]._id,
-        'name': docs[0].jobName,
-        'expression': docs[0].scheduleTimeString,
-        'command': docs[0].para,
-        'enable': docs[0].enable
-      });
-    }
-  });
+  let job = scheduleJobHelper.getJob(id);
+  if (job) {
+    res.send(job);
+  } else {
+    res.send({errorMessage: 'Job ' + id  + ' not found'});
+  }
 });
 
 router.put('/jobs/:id/restart', function(req, res, next) {

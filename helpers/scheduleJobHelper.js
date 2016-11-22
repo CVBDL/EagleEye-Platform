@@ -79,6 +79,20 @@ exports.getJobList = function() {
   return jobList;
 };
 
+exports.getJob = function(id) {
+  if (!jobMappingTable[id]) {
+    return null
+  }
+  var job = jobMappingTable[id];
+  return {
+      id: job.jobId,
+      name: job.jobName,
+      time: job.time,
+      enable: job.enable,
+      para: job.para
+    };
+};
+
 exports.triggerJob = function(id) {
   scheduleJobModule.getOne(id, function(err, docs) {
     scheduleJobLogModule.create({

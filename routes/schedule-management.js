@@ -46,7 +46,7 @@ router.post('/updateJob', function(req, res, next) {
   let id = req.body.id;
   let job = req.body.job;
   let time = req.body.time;
-  let enable = req.body.enable;
+  let enable = req.body.enable == 'true' || req.body.enable == true ? true : false;
   let para = req.body.para;
   scheduleJobHelper.updateJob(id, job, time, enable, para, () => {
     res.send('ok');

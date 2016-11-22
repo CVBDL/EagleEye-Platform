@@ -5,8 +5,9 @@
 
 const schedule = require("node-schedule");
 const scheduleJobModule = require('../modules/scheduleJobModule');
-const jobCodes = require('../modules/taskCodes').getAllTasks();
-const child_process = require('child_process');  
+// const jobCodes = require('../modules/taskCodes').getAllTasks();
+const child_process = require('child_process');
+const scheduleJobLogModule = require('../modules/scheduleJobLogModule');
 
 /*------------------------------------------------------------------------------
 //  The cron format
@@ -32,9 +33,22 @@ function enableJob(id, jobName, cronString, para) {
     enable: true,
     para: para,
     job: schedule.scheduleJob(cronString, function() {
-      console.log(para);
-      child_process.exec(para, function(err, stdout, stderr) {
-        console.log(stdout);
+      scheduleJobLogModule.create({
+        "_id": id,
+        "name": jobName,
+        "expression": cronString,
+        "command": para,
+      }, function(err, result) {
+        child_process.exec(para + " " + result._id, function(err, stdout, stderr) {
+          if (err) {
+            scheduleJobLogModule.updateOne(result._id, {
+              'state': 'failure',
+              'errorMessage': err.message
+            }, (err, result) => (err || result));
+          } else {
+            console.log(stdout);
+          }
+        });
       })
     })
   };

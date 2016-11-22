@@ -66,6 +66,7 @@ The cron format(Time)<br />
         <th>Parameter</th>
         <th>Save</th>
         <th>Delete</th>
+        <th>ID</th>
     </head>
     <% for(var i=0; i<jobs.length; i++) {%>
     <tr>
@@ -75,6 +76,7 @@ The cron format(Time)<br />
         <td><input type="text" id="<%= jobs[i].id %>-para" value="<%= jobs[i].para %>" /></td>
         <td><input type="button" id="<%= jobs[i].id %>-save" value="Save" onclick="saveJob('<%= jobs[i].id %>')" /></td>
         <td><input type="button" id="<%= jobs[i].id %>-delete" value="Delete"  onclick="deleteJob('<%= jobs[i].id %>')" /></td>
+        <td><a href=""><%= jobs[i].id %></a></td>
     </tr>
     <% } %>
 </table>

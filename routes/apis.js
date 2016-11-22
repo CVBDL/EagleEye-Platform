@@ -15,6 +15,8 @@ let excel       = require('../modules/excel');
 let etl         = require('../modules/etl');
 let importData  = require('../modules/importData');
 let utils       = require('../helpers/utils');
+let jobLog      = require('../modules/scheduleJobLogModule');
+var scheduleJobHelper = require('../helpers/scheduleJobHelper');
 
 let router  = express.Router();
 
@@ -339,6 +341,75 @@ router.get('/download/excels/:id', function(req, res, next) {
         "worksheet": "Data",
       }, () => console.log());
     }
+  });
+});
+
+router.get('/jobs', function(req, res, next) {
+  res.send(scheduleJobHelper.getJobList().map(function(x){
+    return {
+      "_id": x.id,
+      "name": x.name,
+      "expression": x.time,
+      "command": x.para,
+      "enabled": x.enable,
+    }
+  }));
+});
+
+router.post('/jobs', function(req, res, next) {
+  let job = req.body.name;
+  let time = req.body.expression;
+  let para = req.body.command;
+  scheduleJobHelper.createJob(job, time, para, (err, doc) => {
+    if (err) {
+      res.status(500).send('');
+    } else {
+      res.send({
+        '_id': doc._id,
+        'name': doc.jobName,
+        'expression': doc.scheduleTimeString,
+        'command': doc.para,
+        'enable': doc.enable
+      });
+    }
+  });
+});
+
+router.get('/jobs/:id', function(req, res, next) {
+  let id = req.params.id;
+
+  jobLog.getOne(id, function(err, docs) {
+    if (docs[0] === undefined) {
+      res.status(404).send('');
+    } else {
+      res.send({
+        '_id': docs[0]._id,
+        'name': docs[0].jobName,
+        'expression': docs[0].scheduleTimeString,
+        'command': docs[0].para,
+        'enable': docs[0].enable
+      });
+    }
+  });
+})
+
+router.put('/jobs/:id/tasks', function(req, res, next) {
+  let id = req.params.id;
+
+  jobLog.getLogsByJob(id, function(err, docs) {
+    res.send({
+      total_count: docs.length,
+      items: docs
+    });
+  });
+});
+
+router.put('/tasks/:id', function(req, res, next) {
+  let id = req.params.id;
+  let state = req.body.state;
+
+  jobLog.updateOne(id, {'state': state}, function(err, doc) {
+    return err ? handleError(err, res) : res.send(doc.value);
   });
 });
 

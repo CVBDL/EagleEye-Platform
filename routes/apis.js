@@ -393,7 +393,7 @@ router.get('/jobs/:id', function(req, res, next) {
   });
 })
 
-router.put('/jobs/:id/tasks', function(req, res, next) {
+router.get('/jobs/:id/tasks', function(req, res, next) {
   let id = req.params.id;
 
   jobLog.getLogsByJob(id, function(err, docs) {
@@ -409,7 +409,7 @@ router.put('/tasks/:id', function(req, res, next) {
   let state = req.body.state;
 
   jobLog.updateOne(id, {'state': state}, function(err, doc) {
-    return err ? handleError(err, res) : res.send(doc.value);
+    return err ? handleError(err, res) : res.send(doc);
   });
 });
 

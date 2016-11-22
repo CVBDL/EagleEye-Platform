@@ -12,7 +12,7 @@ let getTimeStamp = () => new Date().valueOf();
 
 exports.create = function(jobData, callback) {
   let db = DB.get();
-  let logData = { 'job': jobData, 'status': 'running'};
+  let logData = { 'job': jobData, 'state': 'running'};
   logData.startedAt = getTimeStamp();
 
   db.collection(COLLECTION).insert(logData, function(err, result) {
@@ -57,7 +57,5 @@ exports.updateOne = function(_id, updateData, callback) {
 
   db.collection(COLLECTION).updateOne({
     _id: ObjectId(_id)
-  }, {$set: updateData}, function(err, result) {
-    callback(err);
-  });
+  }, {$set: updateData}, callback);
 };

@@ -25,7 +25,7 @@ const scheduleJobLogModule = require('../modules/scheduleJobLogModule');
 let jobMappingTable;
 
 function enableJob(id, jobName, cronString, para) {
-  console.log(para);
+  // console.log(para);
   jobMappingTable[id] = {
     jobId: id,
     jobName: jobName,
@@ -39,6 +39,7 @@ function enableJob(id, jobName, cronString, para) {
         "expression": cronString,
         "command": para,
       }, function(err, result) {
+        // console.log(para + " " + result._id);
         child_process.exec(para + " " + result._id, function(err, stdout, stderr) {
           if (err) {
             scheduleJobLogModule.updateOne(result._id, {

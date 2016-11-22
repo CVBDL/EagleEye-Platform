@@ -415,11 +415,7 @@ router.get('/jobs/:id/tasks', function(req, res, next) {
   let id = req.params.id;
 
   jobLog.getLogsByJob(id, function(err, docs) {
-    // console.log(docs);
-    res.send({
-      total_count: docs.length,
-      items: docs
-    });
+    res.send(docs);
   });
 });
 

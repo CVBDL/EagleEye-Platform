@@ -85,11 +85,11 @@ exports.getJob = function(id) {
   }
   var job = jobMappingTable[id];
   return {
-      id: job.jobId,
-      name: job.jobName,
-      time: job.time,
-      enable: job.enable,
-      para: job.para
+      '_id': job.jobId,
+      'name': job.jobName,
+      'expression': job.time,
+      'enable': job.enable,
+      'command': job.para
     };
 };
 

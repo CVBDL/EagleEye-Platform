@@ -154,11 +154,11 @@ exports.createJob = function(jobName, cronString, para, callback) {
     para,
     (err, result) => {
       if (err) {
-
+        callback(err);
       } else {
         console.log(result._id);
         enableJob(result._id, jobName, cronString, para);
-        callback();
+        callback(result);
       }
     });
 };

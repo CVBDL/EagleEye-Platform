@@ -415,6 +415,7 @@ router.get('/jobs/:id/tasks', function(req, res, next) {
   let id = req.params.id;
 
   jobLog.getLogsByJob(id, function(err, docs) {
+    docs.sort((a, b) => b.finishedAt - a.finishedAt);
     res.send(docs);
   });
 });

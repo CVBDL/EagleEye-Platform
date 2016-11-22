@@ -391,7 +391,14 @@ router.get('/jobs/:id', function(req, res, next) {
       });
     }
   });
-})
+});
+
+router.put('/jobs/:id/restart', function(req, res, next) {
+  let id = req.params.id;
+  console.log(id);
+  scheduleJobHelper.triggerJob(id);
+  res.send('ok');
+});
 
 router.get('/jobs/:id/tasks', function(req, res, next) {
   let id = req.params.id;
@@ -407,6 +414,7 @@ router.get('/jobs/:id/tasks', function(req, res, next) {
 router.put('/tasks/:id', function(req, res, next) {
   let id = req.params.id;
   let state = req.body.state;
+  console.log(id +" " + state);
 
   jobLog.updateOne(id, {'state': state}, function(err, doc) {
     return err ? handleError(err, res) : res.send(doc);

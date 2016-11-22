@@ -70,7 +70,7 @@ The cron format(Time)<br />
     </head>
     <% for(var i=0; i<jobs.length; i++) {%>
     <tr>
-        <td><input type="checkbox" id="<%= jobs[i].id %>-enable" <% if (jobs[i].enable) { %> checked="checked" <% } %> /></td>
+        <td><input type="checkbox" id="<%= jobs[i].id %>-enable" <% if (jobs[i].enable == true || jobs[i].enable == 'true') { %> checked="checked" <% } %> /></td>
         <td><input type="text" id="<%= jobs[i].id %>-name" value="<%= jobs[i].name %>" /></td>
         <td><input type="text" id="<%= jobs[i].id %>-time" value="<%= jobs[i].time %>" /></td>
         <td><input type="text" id="<%= jobs[i].id %>-para" value="<%= jobs[i].para %>" /></td>

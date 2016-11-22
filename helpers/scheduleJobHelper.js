@@ -39,7 +39,7 @@ function enableJob(id, jobName, cronString, para) {
         "expression": cronString,
         "command": para,
       }, function(err, result) {
-        // console.log(para + " " + result._id);
+        console.log(para + " " + result._id);
         child_process.exec(para + " " + result._id, function(err, stdout, stderr) {
           if (err) {
             scheduleJobLogModule.updateOne(result._id, {
@@ -79,6 +79,33 @@ exports.getJobList = function() {
   return jobList;
 };
 
+exports.triggerJob = function(id) {
+  scheduleJobModule.getOne(id, function(err, docs) {
+    scheduleJobLogModule.create({
+      "_id": docs[0]._id,
+      "name": docs[0].jobName,
+      "expression": docs[0].scheduleTimeString,
+      "command": docs[0].para,
+    }, function(err, result) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log(docs[0].para + " " + result._id);
+      child_process.exec(docs[0].para + " " + result._id, function(err, stdout, stderr) {
+        if (err) {
+          scheduleJobLogModule.updateOne(result._id, {
+            'state': 'failure',
+            'errorMessage': err.message
+          }, (err, result) => (err || result));
+        } else {
+          console.log(stdout);
+        }
+      });
+    });
+  });
+};
+
 exports.enableJob = function(id) {
   if (jobMappingTable[id]) {
     enableJob(id, jobMappingTable[id].jobName, jobMappingTable[id].time, jobMappingTable[id].para);
@@ -102,6 +129,8 @@ exports.updateJob = function(id, jobName, cronString, enable, para, callback) {
   jobMappingTable[id].para = para;
   if (enable) {
     exports.enableJob(id);
+  } else {
+    exports.disableJob(id);
   }
 
   scheduleJobModule.updateOneJob(id, jobName, cronString, enable, para, callback);
@@ -139,8 +168,9 @@ exports.initSchedueJobs = function() {
   scheduleJobModule.all(function(err, schedules) {
     console.log("Subscribe schedule jobs.");
     schedules.forEach(function(item, index, array) {
-      if (item.enable) {
-        enableJob(item._id, item.jobName, item.scheduleTimeString, item.para);
+      enableJob(item._id, item.jobName, item.scheduleTimeString, item.para);
+      if (!item.enable) {
+        exports.disableJob(item._id);
       }
     });
   });

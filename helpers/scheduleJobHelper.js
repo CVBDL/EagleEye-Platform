@@ -40,7 +40,7 @@ function enableJob(id, jobName, cronString, para) {
         "command": para,
       }, function(err, result) {
         console.log(para + " " + result._id);
-        child_process.exec(para + " " + result._id, function(err, stdout, stderr) {
+        child_process.exec(para + " --task-id=\"" + result._id + "\"", function(err, stdout, stderr) {
           if (err) {
             scheduleJobLogModule.updateOne(result._id, {
               'state': 'failure',

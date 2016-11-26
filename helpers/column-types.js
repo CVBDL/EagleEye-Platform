@@ -45,7 +45,7 @@ exports.infer = function(data) {
 };
 
 /**
- * Availabe values for a boolean type is:
+ * Available values for a boolean type is:
  * true
  * false
  * null
@@ -55,7 +55,7 @@ function isBoolean(data) {
 }
 
 /**
- * Availabe formats for a number type is:
+ * Available formats for a number type is:
  * 3
  * 3.0
  * 3.14
@@ -68,7 +68,7 @@ function isNumber(data) {
 }
 
 /**
- * Availabe formats for a number type is:
+ * Available formats for a number type is:
  * HH:mm:ss[.SSS]
  */
 function isTimeOfDay(data) {
@@ -76,7 +76,7 @@ function isTimeOfDay(data) {
 }
 
 /**
- * Availabe formats for a number type is:
+ * Available formats for a number type is:
  * yyyy-MM-dd
  */
 function isDate(data) {
@@ -84,7 +84,7 @@ function isDate(data) {
 }
 
 /**
- * Availabe formats for a number type is:
+ * Available formats for a number type is:
  * yyyy-MM-dd
  */
 function isDateTime(data) {

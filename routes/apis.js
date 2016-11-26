@@ -87,14 +87,16 @@ function handleError(err, res) {
 router.get('/', function(req, res, next) {
   utils.getRestApiRootEndpoint().then(function(rootEndpoint) {
     res.send({
-      "charts_url":            rootEndpoint + '/charts/{chart_id}',
-      "chart_sets_url":        rootEndpoint + '/chart-sets/{chart_set_id}',
+      "charts_url":            rootEndpoint + '/charts',
+      "chart_sets_url":        rootEndpoint + '/chart-sets',
       "search_url":            rootEndpoint + '/search',
       "search_charts_url":     rootEndpoint + '/search/charts',
       "search_chart_sets_url": rootEndpoint + '/search/chart-sets',
       "upload_excels_url":     rootEndpoint + '/upload/excels',
       "upload_images_url":     rootEndpoint + '/upload/images',
-      "download_excels_url":   rootEndpoint + '/download/excels/:id'
+      "download_excels_url":   rootEndpoint + '/download/excels/:id',
+      "jobs_url":              rootEndpoint + '/jobs',
+      "tasks_url":             rootEndpoint + '/tasks'
     });
   });
 });

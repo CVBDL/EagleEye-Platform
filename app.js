@@ -9,6 +9,9 @@ var multipart    = require('connect-multiparty');
 var path         = require('path');
 
 var apis         = require('./routes/apis');
+var rootApi      = require('./routes/root-endpoint');
+var chartSetsApi = require('./routes/chart-sets');
+var etlApi       = require('./routes/etl');
 var config       = require('./modules/config');
 var db           = require('./helpers/dbHelper');
 var routes       = require('./routes/index');
@@ -38,7 +41,11 @@ app.use(multipart({
   uploadDir: path.join(__dirname, './excelPath/prod')
 }));
 
+// register routes
 app.use('/', routes);
+app.use('/api/v1', rootApi);
+app.use('/api/v1', etlApi);
+app.use('/api/v1', chartSetsApi);
 app.use('/api/v1', apis);
 app.use('/schedule', scheduleTask);
 

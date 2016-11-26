@@ -29,3 +29,64 @@ exports.getRestApiRootEndpoint = function() {
     return url;
   });
 };
+
+exports.getChartParameter = function(req) {
+  let para = {};
+  ["sort", "order", "limit", "start", "q"].forEach((key) => (req.query[key] ? (para[key] = isNaN(req.query[key]) ? req.query[key] : parseInt(req.query[key])) : null));
+  let queryOption = {};
+
+  if (!para.sort || !new Set(["createdAt", "updatedAt", "chartType"]).has(para.sort)) {
+    para.sort = "createdAt";
+  }
+  if (!para.order || !new Set(["asc", "desc"]).has(para.order.toLowerCase())) {
+    para.order = "desc";
+  }
+  queryOption.sort = [];
+  queryOption.sort.push([para.sort, para.order.toLowerCase()]);
+
+  if (para.start) {
+    queryOption.skip = para.start;
+  }
+  if (para.limit) {
+    queryOption.limit = para.limit;
+  }
+  if (para.q) {
+    queryOption.query = para.q;
+  }
+  return queryOption;
+};
+
+exports.getChartSetParameter = function(req) {
+  let para = {};
+  ["sort", "order", "limit", "start", "q"].forEach((key) => (req.query[key] ? (para[key] = isNaN(req.query[key]) ? req.query[key] : parseInt(req.query[key])) : null));
+
+  let queryOption = {};
+
+  if (!para.sort || !new Set(["createdAt", "updatedAt"]).has(para.sort)) {
+    para.sort = "createdAt";
+  }
+  if (!para.order || !new Set(["asc", "desc"]).has(para.order.toLowerCase())) {
+    para.order = "desc";
+  }
+  queryOption.sort = [];
+  queryOption.sort.push([para.sort, para.order.toLowerCase()]);
+
+  if (para.start) {
+    queryOption.skip = para.start;
+  }
+  if (para.limit) {
+    queryOption.limit = para.limit;
+  }
+  if (para.q) {
+    queryOption.query = para.q;
+  }
+  return queryOption;
+};
+
+exports.handleError = function(err, res) {
+  res.status(400).send({
+    "message": err.message,
+    "errors": [err]
+  });
+};
+

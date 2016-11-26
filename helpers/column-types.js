@@ -85,7 +85,7 @@ function isDate(data) {
 
 /**
  * Available formats for a number type is:
- * yyyy-MM-dd
+ * yyyy-MM-dd HH:mm:ss[.sss]
  */
 function isDateTime(data) {
   return /^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d[\.\d]{0,4}$/.test(data);

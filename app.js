@@ -8,9 +8,14 @@ var logger       = require('morgan');
 var multipart    = require('connect-multiparty');
 var path         = require('path');
 
-var apis         = require('./routes/apis');
 var rootApi      = require('./routes/root-endpoint');
+var chartsApi    = require('./routes/charts');
 var chartSetsApi = require('./routes/chart-sets');
+var jobsApi      = require('./routes/jobs');
+var tasksApi     = require('./routes/tasks');
+var searchApi    = require('./routes/search');
+var uploadApi    = require('./routes/upload');
+var downloadApi  = require('./routes/download');
 var etlApi       = require('./routes/etl');
 var config       = require('./modules/config');
 var db           = require('./helpers/dbHelper');
@@ -45,8 +50,11 @@ app.use(multipart({
 app.use('/', routes);
 app.use('/api/v1', rootApi);
 app.use('/api/v1', etlApi);
+app.use('/api/v1', chartsApi);
 app.use('/api/v1', chartSetsApi);
-app.use('/api/v1', apis);
+app.use('/api/v1', jobsApi);
+app.use('/api/v1', uploadApi);
+app.use('/api/v1', downloadApi);
 app.use('/schedule', scheduleTask);
 
 // catch 404 and forward to error handler

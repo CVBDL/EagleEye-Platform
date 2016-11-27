@@ -124,4 +124,60 @@ describe('Column types', function() {
     should.equal(columnTypes.convertFileToDataTable(null), null);
     columnTypes.convertFileToDataTable('null').should.eql('null');
   });
+
+  // to file
+
+  it('Convert to file format for `boolean` type', function() {
+    columnTypes.convertDataTableToFile('true', 'boolean').should.eql('true');
+    columnTypes.convertDataTableToFile(true, 'boolean').should.eql(true);
+    columnTypes.convertDataTableToFile('false', 'boolean').should.eql('false');
+    columnTypes.convertDataTableToFile(false, 'boolean').should.eql(false);
+  });
+
+  it('Convert to file format for `number` type', function() {
+    columnTypes.convertDataTableToFile('3', 'number').should.eql('3');
+    columnTypes.convertDataTableToFile(3, 'number').should.eql(3);
+    columnTypes.convertDataTableToFile('3.0', 'number').should.eql('3.0');
+    columnTypes.convertDataTableToFile(3.0, 'number').should.eql(3.0);
+    columnTypes.convertDataTableToFile('3.14', 'number').should.eql('3.14');
+    columnTypes.convertDataTableToFile(3.14, 'number').should.eql(3.14);
+    columnTypes.convertDataTableToFile('-71', 'number').should.eql('-71');
+    columnTypes.convertDataTableToFile(-71, 'number').should.eql(-71);
+    columnTypes.convertDataTableToFile('-7.2', 'number').should.eql('-7.2');
+    columnTypes.convertDataTableToFile(-7.2, 'number').should.eql(-7.2);
+    columnTypes.convertDataTableToFile('.6', 'number').should.eql('.6');
+    columnTypes.convertDataTableToFile(.6, 'number').should.eql(.6);
+  });
+
+  it('Convert to file format for `timeofday` type', function() {
+    columnTypes.convertDataTableToFile([0,0,0], 'timeofday').should.eql('00:00:00');
+    columnTypes.convertDataTableToFile([8,1,59], 'timeofday').should.eql('08:01:59');
+    columnTypes.convertDataTableToFile([12,0,0], 'timeofday').should.eql('12:00:00');
+    columnTypes.convertDataTableToFile([23,59,59], 'timeofday').should.eql('23:59:59');
+    columnTypes.convertDataTableToFile([12,0,0], 'timeofday').should.eql('12:00:00');
+    columnTypes.convertDataTableToFile([12,0,0,1], 'timeofday').should.eql('12:00:00.1');
+    columnTypes.convertDataTableToFile([12,0,0,12], 'timeofday').should.eql('12:00:00.12');
+    columnTypes.convertDataTableToFile([12,0,0,123], 'timeofday').should.eql('12:00:00.123');
+  });
+
+  it('Convert to file format for `date` type', function() {
+    columnTypes.convertDataTableToFile('Date(2016,10,11)', 'date').should.eql('2016-11-11');
+    columnTypes.convertDataTableToFile('Date(1999,0,1)', 'date').should.eql('1999-01-01');
+  });
+
+  it('Convert to file format for `datetime` type', function() {
+    columnTypes.convertDataTableToFile('Date(2016,10,11,12,0,0)', 'datetime').should.eql('2016-11-11 12:00:00');
+    columnTypes.convertDataTableToFile('Date(1999,0,1,12,0,0,123)', 'datetime').should.eql('1999-01-01 12:00:00.123');
+  });
+
+  it('Convert to file format for `string` type', function() {
+    columnTypes.convertDataTableToFile('Name', 'string').should.eql('Name');
+    columnTypes.convertDataTableToFile('Hello world!', 'string').should.eql('Hello world!');
+    columnTypes.convertDataTableToFile('3a', 'string').should.eql('3a');
+    columnTypes.convertDataTableToFile('12-00-00', 'string').should.eql('12-00-00');
+    columnTypes.convertDataTableToFile('11/11/2016', 'string').should.eql('11/11/2016');
+    columnTypes.convertDataTableToFile('2016-11-11T12:00:00', 'string').should.eql('2016-11-11T12:00:00');
+    should.equal(columnTypes.convertDataTableToFile(null, 'string'), null);
+    columnTypes.convertDataTableToFile('null', 'string').should.eql('null');
+  });
 });

@@ -17,7 +17,8 @@ exports.writeOne = function(doc, setting, done, mode) {
   for (var i = 0; i < doc.datatable.rows.length; i++) {
     var row = {};
     for (var j = 0; j < setting.columns.length; j++) {
-      row[setting.columns[j].key] = doc.datatable.rows[i].c[j].v;
+      row[setting.columns[j].key] =
+        columnTypes.convertDataTableToFile(doc.datatable.rows[i].c[j].v, doc.datatable.cols[j].type)
     }
     datas.push(row);
   }

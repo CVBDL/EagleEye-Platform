@@ -15,26 +15,26 @@
  *
  */
 
-exports.infer = function(data) {
+exports.infer = function(value) {
   let type = '';
 
-  if (typeof data === 'string') {
-    data = data.trim();
+  if (typeof value === 'string') {
+    value = value.trim();
   }
 
-  if (isBoolean(data)) {
+  if (isBoolean(value)) {
     type = 'boolean';
 
-  } else if (isNumber(data)) {
+  } else if (isNumber(value)) {
     type = 'number';
 
-  } else if (isTimeOfDay(data)) {
+  } else if (isTimeOfDay(value)) {
     type = 'timeofday';
 
-  } else if (isDate(data)) {
+  } else if (isDate(value)) {
     type = 'date';
 
-  } else if (isDateTime(data)) {
+  } else if (isDateTime(value)) {
     type = 'datetime';
 
   } else {
@@ -44,14 +44,65 @@ exports.infer = function(data) {
   return type;
 };
 
+exports.convertFileToDataTable = function(value) {
+  let result;
+
+  if (isTimeOfDay(value)) {
+    let parts = value.split(':');
+    let secondsParts = parts[2].split('.');
+
+    result = [];
+    result.push(parseInt(parts[0], 10));
+    result.push(parseInt(parts[1], 10));
+    result.push(parseInt(secondsParts[0], 10));
+
+    if (secondsParts[1]) result.push(parseInt(secondsParts[1], 10));
+
+  } else if (isDate(value)) {
+    let parts = value.split('-');
+    let month = parseInt(parts[1], 10) - 1;
+    let day = parseInt(parts[2], 10);
+
+    result = 'Date(' + parts[0] + ',' + month + ',' + day + ')';
+
+  } else if (isDateTime(value)) {
+    let parts = value.split(' ');
+    let date = parts[0];
+    let time = parts[1];
+
+    let dateParts = date.split('-');
+    let month = parseInt(dateParts[1], 10) - 1;
+    let day = parseInt(dateParts[2], 10);
+
+    let timeParts = time.split(':');
+    let secondsParts = timeParts[2].split('.');
+
+    result = [];
+    result.push(parseInt(timeParts[0], 10));
+    result.push(parseInt(timeParts[1], 10));
+    result.push(parseInt(secondsParts[0], 10));
+
+    if (secondsParts[1]) parseInt(secondsParts[1], 10);
+
+    result = 'Date(' + dateParts[0] + ',' + month + ',' + day + ',' +
+      parseInt(timeParts[0], 10) + ',' + parseInt(timeParts[1], 10) + ',' +
+      parseInt(secondsParts[0], 10) + (secondsParts[1] ? (',' + parseInt(secondsParts[1], 10)) : '') +')';
+
+  } else {
+    result = value;
+  }
+
+  return result;
+}
+
 /**
  * Available values for a boolean type is:
  * true
  * false
  * null
  */
-function isBoolean(data) {
-  return data === 'true' || data === 'false' || data === true || data === false;
+function isBoolean(value) {
+  return value === 'true' || value === 'false' || value === true || value === false;
 }
 
 /**
@@ -63,30 +114,30 @@ function isBoolean(data) {
  * -7.2
  * .6
  */
-function isNumber(data) {
-  return !isNaN(parseFloat(data)) && isFinite(data) && /^[-+]?(\d+|\d+\.\d*|\d*\.\d+)$/.test(data);
+function isNumber(value) {
+  return !isNaN(parseFloat(value)) && isFinite(value) && /^[-+]?(\d+|\d+\.\d*|\d*\.\d+)$/.test(value);
 }
 
 /**
  * Available formats for a number type is:
  * HH:mm:ss[.SSS]
  */
-function isTimeOfDay(data) {
-  return /^\d\d:\d\d:\d\d[\.\d]{0,4}$/.test(data);
+function isTimeOfDay(value) {
+  return /^\d\d:\d\d:\d\d[\.\d]{0,4}$/.test(value);
 }
 
 /**
  * Available formats for a number type is:
  * yyyy-MM-dd
  */
-function isDate(data) {
-  return /^\d\d\d\d-\d\d-\d\d$/.test(data);
+function isDate(value) {
+  return /^\d\d\d\d-\d\d-\d\d$/.test(value);
 }
 
 /**
  * Available formats for a number type is:
  * yyyy-MM-dd HH:mm:ss[.sss]
  */
-function isDateTime(data) {
-  return /^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d[\.\d]{0,4}$/.test(data);
+function isDateTime(value) {
+  return /^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d[\.\d]{0,4}$/.test(value);
 }

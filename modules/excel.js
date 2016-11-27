@@ -5,6 +5,7 @@
 
 let charts = require('../modules/charts');
 let excelHelper = require('../helpers/excelHelper');
+let columnTypes = require('../helpers/column-types');
 
 exports.writeOne = function(doc, setting, done, mode) {
   setting.columns = doc.datatable.cols;
@@ -27,10 +28,36 @@ exports.updateFromFileToDB = function(doc, setting, done, mode) {
   excelHelper.readFile(setting, function(result) {
     // Result format:
     // [
-    //     [ 'Category', 'value1', 'value2', 'value3' ],
-    //     [ 'Apple', 5, 9, 11 ],
-    //     [ 'Orange', 7, 3, 12 ],
-    //     [ 'Banana', 9, 5, 14 ]
+    //   [
+    //     'name(string)',
+    //     'dept(string)',
+    //     'lunchTime(timeofday)',
+    //     'salary(number)',
+    //     'hireDate(date)',
+    //     'age(number)',
+    //     'isSenior(boolean)',
+    //     'seniorityStartTime(datetime)'
+    //   ],
+    //   [
+    //     'John',
+    //     'Eng',
+    //     '12:00:00',
+    //     1000,
+    //     '2005-03-19',
+    //     35,
+    //     'true',
+    //     '2007-12-02 15:56:00'
+    //   ],
+    //   [
+    //     'Dave',
+    //     'Eng',
+    //     '12:00:00',
+    //     500,
+    //     '2006-04-19',
+    //     27,
+    //     'false',
+    //     'null'
+    //   ]
     // ]
     let updateData = doc;
     var column = result[0];
@@ -47,7 +74,7 @@ exports.updateFromFileToDB = function(doc, setting, done, mode) {
     //   doc.datatable.cols[0].type = doc.domainDataType;
     // }
     if (result.length > 0) {
-        doc.datatable.cols[0].type = column_types.infer(result[1][0]);    
+        doc.datatable.cols[0].type = columnTypes.infer(result[1][0]);
     }
     for (let i = 1; i < column.length; i++) {
       updateData.datatable.cols.push({
@@ -61,7 +88,7 @@ exports.updateFromFileToDB = function(doc, setting, done, mode) {
       };
       for (let j = 0; j < column.length; j++) {
         row.c.push({
-          v: result[i][j]
+          v: columnTypes.convertFileToDataTable(result[i][j])
         });
       }
       updateData.datatable.rows.push(row);

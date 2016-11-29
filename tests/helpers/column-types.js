@@ -72,9 +72,9 @@ describe('Column types', function() {
   });
 
   it('Convert to data table format for `boolean` type', function() {
-    columnTypes.convertFileToDataTable('true').should.eql('true');
+    columnTypes.convertFileToDataTable('true').should.eql(true);
     columnTypes.convertFileToDataTable(true).should.eql(true);
-    columnTypes.convertFileToDataTable('false').should.eql('false');
+    columnTypes.convertFileToDataTable('false').should.eql(false);
     columnTypes.convertFileToDataTable(false).should.eql(false);
   });
 
@@ -129,9 +129,9 @@ describe('Column types', function() {
 
   it('Convert to file format for `boolean` type', function() {
     columnTypes.convertDataTableToFile('true', 'boolean').should.eql('true');
-    columnTypes.convertDataTableToFile(true, 'boolean').should.eql(true);
+    columnTypes.convertDataTableToFile(true, 'boolean').should.eql('true');
     columnTypes.convertDataTableToFile('false', 'boolean').should.eql('false');
-    columnTypes.convertDataTableToFile(false, 'boolean').should.eql(false);
+    columnTypes.convertDataTableToFile(false, 'boolean').should.eql('false');
   });
 
   it('Convert to file format for `number` type', function() {
@@ -177,7 +177,7 @@ describe('Column types', function() {
     columnTypes.convertDataTableToFile('12-00-00', 'string').should.eql('12-00-00');
     columnTypes.convertDataTableToFile('11/11/2016', 'string').should.eql('11/11/2016');
     columnTypes.convertDataTableToFile('2016-11-11T12:00:00', 'string').should.eql('2016-11-11T12:00:00');
-    should.equal(columnTypes.convertDataTableToFile(null, 'string'), null);
+    should.equal(columnTypes.convertDataTableToFile(null, 'string'), 'null');
     columnTypes.convertDataTableToFile('null', 'string').should.eql('null');
   });
 });

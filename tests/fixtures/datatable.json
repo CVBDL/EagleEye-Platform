@@ -4,7 +4,7 @@
     "label": "name(string)"
   }, {
     "label": "dept(string)",
-    "type": "number"
+    "type": "string"
   }, {
     "label": "lunchTime(timeofday)",
     "type": "timeofday"
@@ -38,7 +38,7 @@
     }, {
       "v": 35
     }, {
-      "v": "true"
+      "v": true
     }, {
       "v": "Date(2007,11,2,15,56,0)"
     }]
@@ -50,13 +50,13 @@
     }, {
       "v": [13, 1, 30, 123]
     }, {
-      "v": "500.5"
+      "v": 500.5
     }, {
       "v": "Date(2006,3,19)"
     }, {
       "v": 27
     }, {
-      "v": "false"
+      "v": false
     }, {
       "v": "Date(2005,2,9,12,30,0,32)"
     }]
@@ -74,7 +74,7 @@
     }, {
       "v": 30
     }, {
-      "v": "false"
+      "v": false
     }, {
       "v": null
     }]

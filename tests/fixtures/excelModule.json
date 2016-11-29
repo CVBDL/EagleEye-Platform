@@ -1,28 +1,70 @@
 {
   "setting": {
-    "filename": "testChartModule2ExcelRead.xlsx",
+    "filename": "datatable.xlsx",
     "worksheet": "Data",
     "columns": [{
-      "header": "Name",
+      "header": "name(string)",
       "key": "name",
       "width": 32
     }, {
-      "header": "Id",
-      "key": "id",
+      "header": "dept(string)",
+      "key": "dept",
       "width": 10
     }, {
-      "header": "TestFile",
-      "key": "test",
+      "header": "lunchTime(timeofday)",
+      "key": "lunchTime",
       "width": 20
+    }, {
+      "header": "salary(number)",
+      "key": "salary",
+      "width": 20
+    }, {
+      "header": "hireDate(date)",
+      "key": "hireDate",
+      "width": 20
+    }, {
+      "header": "age(number)",
+      "key": "age",
+      "width": 20
+    },{
+      "header": "isSenior(boolean)",
+      "key": "isSenior",
+      "width": 20
+    }, {
+      "header": "seniorityStartTime(datetime)",
+      "key": "seniorityStartTime",
+      "width": 40
     }]
   },
   "data": [{
     "id": 1,
-    "name": "John Doe",
-    "test": 123
+    "name": "John",
+    "dept": "Eng",
+    "lunchTime": "12:00:00",
+    "salary": "1000",
+    "hireDate": "2005-03-19",
+    "age": "35",
+    "isSenior": "true",
+    "seniorityStartTime": "2007-12-02 15:56:00"
   }, {
     "id": 2,
-    "name": "Jane Doe",
-    "test": 456
+    "name": "Dave",
+    "dept": "Eng",
+    "lunchTime": "13:01:30.123",
+    "salary": "500.5",
+    "hireDate": "2006-04-19",
+    "age": "27",
+    "isSenior": "false",
+    "seniorityStartTime": "2005-03-09 12:30:00.32"
+  }, {
+    "id": 3,
+    "name": "Sally",
+    "dept": "Eng",
+    "lunchTime": "09:30:05",
+    "salary": "600",
+    "hireDate": "2005-10-10",
+    "age": "30",
+    "isSenior": "false",
+    "seniorityStartTime": "null"
   }]
 }

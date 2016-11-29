@@ -6,4 +6,4 @@ require('./testChartModule');
 require('./testChartSetModule');
 require('../helpers/column-types');
 // require('./testExcelHelper');
-// require('./testExcelModule');
+require('./excelSpec');

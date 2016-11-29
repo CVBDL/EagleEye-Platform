@@ -122,7 +122,7 @@ describe('Column types', function() {
     columnTypes.convertFileToDataTable('11/11/2016').should.eql('11/11/2016');
     columnTypes.convertFileToDataTable('2016-11-11T12:00:00').should.eql('2016-11-11T12:00:00');
     should.equal(columnTypes.convertFileToDataTable(null), null);
-    columnTypes.convertFileToDataTable('null').should.eql('null');
+    should.equal(columnTypes.convertFileToDataTable('null'), null);
   });
 
   // to file

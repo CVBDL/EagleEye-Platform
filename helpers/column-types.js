@@ -88,6 +88,9 @@ exports.convertFileToDataTable = function(value) {
       parseInt(timeParts[0], 10) + ',' + parseInt(timeParts[1], 10) + ',' +
       parseInt(secondsParts[0], 10) + (secondsParts[1] ? (',' + parseInt(secondsParts[1], 10)) : '') +')';
 
+  } else if (isNull(value)) {
+    result = null;
+
   } else {
     result = value;
   }
@@ -109,43 +112,52 @@ exports.convertDataTableToFile = function(value, type) {
     if (milsec) result += '.' + milsec;
 
   } else if (type === 'date') {
-    let str = value.substring(5, value.length - 1);
-    let dateParts = str.split(',');
-    let year = dateParts[0];
-    let month = parseInt(dateParts[1], 10) + 1;
-    let day = parseInt(dateParts[2], 10);
-    result = [
-      year,
-      month < 10 ? '0' + month : month,
-      day < 10 ? '0' + day : day
-    ].join('-');
+    if (isNull(value)) {
+      result = 'null';
+
+    } else {
+      let str = value.substring(5, value.length - 1);
+      let dateParts = str.split(',');
+      let year = dateParts[0];
+      let month = parseInt(dateParts[1], 10) + 1;
+      let day = parseInt(dateParts[2], 10);
+      result = [
+        year,
+        month < 10 ? '0' + month : month,
+        day < 10 ? '0' + day : day
+      ].join('-');
+    }
 
   } else if (type === 'datetime') {
-    //'Date(1999,0,1,12,0,0,123)'
-    let str = value.substring(5, value.length - 1);
-    let parts = str.split(',');
-    let year = parts[0];
-    let month = parseInt(parts[1], 10) + 1;
-    let day = parseInt(parts[2], 10);
-    let hour = parseInt(parts[3], 10);
-    let min = parseInt(parts[4], 10);
-    let sec = parseInt(parts[5], 10);
-    let milsec = parts[6] ? parseInt(parts[6], 10) : 0;
+    if (isNull(value)) {
+      result = 'null';
+    } else {
+      //'Date(1999,0,1,12,0,0,123)'
+      let str = value.substring(5, value.length - 1);
+      let parts = str.split(',');
+      let year = parts[0];
+      let month = parseInt(parts[1], 10) + 1;
+      let day = parseInt(parts[2], 10);
+      let hour = parseInt(parts[3], 10);
+      let min = parseInt(parts[4], 10);
+      let sec = parseInt(parts[5], 10);
+      let milsec = parts[6] ? parseInt(parts[6], 10) : 0;
 
-    let dateArr = [
-      year,
-      month < 10 ? '0' + month : month,
-      day < 10 ? '0' + day : day
-    ];
-    let timeArr = [
-      hour < 10 ? '0' + hour : hour,
-      min < 10 ? '0' + min : min,
-      sec < 10 ? '0' + sec : sec
-    ];
+      let dateArr = [
+        year,
+        month < 10 ? '0' + month : month,
+        day < 10 ? '0' + day : day
+      ];
+      let timeArr = [
+        hour < 10 ? '0' + hour : hour,
+        min < 10 ? '0' + min : min,
+        sec < 10 ? '0' + sec : sec
+      ];
 
-    result = dateArr.join('-') + ' ' + timeArr.join(':');
+      result = dateArr.join('-') + ' ' + timeArr.join(':');
 
-    if (milsec) result += '.' + milsec;
+      if (milsec) result += '.' + milsec;
+    }
 
   } else {
     result = value;
@@ -199,4 +211,8 @@ function isDate(value) {
  */
 function isDateTime(value) {
   return /^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d[\.\d]{0,4}$/.test(value);
+}
+
+function isNull(value) {
+  return value === null || (value + '').toLowerCase() === 'null';
 }

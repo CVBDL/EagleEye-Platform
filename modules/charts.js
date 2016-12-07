@@ -9,6 +9,7 @@ let chartOptionsHelper = require('../helpers/chart-options-helper');
 let chartSets          = require('./chart-sets');
 let DB                 = require('../helpers/dbHelper');
 let utils              = require('../helpers/utils');
+let columnTypes        = require('../helpers/column-types');
 
 let COLLECTION = "chart_collection";
 let CHART_TYPE = "chart";
@@ -162,4 +163,60 @@ exports.updateImageChartFile = function(_id, fileName, callback) {
       }
     }, callback);
   })
+};
+
+exports.updateDataTableBy2dArray = function(_id, data, done) {
+  let defaultDomainType = 'string';
+  let defaultDataType = 'number';
+
+  let updateData = {};
+
+  // response if data table is empty
+  if (typeof data === 'undefined' || data.length === 0) {
+    done({
+      message: 'Data table has no data.'
+    });
+  }
+
+  let firstRow = data[0];
+
+  updateData.datatable = {
+    "cols": [{
+      "type": defaultDomainType,
+      "label": firstRow[0] || ''
+    }],
+    "rows": []
+  };
+
+  if (data.length === 1) {
+    for (let i = 1; i < firstRow.length; i++) {
+      updateData.datatable.cols.push({
+        "label": column[i],
+        "type": defaultDataType
+      });
+    }
+
+  } else {
+    updateData.datatable.cols[0].type = columnTypes.infer(data[1][0]);
+
+    for (let i = 1; i < column.length; i++) {
+      updateData.datatable.cols.push({
+        "label": column[i],
+        "type": "number"
+      });
+    }
+    for (let i = 1; i < data.length; i++) {
+      let row = {
+        c: []
+      };
+      for (let j = 0; j < column.length; j++) {
+        row.c.push({
+          v: data[i][j]
+        });
+      }
+      updateData.datatable.rows.push(row);
+    }
+  }
+
+  charts.updateOne(_id, updateData, done);
 };

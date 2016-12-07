@@ -8,7 +8,6 @@ let express    = require('express');
 let utils      = require('../helpers/utils');
 let charts     = require('../modules/charts');
 let chartSets  = require('../modules/chart-sets');
-let importData = require('../modules/importData');
 
 let router = express.Router();
 

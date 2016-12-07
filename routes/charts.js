@@ -3,7 +3,6 @@
 let express    = require('express');
 let utils      = require('../helpers/utils');
 let charts     = require('../modules/charts');
-let importData = require('../modules/importData');
 
 let router = express.Router();
 
@@ -76,7 +75,7 @@ router.route('/charts/:id/datatable')
   .put(function putChartDataTable(req, res) {
     let id = req.params.id;
 
-    importData.updateChartWithRawData(id, req.body.datatable, function(err, result) {
+    charts.updateDataTableBy2dArray(id, req.body.datatable, function(err, result) {
       return err ? utils.handleError(err, res) : res.send(result.value);
     });
   });

@@ -60,10 +60,12 @@ exports.updateFromFileToDB = function(doc, setting, done, mode) {
     //     'null'
     //   ]
     // ]
-	console.log(result);
-    let updateData = doc;
+
+    var updateData = {
+		"friendlyUrl": doc.friendlyUrl
+	};
     var column = result[0];
-    doc.datatable = {
+    updateData.datatable = {
       "cols": [{
         "type": "string",
         "label": column[0] ? column[0] : "Category"
@@ -76,7 +78,7 @@ exports.updateFromFileToDB = function(doc, setting, done, mode) {
     //   doc.datatable.cols[0].type = doc.domainDataType;
     // }
     if (result.length > 0) {
-        doc.datatable.cols[0].type = columnTypes.infer(result[1][0]);
+        updateData.datatable.cols[0].type = columnTypes.infer(result[1][0]);
     }
     for (let i = 1; i < column.length; i++) {
       updateData.datatable.cols.push({
@@ -95,6 +97,7 @@ exports.updateFromFileToDB = function(doc, setting, done, mode) {
       }
       updateData.datatable.rows.push(row);
     }
+
     charts.updateOne(doc._id, updateData, done);
   }, mode);
 }

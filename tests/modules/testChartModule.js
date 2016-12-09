@@ -114,12 +114,14 @@ describe('Model chart Tests', function() {
       let id = newChart._id;
 
       charts.updateOne(id, {
-        'friendlyUrl': 'c-updated-friendly-url'
+        'friendlyUrl': 'c-updated-friendly-url',
+		'test_key': 'test_value'
       }, function(err, docs) {
 
         charts.getOne(id, function(err, docs) {
           docs.length.should.eql(1);
           docs[0].friendlyUrl.should.eql('c-updated-friendly-url');
+		  docs[0].test_key.should.eql('test_value');
           done();
         });
       });

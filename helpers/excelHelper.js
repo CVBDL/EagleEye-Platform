@@ -69,7 +69,7 @@ exports.writeXlsx = function(setting, data, done, mode) {
 
   var workbook = createWorkbook(setting);
 
-  var worksheet = workbook.addWorksheet(setting.worksheet ? setting.worksheet : defaultSetting.worksheet, 'FFC0000');
+  var worksheet = workbook.addWorksheet(setting.worksheet ? setting.worksheet : defaultSetting.worksheet, {properties: { tabColor: { argb: "FFC0000" }}});
 
   worksheet.columns = setting.columns;
 

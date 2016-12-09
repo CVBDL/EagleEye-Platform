@@ -19,12 +19,13 @@ describe('Model excel Tests', function() {
 
   beforeEach(function(done) {
     DB.drop(function(err) {
-      if (err) return done(err)
-      DB.fixtures(fixtures, done);
+      if (err) return done(err);
+      //DB.fixtures(fixtures, done);
     })
   });
 
-  /*it('writeOne: id', function(done) {
+  
+  it('writeOne: id', function(done) {
     charts.getOne("c-eagleeye-line-chart", function(err, docs) {
       docs.length.should.eql(1);
       var setting = {
@@ -46,43 +47,8 @@ describe('Model excel Tests', function() {
         }, excelHelper.MODE_TEST);
       }, excelHelper.MODE_TEST);
     })
-  });*/
+  });
 
-/*
-[
-  [
-    'name(string)',
-    'dept(string)',
-    'lunchTime(timeofday)',
-    'salary(number)',
-    'hireDate(date)',
-    'age(number)',
-    'isSenior(boolean)',
-    'seniorityStartTime(datetime)'
-  ],
-  [
-    'John',
-    'Eng',
-    '12:00:00',
-    1000,
-    '2005-03-19',
-    35,
-    'true',
-    '2007-12-02 15:56:00'
-  ],
-  [
-    'Dave',
-    'Eng',
-    '12:00:00',
-    500,
-    '2006-04-19',
-    27,
-    'false',
-    'null'
-  ],
-  ...
-]
-*/
   it('updateFromFile', function(done) {
     charts.getOne("c-eagleeye-line-chart", function(err, docs) {
       docs.length.should.eql(1);

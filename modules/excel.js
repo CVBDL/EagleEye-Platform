@@ -60,6 +60,7 @@ exports.updateFromFileToDB = function(doc, setting, done, mode) {
     //     'null'
     //   ]
     // ]
+	console.log(result);
     let updateData = doc;
     var column = result[0];
     doc.datatable = {

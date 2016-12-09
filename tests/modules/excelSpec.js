@@ -63,6 +63,9 @@ describe('excel spec Tests', function() {
         excel.updateFromFileToDB(docs[0], setting, function(err) {
           charts.getOne("c-eagleeye-line-chart", function(err, newDocs) {
             newDocs[0].datatable.rows.should.eql(datatableFixture.rows);
+			fixtures.collections.chart_collection[0].type
+			newDocs[0].type.should.eql(fixtures.collections.chart_collection[0].type);
+			newDocs[0].chartType.should.eql(fixtures.collections.chart_collection[0].chartType);
             done();
           });
         }, excelHelper.MODE_TEST);

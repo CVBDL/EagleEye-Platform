@@ -191,7 +191,7 @@ exports.updateDataTableBy2dArray = function(_id, data, done) {
   if (data.length === 1) {
     for (let i = 1; i < firstRow.length; i++) {
       updateData.datatable.cols.push({
-        "label": column[i],
+        "label": firstRow[i],
         "type": defaultDataType
       });
     }
@@ -199,9 +199,9 @@ exports.updateDataTableBy2dArray = function(_id, data, done) {
   } else {
     updateData.datatable.cols[0].type = columnTypes.infer(data[1][0]);
 
-    for (let i = 1; i < column.length; i++) {
+    for (let i = 1; i < firstRow.length; i++) {
       updateData.datatable.cols.push({
-        "label": column[i],
+        "label": firstRow[i],
         "type": "number"
       });
     }
@@ -209,7 +209,7 @@ exports.updateDataTableBy2dArray = function(_id, data, done) {
       let row = {
         c: []
       };
-      for (let j = 0; j < column.length; j++) {
+      for (let j = 0; j < firstRow.length; j++) {
         row.c.push({
           v: data[i][j]
         });
@@ -217,6 +217,6 @@ exports.updateDataTableBy2dArray = function(_id, data, done) {
       updateData.datatable.rows.push(row);
     }
   }
-
-  charts.updateOne(_id, updateData, done);
+console.log(updateData)
+  this.updateOne(_id, updateData, done);
 };

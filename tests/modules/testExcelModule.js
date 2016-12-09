@@ -20,7 +20,7 @@ describe('Model excel Tests', function() {
   beforeEach(function(done) {
     DB.drop(function(err) {
       if (err) return done(err);
-      //DB.fixtures(fixtures, done);
+      DB.fixtures(fixtures, done);
     })
   });
 

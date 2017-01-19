@@ -217,6 +217,10 @@ exports.updateDataTableBy2dArray = function(_id, data, done) {
       updateData.datatable.rows.push(row);
     }
   }
-console.log(updateData)
+  console.log(updateData)
   this.updateOne(_id, updateData, done);
+};
+
+exports.updateDataTable = function(_id, data, done) {
+  this.updateOne(_id, { datatable: data }, done);
 };

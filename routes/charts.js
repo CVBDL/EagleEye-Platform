@@ -75,7 +75,7 @@ router.route('/charts/:id/datatable')
   .put(function putChartDataTable(req, res) {
     let id = req.params.id;
 
-    charts.updateDataTableBy2dArray(id, req.body.datatable, function(err, result) {
+    charts.updateDataTable(id, req.body, function(err, result) {
       return err ? utils.handleError(err, res) : res.send(result.value);
     });
   });

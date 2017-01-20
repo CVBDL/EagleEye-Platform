@@ -45,7 +45,7 @@ router.route('/chart-sets/:id')
   })
 
   // update a single chart set
-  .put(function putSingleChartSet(req, res) {
+  .post(function putSingleChartSet(req, res) {
     let id = req.params.id;
 
     chartSets.updateOne(id, req.body, function(err, doc) {

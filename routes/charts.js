@@ -50,7 +50,7 @@ router.route('/charts/:id')
   })
 
   // update a single chart
-  .put(function putChart(req, res) {
+  .post(function putChart(req, res) {
     let id = req.params.id;
 
     charts.updateOne(id, req.body, function(err, doc) {

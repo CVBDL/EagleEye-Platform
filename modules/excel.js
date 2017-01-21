@@ -62,9 +62,6 @@ exports.updateFromFileToDB = function(doc, setting, done, mode) {
     // ]
 
     var updateData = {};
-	if (doc.friendlyUrl) {
-		updateData.friendlyUrl = doc.friendlyUrl;
-	}
     var column = result[0];
     updateData.datatable = {
       "cols": [{

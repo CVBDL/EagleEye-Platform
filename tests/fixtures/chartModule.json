@@ -5,7 +5,6 @@
       "chartType": "LineChart",
       "domainDataType": "string",
       "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-      "friendlyUrl": "c-eagleeye-line-chart",
       "options": {
         "title": "Fruits Overview",
         "hAxis": {
@@ -49,7 +48,6 @@
       "chartType": "ColumnChart",
       "domainDataType": "number",
       "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-      "friendlyUrl": "c-eagleeye-column-chart",
       "options": {
         "title": "Fruits Overview",
         "hAxis": {

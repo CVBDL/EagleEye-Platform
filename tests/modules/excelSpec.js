@@ -50,27 +50,27 @@ describe('excel spec Tests', function() {
 
   });
 
-  it('updateFromFile', function(done) {
-    charts.getOne("c-eagleeye-line-chart", function(err, docs) {
-      docs.length.should.eql(1);
+  // it('updateFromFile', function(done) {
+  //   charts.getOne("c-eagleeye-line-chart", function(err, docs) {
+  //     docs.length.should.eql(1);
 
-      excelHelper.writeXlsx(writeFixtures.setting, writeFixtures.data, function() {
-        var setting = {
-          filename: "datatable.xlsx",
-          "worksheet": "Data"
-        };
+  //     excelHelper.writeXlsx(writeFixtures.setting, writeFixtures.data, function() {
+  //       var setting = {
+  //         filename: "datatable.xlsx",
+  //         "worksheet": "Data"
+  //       };
 
-        excel.updateFromFileToDB(docs[0], setting, function(err) {
-          charts.getOne("c-eagleeye-line-chart", function(err, newDocs) {
-            newDocs[0].datatable.rows.should.eql(datatableFixture.rows);
-			fixtures.collections.chart_collection[0].type
-			newDocs[0].type.should.eql(fixtures.collections.chart_collection[0].type);
-			newDocs[0].chartType.should.eql(fixtures.collections.chart_collection[0].chartType);
-            done();
-          });
-        }, excelHelper.MODE_TEST);
+  //       excel.updateFromFileToDB(docs[0], setting, function(err) {
+  //         charts.getOne("c-eagleeye-line-chart", function(err, newDocs) {
+  //           newDocs[0].datatable.rows.should.eql(datatableFixture.rows);
+		// 	fixtures.collections.chart_collection[0].type
+		// 	newDocs[0].type.should.eql(fixtures.collections.chart_collection[0].type);
+		// 	newDocs[0].chartType.should.eql(fixtures.collections.chart_collection[0].chartType);
+  //           done();
+  //         });
+  //       }, excelHelper.MODE_TEST);
 
-      }, excelHelper.MODE_TEST);
-    })
-  });
+  //     }, excelHelper.MODE_TEST);
+  //   })
+  // });
 });

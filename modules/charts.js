@@ -18,16 +18,7 @@ let IMAGE_CHART_TYPE = "ImageChart";
 DB.DATABASE_KEYS.push({
   COLLECTION: COLLECTION,
   keys: [{
-    key: {
-      friendlyUrl: 1
-    },
-    option: {
-      unique: true,
-      sparse: true
-    }
-  }, {
     "options.title": "text",
-    friendlyUrl: "text",
     description: "text"
   }]
 });
@@ -47,8 +38,6 @@ exports.create = function(chartData, callback) {
       excel: chartData.chartType === IMAGE_CHART_TYPE ? null : rootEndpoint + '/download/excels/' + id,
       image: null
     };
-
-    if (!chartData.friendlyUrl) delete chartData.friendlyUrl;
 
     db.collection(COLLECTION).insert(chartData, function(err, result) {
       if (err) {
@@ -81,18 +70,10 @@ exports.all = function(option, callback) {
 
 exports.getOne = function(_id, callback) {
   let db = DB.get();
-  let regExp = /^c-/g;
 
-  if (regExp.test(_id)) {
-    db.collection(COLLECTION).find({
-      "friendlyUrl": _id
-    }).toArray(callback);
-
-  } else {
-    db.collection(COLLECTION).find({
-      "_id": ObjectId(_id)
-    }).toArray(callback);
-  }
+  db.collection(COLLECTION).find({
+    "_id": ObjectId(_id)
+  }).toArray(callback);
 };
 
 exports.clearCollection = function(callback) {
@@ -122,16 +103,6 @@ exports.updateOne = function(_id, updateData, callback) {
 
   updateData.updatedAt = now.toISOString();
 
-  if (!updateData.friendlyUrl) {
-    delete updateData.friendlyUrl;
-    update.$unset = {
-      "friendlyUrl": ""
-    };
-
-  } else {
-    update.$set.friendlyUrl = updateData.friendlyUrl;
-  }
-
   db.collection(COLLECTION).findAndModify({
     _id: ObjectId(_id)
 
@@ -146,11 +117,7 @@ exports.updateImageChartFile = function(_id, fileName, callback) {
   let regExp = /^c-/g;
   let query = {};
 
-  if (regExp.test(_id)) {
-    query = { friendlyUrl: _id }
-  } else {
-    query = { _id: ObjectId(_id) }
-  }
+  query = { _id: ObjectId(_id) }
 
   utils.getRootEndpoint().then(function(rootEndpoint) {
     db.collection(COLLECTION).findOneAndUpdate(query, {

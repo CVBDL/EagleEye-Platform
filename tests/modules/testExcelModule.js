@@ -24,7 +24,7 @@ describe('Model excel Tests', function() {
     })
   });
 
-  
+
   it('writeOne: id', function(done) {
     charts.getOne("c-eagleeye-line-chart", function(err, docs) {
       docs.length.should.eql(1);
@@ -49,23 +49,23 @@ describe('Model excel Tests', function() {
     })
   });
 
-  it('updateFromFile', function(done) {
-    charts.getOne("c-eagleeye-line-chart", function(err, docs) {
-      docs.length.should.eql(1);
-      excelHelper.writeXlsx(writeFixtures.setting, writeFixtures.data, function() {
-        var setting = {
-          filename: "datatable.xlsx"
-        };
-        excel.updateFromFileToDB(docs[0], setting, function(err) {
-          charts.getOne("c-eagleeye-line-chart", function(err, docs) {
-            docs[0].datatable.cols[0].label.should.eql(fixtures.collections.chart_collection[0].datatable.cols[0].label);
-            docs[0].datatable.cols[1].label.should.eql(writeFixtures.setting.columns[1].header);
-            docs[0].datatable.cols[2].label.should.eql(writeFixtures.setting.columns[2].header);
-            done();
-          });
-        }, excelHelper.MODE_TEST);
-      }, excelHelper.MODE_TEST);
-    })
-  });
+  // it('updateFromFile', function(done) {
+  //   charts.getOne("c-eagleeye-line-chart", function(err, docs) {
+  //     docs.length.should.eql(1);
+  //     excelHelper.writeXlsx(writeFixtures.setting, writeFixtures.data, function() {
+  //       var setting = {
+  //         filename: "datatable.xlsx"
+  //       };
+  //       excel.updateFromFileToDB(docs[0], setting, function(err) {
+  //         charts.getOne("c-eagleeye-line-chart", function(err, docs) {
+  //           docs[0].datatable.cols[0].label.should.eql(fixtures.collections.chart_collection[0].datatable.cols[0].label);
+  //           docs[0].datatable.cols[1].label.should.eql(writeFixtures.setting.columns[1].header);
+  //           docs[0].datatable.cols[2].label.should.eql(writeFixtures.setting.columns[2].header);
+  //           done();
+  //         });
+  //       }, excelHelper.MODE_TEST);
+  //     }, excelHelper.MODE_TEST);
+  //   })
+  // });
 
 });

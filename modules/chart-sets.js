@@ -15,16 +15,7 @@ let CHART_SET_TYPE = "chartset";
 DB.DATABASE_KEYS.push({
   COLLECTION: COLLECTION,
   keys: [{
-    key: {
-      friendlyUrl: 1
-    },
-    option: {
-      unique: true,
-      sparse: true
-    }
-  }, {
     "options.title": "text",
-    friendlyUrl: "text",
     description: "text"
   }]
 });
@@ -35,10 +26,6 @@ exports.create = function(chartSetData, callback) {
 
   chartSetData.type = CHART_SET_TYPE;
   chartSetData.createdAt = chartSetData.updatedAt = now.toISOString();
-
-  if (chartSetData.friendlyUrl == "") {
-    delete chartSetData.friendlyUrl;
-  }
 
   db.collection(COLLECTION).insert(chartSetData, function(err, result) {
     if (err) {
@@ -74,12 +61,7 @@ exports.getOne = function(_id) {
   let query = {};
   let promiseQueue = [];
 
-  if (regExp.test(_id)) {
-    query = { 'friendlyUrl': _id };
-
-  } else {
-    query = { '_id': ObjectId(_id) };
-  }
+  query = { '_id': ObjectId(_id) };
 
   return db.collection(COLLECTION).findOne(query).then(function(doc) {
     if (!doc) return null;
@@ -120,18 +102,6 @@ exports.updateOne = function(_id, updateData, callback) {
   let update = {
     "$set": updateData
   };
-
-  updateData.updatedAt = now.toISOString();
-
-  if (!updateData.friendlyUrl) {
-    delete updateData.friendlyUrl;
-    update.$unset = {
-      "friendlyUrl": ""
-    };
-
-  } else {
-    update.$set.friendlyUrl = updateData.friendlyUrl;
-  }
 
   db.collection(COLLECTION).findAndModify({
     "_id": ObjectId(_id)

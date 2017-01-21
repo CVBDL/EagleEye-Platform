@@ -13,7 +13,6 @@ describe('Model chart set tests', function() {
   let chartSet = {
     "title": "Chart set sample",
     "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-    "friendlyUrl": "s-eagleeye-chart-set-three",
     "charts": []
   };
 
@@ -66,20 +65,6 @@ describe('Model chart set tests', function() {
       let id = newChartSet._id;
 
       chartSets.getOne(id).then(function(doc) {
-        for (let key in fixtures.collections.chart_set_collection[0]) {
-          doc[key].should.eql(chartSet[key]);
-        }
-
-        done();
-      })
-    });
-  });
-
-  it('getOne: friendlyUrl', function(done) {
-    chartSets.create(chartSet, function(err, newChartSet) {
-      let id = newChartSet._id;
-
-      chartSets.getOne(chartSet.friendlyUrl).then(function(doc) {
         for (let key in fixtures.collections.chart_set_collection[0]) {
           doc[key].should.eql(chartSet[key]);
         }

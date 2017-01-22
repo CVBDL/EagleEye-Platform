@@ -1,33 +1,33 @@
 'use strict';
 
-let fs   = require('fs');
-let path = require('path');
-let q    = require('q');
+let Promise = require('es6-promise').Promise;
+let fs      = require('fs');
+let path    = require('path');
+let q       = require('q');
 
 let configFilePath = path.join(__dirname, '..', '/config.json');
 let config;
 
-exports.load = function() {
-  let deferred = q.defer();
+exports.load = function () {
 
-  if (config) {
-    deferred.resolve(config);
+  return new Promise(function (resolve, reject) {
+    if (config) {
+      resolve(config);
 
-  } else {
-    fs.readFile(configFilePath, {
-      encoding: 'utf-8'
+    } else {
+      fs.readFile(configFilePath, {
+        encoding: 'utf-8'
 
-    }, function(err, data) {
-      if (err) {
-        deferred.reject(new Error(err));
+      }, function (err, data) {
+        if (err) {
+          reject('An error occurred loading configuration file.');
 
-      } else {
-        config = JSON.parse(data);
+        } else {
+          config = JSON.parse(data);
 
-        deferred.resolve(config);
-      }
-    });
-  }
-
-  return deferred.promise;
+          resolve(config);
+        }
+      });
+    }
+  });
 };

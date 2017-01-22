@@ -1,15 +1,14 @@
-/**
- * Created by MMo2 on 6/15/2016.
- */
 'use strict';
 
-let should = require('should');
+let MongoClient = require('mongodb').MongoClient
+let should      = require('should');
 
 let charts   = require('../../modules/charts');
-let DB       = require('../../helpers/dbHelper');
+let dbClient = require('../../helpers/dbHelper');
 let fixtures = require('../fixtures/chartModule');
 
-describe('Model chart Tests', function() {
+describe('modules: charts', function () {
+
   let chart = {
     "chartType": "LineChart",
     "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
@@ -36,16 +35,16 @@ describe('Model chart Tests', function() {
   };
 
   before(function(done) {
-    DB.connect(DB.MODE_TEST, done);
+    dbClient.connect(dbClient.MODE_TEST, done);
   });
 
   beforeEach(function(done) {
-    DB.drop(function(err) {
+    dbClient.drop(function(err) {
       if (err) {
         return done(err);
       }
 
-      DB.fixtures(fixtures, done);
+      dbClient.fixtures(fixtures, done);
     });
   });
 

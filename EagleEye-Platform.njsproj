@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <SchemaVersion>2.0</SchemaVersion>
+        <ProjectGuid>{0aef616f-48f7-4074-9b72-9fca6292ee61}</ProjectGuid>
+        <ProjectHome />
+        <ProjectView>ShowAllFiles</ProjectView>
+        <StartupFile>app.js</StartupFile>
+        <WorkingDirectory>.</WorkingDirectory>
+        <OutputPath>.</OutputPath>
+        <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+        <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+        <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+    <ItemGroup>
+        <Content Include="config.json" />
+        <Content Include="package.json" />
+        <Content Include="CHANGELOG.md" />
+        <Content Include="README.md" />
+        <Compile Include="app.js" />
+        <Compile Include="Gruntfile.js" />
+        <Compile Include="helpers\chart-options-helper.js" />
+        <Compile Include="helpers\column-types.js" />
+        <Compile Include="helpers\dbHelper.js" />
+        <Compile Include="helpers\default-chart-options.js" />
+        <Compile Include="helpers\excelHelper.js" />
+        <Compile Include="helpers\scheduleJobHelper.js" />
+        <Compile Include="helpers\utils.js" />
+        <Compile Include="modules\chart-sets.js" />
+        <Compile Include="modules\charts.js" />
+        <Compile Include="modules\config.js" />
+        <Compile Include="modules\etl.js" />
+        <Compile Include="modules\excel.js" />
+        <Compile Include="modules\scheduleJobLogModule.js" />
+        <Compile Include="modules\scheduleJobModule.js" />
+        <Compile Include="modules\statistics.js" />
+        <Compile Include="modules\taskCodes.js" />
+        <Content Include="public\favicon.ico" />
+        <Compile Include="routes\chart-sets.js" />
+        <Compile Include="routes\charts.js" />
+        <Compile Include="routes\download.js" />
+        <Compile Include="routes\etl.js" />
+        <Compile Include="routes\index.js" />
+        <Compile Include="routes\jobs.js" />
+        <Compile Include="routes\root-endpoint.js" />
+        <Compile Include="routes\schedule-management.js" />
+        <Compile Include="routes\search.js" />
+        <Compile Include="routes\tasks.js" />
+        <Compile Include="routes\upload.js" />
+        <Compile Include="tools\start-express.js" />
+        <Compile Include="tools\terminate-express.js" />
+        <Content Include="views\cron.ejs" />
+        <Content Include="views\error.ejs" />
+        <Content Include="views\index.ejs" />
+        <Compile Include="public\javascript\init.js" />
+        <Compile Include="public\javascript\jquery.min.js" />
+        <Compile Include="public\javascript\materialize.js" />
+        <Compile Include="public\javascript\materialize.min.js" />
+        <Content Include="public\stylesheets\materialize.css" />
+        <Content Include="public\stylesheets\materialize.min.css" />
+        <Content Include="public\stylesheets\style.css" />
+        <Content Include="public\uploadChartImages\IC_692172pSpXvjOCgEw-Aj99bG7x2j5U.jpg" />
+        <Content Include="public\uploadChartImages\IC_9892576FFY3OKfsoNCgYjC7gTbnkt4.jpg" />
+        <Content Include="public\uploadChartImages\README.md" />
+        <Content Include="tests\fixtures\chartModule.json" />
+        <Content Include="tests\fixtures\chartSetModule.json" />
+        <Content Include="tests\fixtures\datatable.json" />
+        <Content Include="tests\fixtures\excelHelper.json" />
+        <Content Include="tests\fixtures\excelModule.json" />
+        <Compile Include="tests\helpers\column-types.js" />
+        <Compile Include="tests\modules\excelSpec.js" />
+        <Compile Include="tests\modules\fullSuitTests.js" />
+        <Compile Include="tests\modules\testChartModule.js" />
+        <Compile Include="tests\modules\testChartSetModule.js" />
+        <Compile Include="tests\modules\testExcelHelper.js" />
+        <Compile Include="tests\modules\testExcelModule.js" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="bin" />
+        <Folder Include="excelPath" />
+        <Folder Include="excelPath\prod" />
+        <Folder Include="excelPath\test" />
+        <Folder Include="helpers" />
+        <Folder Include="modules" />
+        <Folder Include="public" />
+        <Folder Include="public\fonts" />
+        <Folder Include="public\fonts\roboto" />
+        <Folder Include="public\javascript" />
+        <Folder Include="public\stylesheets" />
+        <Folder Include="public\uploadChartImages" />
+        <Folder Include="routes" />
+        <Folder Include="tests" />
+        <Folder Include="tests\fixtures" />
+        <Folder Include="tests\helpers" />
+        <Folder Include="tests\modules" />
+        <Folder Include="tools" />
+        <Folder Include="views" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
+    <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+    <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+    <ProjectExtensions>
+        <VisualStudio>
+          <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+            <WebProjectProperties>
+              <UseIIS>False</UseIIS>
+              <AutoAssignPort>True</AutoAssignPort>
+              <DevelopmentServerPort>0</DevelopmentServerPort>
+              <DevelopmentServerVPath>/</DevelopmentServerVPath>
+              <IISUrl>http://localhost:48022/</IISUrl>
+              <NTLMAuthentication>False</NTLMAuthentication>
+              <UseCustomServer>True</UseCustomServer>
+              <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+              <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+            </WebProjectProperties>
+          </FlavorProperties>
+          <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+            <WebProjectProperties>
+              <StartPageUrl>
+              </StartPageUrl>
+              <StartAction>CurrentPage</StartAction>
+              <AspNetDebugging>True</AspNetDebugging>
+              <SilverlightDebugging>False</SilverlightDebugging>
+              <NativeDebugging>False</NativeDebugging>
+              <SQLDebugging>False</SQLDebugging>
+              <ExternalProgram>
+              </ExternalProgram>
+              <StartExternalURL>
+              </StartExternalURL>
+              <StartCmdLineArguments>
+              </StartCmdLineArguments>
+              <StartWorkingDirectory>
+              </StartWorkingDirectory>
+              <EnableENC>False</EnableENC>
+              <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+            </WebProjectProperties>
+          </FlavorProperties>
+        </VisualStudio>
+    </ProjectExtensions>
+</Project>

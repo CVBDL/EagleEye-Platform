@@ -1,9 +1,0 @@
-/**
- * Created by MMo2 on 6/14/2016.
- */
-
-require('./testChartModule');
-require('./testChartSetModule');
-require('../helpers/column-types');
-// require('./testExcelHelper');
-require('./excelSpec');

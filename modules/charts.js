@@ -4,7 +4,7 @@ let ObjectId = require('mongodb').ObjectId;
 
 let chartOptionsHelper = require('../helpers/chart-options-helper');
 let chartSets          = require('./chart-sets');
-let DB                 = require('../helpers/dbHelper');
+let dbClient           = require('../helpers/dbHelper');
 let utils              = require('../helpers/utils');
 let columnTypes        = require('../helpers/column-types');
 
@@ -12,7 +12,7 @@ const COLLECTION = "chart_collection";
 const CHART_TYPE = "chart";
 const IMAGE_CHART_TYPE = "ImageChart";
 
-DB.DATABASE_KEYS.push({
+dbClient.DATABASE_KEYS.push({
   COLLECTION: COLLECTION,
   keys: [{
     "options.title": "text",
@@ -21,7 +21,7 @@ DB.DATABASE_KEYS.push({
 });
 
 exports.create = function(chartData, callback) {
-  const db = DB.get();
+  const db = dbClient.get();
   const id = ObjectId();
 
   utils.getRestApiRootEndpoint().then(function(rootEndpoint) {
@@ -51,7 +51,7 @@ exports.create = function(chartData, callback) {
 };
 
 exports.all = function(option, callback) {
-  let db = DB.get();
+  let db = dbClient.get();
   let query = {};
   if (arguments.length == 1) {
     callback = option;
@@ -70,7 +70,7 @@ exports.all = function(option, callback) {
 };
 
 exports.getOne = function(_id, callback) {
-  let db = DB.get();
+  let db = dbClient.get();
 
   db.collection(COLLECTION).find({
     "_id": ObjectId(_id)
@@ -78,7 +78,7 @@ exports.getOne = function(_id, callback) {
 };
 
 exports.clearCollection = function(callback) {
-  let db = DB.get();
+  let db = dbClient.get();
 
   db.collection(COLLECTION).remove({}, function(err, result) {
     callback(err);
@@ -86,7 +86,7 @@ exports.clearCollection = function(callback) {
 };
 
 exports.remove = function(_id, callback) {
-  let db = DB.get();
+  let db = dbClient.get();
   db.collection(COLLECTION).removeOne({
     _id: ObjectId(_id)
   }, function(err, result) {
@@ -96,7 +96,7 @@ exports.remove = function(_id, callback) {
 };
 
 exports.updateOne = function(_id, updateData, callback) {
-  let db = DB.get();
+  let db = dbClient.get();
   let now = new Date();
   let update = {
     "$set": updateData
@@ -113,7 +113,7 @@ exports.updateOne = function(_id, updateData, callback) {
 };
 
 exports.updateImageChartFile = function(_id, fileName, callback) {
-  let db = DB.get();
+  let db = dbClient.get();
   let now = new Date();
   let regExp = /^c-/g;
   let query = {};

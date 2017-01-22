@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "test": "node_modules/.bin/mocha tests/modules/fullSuitTests.js",
+    "test": "node_modules/.bin/mocha tests/unit.conf.js",
     "start-mongodb": "mongod",
     "install-mongodb-service": "mongod --dbpath=C:\\data\\db --logpath=C:\\data\\db\\log.txt --install --port 27017",
     "uninstall-mongodb-service": "mongod --remove",

@@ -1,9 +1,6 @@
-/**
- * Created by MMo2 on 6/14/2016.
- */
 'use strict';
 
-let ObjectId           = require('mongodb').ObjectId;
+let ObjectId = require('mongodb').ObjectId;
 
 let chartOptionsHelper = require('../helpers/chart-options-helper');
 let chartSets          = require('./chart-sets');
@@ -11,9 +8,9 @@ let DB                 = require('../helpers/dbHelper');
 let utils              = require('../helpers/utils');
 let columnTypes        = require('../helpers/column-types');
 
-let COLLECTION = "chart_collection";
-let CHART_TYPE = "chart";
-let IMAGE_CHART_TYPE = "ImageChart";
+const COLLECTION = "chart_collection";
+const CHART_TYPE = "chart";
+const IMAGE_CHART_TYPE = "ImageChart";
 
 DB.DATABASE_KEYS.push({
   COLLECTION: COLLECTION,
@@ -24,22 +21,26 @@ DB.DATABASE_KEYS.push({
 });
 
 exports.create = function(chartData, callback) {
-  let db = DB.get();
-  let id = ObjectId();
-  let now = new Date();
+  const db = DB.get();
+  const id = ObjectId();
 
   utils.getRestApiRootEndpoint().then(function(rootEndpoint) {
     chartData._id = id;
-    chartData.type = IMAGE_CHART_TYPE == chartData.chartType ? IMAGE_CHART_TYPE : CHART_TYPE;
-    chartData.options = chartOptionsHelper.ChartOptionsAdapter(chartData.chartType, chartData.options);
-    chartData.createdAt = chartData.updatedAt = now.toISOString();
+
+    chartData.options = chartOptionsHelper.ChartOptionsAdapter(
+      chartData.chartType,
+      chartData.options
+    );
+
+    chartData.createdAt = chartData.updatedAt = new Date().toISOString();
 
     chartData.browserDownloadUrl = {
-      excel: chartData.chartType === IMAGE_CHART_TYPE ? null : rootEndpoint + '/download/excels/' + id,
+      excel: chartData.chartType === IMAGE_CHART_TYPE ?
+                              null : rootEndpoint + '/download/excels/' + id,
       image: null
     };
 
-    db.collection(COLLECTION).insert(chartData, function(err, result) {
+    db.collection(COLLECTION).insertOne(chartData, function(err, result) {
       if (err) {
         return callback(err);
       }

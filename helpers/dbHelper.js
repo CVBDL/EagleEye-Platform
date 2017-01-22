@@ -1,23 +1,22 @@
-/**
- * Created by MMo2 on 6/14/2016.
- */
-var MongoClient = require('mongodb').MongoClient,
-  async = require('async');
+'use strict';
 
-var PRODUCTION_URI = 'mongodb://localhost:27017/eagleEyeDatabase',
-  TEST_URI = 'mongodb://localhost:27017/testEagleEyeDatabase';
+let MongoClient = require('mongodb').MongoClient;
+let async       = require('async');
 
-exports.MODE_TEST = 'mode_test'
-exports.MODE_PRODUCTION = 'mode_production'
+const PRODUCTION_URI = 'mongodb://localhost:27017/eagleEyeDatabase';
+const TEST_URI       = 'mongodb://localhost:27017/testEagleEyeDatabase';
+
+exports.MODE_PRODUCTION = 'mode_production';
+exports.MODE_TEST       = 'mode_test';
 
 exports.DATABASE_KEYS = [];
 
-var state = {
+let state = {
   db: null,
-  mode: null,
-}
+  mode: null
+};
 
-var ensureIndex = function(keyObject, collection) {
+let ensureIndex = function(keyObject, collection) {
   keyObject.keys.forEach(function(keyConfig) {
     if (keyConfig.option) {
       collection.ensureIndex(keyConfig.key, keyConfig.option);
@@ -30,14 +29,17 @@ var ensureIndex = function(keyObject, collection) {
 
 exports.connect = function(mode, done) {
   if (state.db != null) return done();
-  var uri = mode === exports.MODE_TEST ? TEST_URI : PRODUCTION_URI
+
+  let uri = mode === exports.MODE_TEST ? TEST_URI : PRODUCTION_URI;
 
   MongoClient.connect(uri, function(err, db) {
-    if (err) return done(err)
+    if (err) return done(err);
+
     state.db = db;
     state.mode = mode;
+
     exports.DATABASE_KEYS.forEach(function(keyObject) {
-      var collection = db.collection[keyObject.COLLECTION];
+      let collection = db.collection[keyObject.COLLECTION];
       if (!collection) {
         db.createCollection(keyObject.COLLECTION, function(err, collection) {
           ensureIndex(keyObject, collection);
@@ -46,7 +48,7 @@ exports.connect = function(mode, done) {
         ensureIndex(keyObject, collection);
       }
     });
-    done()
+    done();
   })
 };
 
@@ -71,20 +73,21 @@ exports.drop = function(done) {
   state.db.collections(function(err, collections) {
     async.each(collections, function(collection, cb) {
       if (collection.collectionName.indexOf('system') === 0) {
-        return cb()
+        return cb();
       }
-      collection.remove(cb)
-    }, done)
-  })
+      collection.remove(cb);
+    }, done);
+  });
 };
 
 exports.fixtures = function(data, done) {
-  var db = state.db;
+  let db = state.db;
+
   if (!db) {
-    return done(new Error('Missing database connection.'))
+    return done(new Error('Missing database connection.'));
   }
 
-  var names = Object.keys(data.collections);
+  let names = Object.keys(data.collections);
 
   async.each(names, function(name, cb) {
     db.createCollection(name, function(err, collection) {

@@ -1,7 +1,6 @@
 {
   "collections": {
     "chart_collection": [{
-      "type": "chart",
       "chartType": "LineChart",
       "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
       "options": {
@@ -43,7 +42,6 @@
         }]
       }
     }, {
-      "type": "chart",
       "chartType": "ColumnChart",
       "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
       "options": {

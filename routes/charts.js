@@ -1,8 +1,8 @@
 'use strict';
 
-let express    = require('express');
-let utils      = require('../helpers/utils');
-let charts     = require('../modules/charts');
+let express = require('express');
+let utils   = require('../helpers/utils');
+let charts  = require('../modules/charts');
 
 let router = express.Router();
 

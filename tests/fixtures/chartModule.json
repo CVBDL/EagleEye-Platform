@@ -3,7 +3,6 @@
     "chart_collection": [{
       "type": "chart",
       "chartType": "LineChart",
-      "domainDataType": "string",
       "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
       "options": {
         "title": "Fruits Overview",
@@ -46,7 +45,6 @@
     }, {
       "type": "chart",
       "chartType": "ColumnChart",
-      "domainDataType": "number",
       "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
       "options": {
         "title": "Fruits Overview",

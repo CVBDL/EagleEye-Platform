@@ -12,7 +12,6 @@ let fixtures = require('../fixtures/chartModule');
 describe('Model chart Tests', function() {
   let chart = {
     "chartType": "LineChart",
-    "domainDataType": "string",
     "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
     "options": {
       "title": "Fruits Overview",

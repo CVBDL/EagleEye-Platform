@@ -15,8 +15,8 @@ let router = express.Router();
 // define routes
 router.route('/search')
   .get(function search(req, res) {
-    charts.all(utils.getChartParameter(req), function(err, chartDocs) {
-      chartSets.all(utils.getChartSetParameter(req), function(err, chartSetDocs) {
+    charts.all(utils.getQueryParameters(req), function(err, chartDocs) {
+      chartSets.all(utils.getQueryParameters(req), function(err, chartSetDocs) {
         var totalCount = chartDocs.length + chartSetDocs.length;
         var items = chartSetDocs.concat(chartDocs);
 
@@ -32,7 +32,7 @@ router.route('/search')
 // define routes
 router.route('/search/charts')
   .get(function searchCharts(req, res) {
-    charts.all(utils.getChartParameter(req), function(err, docs) {
+    charts.all(utils.getQueryParameters(req), function(err, docs) {
       res.send({
         total_count: docs.length,
         items: docs
@@ -44,7 +44,7 @@ router.route('/search/charts')
 // define routes
 router.route('/search/chart-sets')
   .get(function searchChartSets(req, res) {
-    chartSets.all(utils.getChartSetParameter(req), function(err, docs) {
+    chartSets.all(utils.getQueryParameters(req), function(err, docs) {
       res.send({
         total_count: docs.length,
         items: docs

@@ -50,6 +50,7 @@
     <Compile Include="routes\search.js" />
     <Compile Include="routes\tasks.js" />
     <Compile Include="routes\upload.js" />
+    <Compile Include="tests\helpers\utils.spec.js" />
     <Compile Include="tests\modules\config.spec.js" />
     <Compile Include="tests\unit.conf.js" />
     <Compile Include="tools\start-express.js" />

@@ -12,7 +12,7 @@ router.route('/charts')
 
   // read all charts
   .get(function getCharts(req, res) {
-    charts.all(utils.getChartParameter(req), function(err, docs) {
+    charts.all(utils.getQueryParameters(req), function(err, docs) {
       res.send(docs);
     });
   })

@@ -12,7 +12,7 @@ router.route('/chart-sets')
 
   // read all chart sets
   .get(function getChartSets(req, res) {
-    chartSets.all(utils.getChartSetParameter(req), function(err, docs) {
+    chartSets.all(utils.getQueryParameters(req), function(err, docs) {
       res.send(docs);
     });
   })

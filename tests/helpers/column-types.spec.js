@@ -4,7 +4,8 @@ let should = require('should');
 
 let columnTypes = require('../../helpers/column-types');
 
-describe('Column types', function() {
+describe('Column types', function () {
+
   it('should infer to `boolean` type', function(done) {
     columnTypes.infer('true').should.eql('boolean');
     columnTypes.infer(true).should.eql('boolean');

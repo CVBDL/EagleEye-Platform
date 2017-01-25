@@ -21,7 +21,7 @@
     <Content Include="CHANGELOG.md" />
     <Content Include="README.md" />
     <Compile Include="app.js" />
-    <Compile Include="Gruntfile.js" />
+    <Compile Include="gulpfile.js" />
     <Compile Include="helpers\chart-options-helper.js" />
     <Compile Include="helpers\column-types.js" />
     <Compile Include="helpers\dbHelper.js" />

@@ -1,15 +1,15 @@
 'use strict';
 
+let Promise  = require('es6-promise').Promise;
 let ObjectId = require('mongodb').ObjectId;
 
-let chartOptionsHelper = require('../helpers/chart-options-helper');
 let chartSets          = require('./chart-sets');
+let chartOptionsHelper = require('../helpers/chart-options-helper');
 let dbClient           = require('../helpers/dbHelper');
 let utils              = require('../helpers/utils');
 let columnTypes        = require('../helpers/column-types');
 
-const COLLECTION = "chart_collection";
-const CHART_TYPE = "chart";
+const COLLECTION       = "chart_collection";
 const IMAGE_CHART_TYPE = "ImageChart";
 
 dbClient.DATABASE_KEYS.push({
@@ -20,32 +20,28 @@ dbClient.DATABASE_KEYS.push({
   }]
 });
 
-exports.create = function(chartData, callback) {
+exports.create = function(chart) {
   const db = dbClient.get();
   const id = ObjectId();
 
-  utils.getRestApiRootEndpoint().then(function(rootEndpoint) {
-    chartData._id = id;
+  return utils.getRestApiRootEndpoint().then(function(rootEndpoint) {
+    chart._id = id;
 
-    chartData.options = chartOptionsHelper.ChartOptionsAdapter(
-      chartData.chartType,
-      chartData.options
+    chart.options = chartOptionsHelper.ChartOptionsAdapter(
+      chart.chartType,
+      chart.options
     );
 
-    chartData.createdAt = chartData.updatedAt = new Date().toISOString();
+    chart.createdAt = chart.updatedAt = new Date().toISOString();
 
-    chartData.browserDownloadUrl = {
-      excel: chartData.chartType === IMAGE_CHART_TYPE ?
+    chart.browserDownloadUrl = {
+      excel: chart.chartType === IMAGE_CHART_TYPE ?
                               null : rootEndpoint + '/download/excels/' + id,
       image: null
     };
 
-    db.collection(COLLECTION).insertOne(chartData, function(err, result) {
-      if (err) {
-        return callback(err);
-      }
-
-      callback(null, result.ops[0]);
+    return db.collection(COLLECTION).insertOne(chart).then(function (result) {
+      return result.ops[0];
     });
   });
 };

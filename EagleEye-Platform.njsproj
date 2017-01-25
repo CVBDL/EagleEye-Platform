@@ -50,9 +50,12 @@
     <Compile Include="routes\search.js" />
     <Compile Include="routes\tasks.js" />
     <Compile Include="routes\upload.js" />
+    <Compile Include="tests\helpers\db.spec.js" />
     <Compile Include="tests\helpers\utils.spec.js" />
     <Compile Include="tests\modules\config.spec.js" />
+    <Compile Include="tests\routes\charts.spec.js" />
     <Compile Include="tests\unit.conf.js" />
+    <Compile Include="tests\unit.settings.js" />
     <Compile Include="tools\start-express.js" />
     <Compile Include="tools\terminate-express.js" />
     <Content Include="views\cron.ejs" />
@@ -96,6 +99,7 @@
     <Folder Include="tests\fixtures" />
     <Folder Include="tests\helpers" />
     <Folder Include="tests\modules" />
+    <Folder Include="tests\routes\" />
     <Folder Include="tools" />
     <Folder Include="typings\" />
     <Folder Include="typings\globals\" />

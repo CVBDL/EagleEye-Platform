@@ -35,7 +35,8 @@
     "gulp": "^3.9.1",
     "json-loader": "^0.5.4",
     "mocha": "^1.21.5",
-    "should": "~4.0.4"
+    "should": "~4.0.4",
+    "supertest": "^2.0.1"
   },
   "optionalDependencies": {
     "node-windows": "^0.1.11"

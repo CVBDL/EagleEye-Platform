@@ -1,87 +1,117 @@
 {
   "collections": {
-    "chart_collection": [{
-      "chartType": "LineChart",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-      "options": {
-        "title": "Fruits Overview",
-        "hAxis": {
-          "title": "Category"
+    "chart_collection": [
+      {
+        "chartType": "LineChart",
+        "description": "This is a line chart.",
+        "options": {
+          "title": "Population"
         },
-        "vAxis": {
-          "title": "Inventory"
+        "datatable": {
+          "cols": [
+            {
+              "label": "City",
+              "type": "string"
+            },
+            {
+              "label": "2010 Population",
+              "type": "number"
+            },
+            {
+              "label": "2000 Population",
+              "type": "number"
+            }
+          ],
+          "rows": [
+            {
+              "c": [
+                { "v": "New York City, NY" },
+                { "v": 8175000 },
+                { "v": 8008000 }
+              ]
+            },
+            {
+              "c": [
+                { "v": "Los Angeles, CA" },
+                { "v": 3792000 },
+                { "v": 3694000 }
+              ]
+            },
+            {
+              "c": [
+                { "v": "Chicago, IL" },
+                { "v": 2695000 },
+                { "v": 2896000 }
+              ]
+            },
+            {
+              "c": [
+                { "v": "Houston, TX" },
+                { "v": 2099000 },
+                { "v": 1953000 }
+              ]
+            },
+            {
+              "c": [
+                { "v": "Philadelphia, PA" },
+                { "v": 1526000 },
+                { "v": 1517000 }
+              ]
+            }
+          ]
         }
       },
-      "datatable": {
-        "cols": [{
-          "type": "string",
-          "label": "Category"
-        }, {
-          "type": "number",
-          "label": "value1"
-        }, {
-          "type": "number",
-          "label": "value2"
-        }],
-        "rows": [{
-          "c": [{
-            "v": "Apple"
-          }, {
-            "v": 5
-          }, {
-            "v": 9
-          }]
-        }, {
-          "c": [{
-            "v": "Orange"
-          }, {
-            "v": 7
-          }, {
-            "v": 3
-          }]
-        }]
-      }
-    }, {
-      "chartType": "ColumnChart",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-      "options": {
-        "title": "Fruits Overview",
-        "hAxis": {
-          "title": "Category"
+      {
+        "chartType": "PieChart",
+        "description": "This is a pie chart.",
+        "options": {
+          "title": "Work"
         },
-        "vAxis": {
-          "title": "Inventory"
+        "datatable": {
+          "cols": [
+            {
+              "label": "Task",
+              "type": "string"
+            },
+            {
+              "label": "Hours per Day",
+              "type": "number"
+            }
+          ],
+          "rows": [
+            {
+              "c": [
+                { "v": "Work" },
+                { "v": 11 }
+              ]
+            },
+            {
+              "c": [
+                { "v": "Eat" },
+                { "v": 2 }
+              ]
+            },
+            {
+              "c": [
+                { "v": "Commute" },
+                { "v": 2 }
+              ]
+            },
+            {
+              "c": [
+                { "v": "Watch TV" },
+                { "v": 2 }
+              ]
+            },
+            {
+              "c": [
+                { "v": "Sleep" },
+                { "v": 7 }
+              ]
+            }
+          ]
         }
-      },
-      "datatable": {
-        "cols": [{
-          "type": "string",
-          "label": "Category"
-        }, {
-          "type": "number",
-          "label": "value 1"
-        }, {
-          "type": "number",
-          "label": "value 2"
-        }],
-        "rows": [{
-          "c": [{
-            "v": "Apple"
-          }, {
-            "v": 5
-          }, {
-            "v": 9
-          }]
-        }, {
-          "c": [{
-            "v": "Orange"
-          }, {
-            "v": 7
-          }, {
-            "v": 3
-          }]
-        }]
       }
-    }]
+    ]
   }
 }

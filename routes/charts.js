@@ -19,8 +19,10 @@ router.route('/charts')
 
   // create a chart
   .post(function postCharts(req, res) {
-    charts.create(req.body, function(err, result) {
-      err ? utils.handleError(err, res) : res.send(result);
+    charts.create(req.body).then(function (result) {
+      res.send(result);
+    }, function (err) {
+      utils.handleError(err, res);
     });
   })
 

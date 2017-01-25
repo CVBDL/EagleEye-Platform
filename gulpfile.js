@@ -19,5 +19,5 @@ gulp.task('ci:test', function (cb) {
       console.log(stderr);
     }
     cb();
-  })
+  });
 });

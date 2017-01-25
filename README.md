@@ -54,6 +54,7 @@ brew install mongodb --with-openssl
 
 ```sh
 npm install
+npm install gulp-cli -g
 ```
 
 
@@ -67,6 +68,14 @@ npm start
 
 ## Testing
 
+Run once:
+
 ```sh
 npm test
+```
+
+CI mode:
+
+```sh
+gulp watch
 ```

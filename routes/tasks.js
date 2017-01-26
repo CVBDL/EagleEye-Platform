@@ -2,7 +2,8 @@
 
 let express    = require('express');
 let utils      = require('../helpers/utils');
-let jobLog     = require('../modules/scheduleJobLogModule');
+let jobLog = require('../modules/scheduleJobLogModule');
+let errHandler = require('../helpers/error-handlers');
 
 let router = express.Router();
 
@@ -16,7 +17,7 @@ router.route('/tasks/:id')
     let state = req.body.state;
 
     jobLog.updateOne(id, {'state': state}, function(err, doc) {
-      return err ? utils.handleError(err, res) : res.send(doc);
+      return err ? errHandler.handleInternalError(err, req, res) : res.send(doc);
     });
   });
 

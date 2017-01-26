@@ -21,6 +21,8 @@ var config       = require('./modules/config');
 var db           = require('./helpers/dbHelper');
 var routes       = require('./routes/index');
 var scheduleTask = require('./routes/schedule-management');
+var utils        = require('./helpers/utils');
+var errHandlers   = require('./helpers/error-handlers');
 
 var app = express();
 
@@ -37,9 +39,19 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
+
+if (process.env.NODE_ENV === 'dev') {
+  app.use(logger('dev'));
+}
+
+// parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
+
+app.use(errHandlers.handle);
+
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(multipart({

@@ -26,9 +26,11 @@
     <Compile Include="helpers\column-types.js" />
     <Compile Include="helpers\dbHelper.js" />
     <Compile Include="helpers\default-chart-options.js" />
+    <Compile Include="helpers\error-handlers.js" />
     <Compile Include="helpers\excelHelper.js" />
     <Compile Include="helpers\scheduleJobHelper.js" />
     <Compile Include="helpers\utils.js" />
+    <Compile Include="helpers\validator.js" />
     <Compile Include="modules\chart-sets.js" />
     <Compile Include="modules\charts.js" />
     <Compile Include="modules\config.js" />

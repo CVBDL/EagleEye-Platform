@@ -1,8 +1,10 @@
 'use strict';
 
 let express = require('express');
-let utils   = require('../helpers/utils');
-let charts  = require('../modules/charts');
+
+let utils      = require('../helpers/utils');
+let charts     = require('../modules/charts');
+let errHandlers = require('../helpers/error-handlers');
 
 let router = express.Router();
 
@@ -22,7 +24,7 @@ router.route('/charts')
     charts.create(req.body).then(function (result) {
       res.send(result);
     }, function (err) {
-      utils.handleError(err, res);
+      errHandlers.handle(err, req, res);
     });
   })
 
@@ -56,7 +58,7 @@ router.route('/charts/:id')
     let id = req.params.id;
 
     charts.updateOne(id, req.body, function(err, doc) {
-      return err ? utils.handleError(err, res) : res.send(doc.value);
+      return err ? errHandlers.handleInternalError(err, req, res) : res.send(doc.value);
     });
   })
 
@@ -78,7 +80,7 @@ router.route('/charts/:id/datatable')
     let id = req.params.id;
 
     charts.updateDataTable(id, req.body, function(err, result) {
-      return err ? utils.handleError(err, res) : res.send(result.value);
+      return err ? errHandlers.handleInternalError(err, req, res) : res.send(result.value);
     });
   });
 

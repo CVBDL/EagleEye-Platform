@@ -65,11 +65,3 @@ exports.getQueryParameters = function (req) {
 
   return queryOption;
 };
-
-exports.handleError = function(err, res) {
-  res.status(400).send({
-    "message": err.message,
-    "errors": [err]
-  });
-};
-

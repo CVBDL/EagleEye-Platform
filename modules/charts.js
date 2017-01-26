@@ -8,6 +8,7 @@ let chartOptionsHelper = require('../helpers/chart-options-helper');
 let dbClient           = require('../helpers/dbHelper');
 let utils              = require('../helpers/utils');
 let columnTypes        = require('../helpers/column-types');
+let validator          = require('../helpers/validator');
 
 const COLLECTION       = "chart_collection";
 const IMAGE_CHART_TYPE = "ImageChart";
@@ -24,23 +25,56 @@ exports.create = function(chart) {
   const db = dbClient.get();
   const id = ObjectId();
 
-  return utils.getRestApiRootEndpoint().then(function(rootEndpoint) {
-    chart._id = id;
+  return utils.getRestApiRootEndpoint().then(function (rootEndpoint) {
 
-    chart.options = chartOptionsHelper.ChartOptionsAdapter(
-      chart.chartType,
-      chart.options
-    );
-
-    chart.createdAt = chart.updatedAt = new Date().toISOString();
-
-    chart.browserDownloadUrl = {
-      excel: chart.chartType === IMAGE_CHART_TYPE ?
-                              null : rootEndpoint + '/download/excels/' + id,
-      image: null
+    // chart schema
+    let schema = {
+      _id: null,
+      chartType: null,
+      description: null,
+      datatable: null,
+      options: null,
+      browserDownloadUrl: {
+        excel: null,
+        image: null
+      },
+      createdAt: null,
+      updatedAt: null
     };
 
-    return db.collection(COLLECTION).insertOne(chart).then(function (result) {
+    schema._id = id;
+    
+    if (validator.isValidChartType(chart.chartType)) {
+      schema.chartType = chart.chartType;
+
+    } else {
+      return Promise.reject({
+        status: 422,
+        errors: [{
+          "resource": "chart",
+          "field": "chartType",
+          "code": "missing_field"
+        }]
+      });
+    }
+
+    schema.browserDownloadUrl.excel = (chart.chartType === IMAGE_CHART_TYPE) ? null : (rootEndpoint + '/download/excels/' + id);
+
+    if (validator.isValidDescription(chart.description)) {
+      schema.description = chart.description;
+    }
+
+    if (validator.isValidDataTable(chart.datatable)) {
+      schema.datatable = chart.datatable;
+    }
+
+    if (validator.isValidOptions(chart.options)) {
+      schema.options = chart.options;
+    }
+
+    schema.createdAt = schema.updatedAt = new Date().toISOString();
+
+    return db.collection(COLLECTION).insertOne(schema).then(function (result) {
       return result.ops[0];
     });
   });

@@ -3,6 +3,7 @@
 let express   = require('express');
 let utils     = require('../helpers/utils');
 let chartSets = require('../modules/chart-sets');
+let errHandlers = require('../helpers/error-handlers');
 
 let router = express.Router();
 
@@ -20,7 +21,7 @@ router.route('/chart-sets')
   // create a chart set
   .post(function postChartSets(req, res) {
     chartSets.create(req.body, function(err, result) {
-      err ? utils.handleError(err, res) : res.send(result);
+      err ? errHandlers.handleInternalError(err, req, res) : res.send(result);
     });
   })
 
@@ -49,7 +50,7 @@ router.route('/chart-sets/:id')
     let id = req.params.id;
 
     chartSets.updateOne(id, req.body, function(err, doc) {
-      err ? utils.handleError(err, res) : res.send(doc.value);
+      err ? errHandlers.handleInternalError(err, req, res) : res.send(doc.value);
     });
   })
 

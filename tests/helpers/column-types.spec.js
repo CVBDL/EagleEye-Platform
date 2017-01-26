@@ -4,7 +4,7 @@ let should = require('should');
 
 let columnTypes = require('../../helpers/column-types');
 
-describe('Column types', function () {
+describe('helpers: column types', function () {
 
   it('should infer to `boolean` type', function(done) {
     columnTypes.infer('true').should.eql('boolean');
@@ -80,17 +80,17 @@ describe('Column types', function () {
   });
 
   it('Convert to data table format for `number` type', function() {
-    columnTypes.convertFileToDataTable('3').should.eql('3');
+    columnTypes.convertFileToDataTable('3').should.eql(3);
     columnTypes.convertFileToDataTable(3).should.eql(3);
-    columnTypes.convertFileToDataTable('3.0').should.eql('3.0');
+    columnTypes.convertFileToDataTable('3.0').should.eql(3);
     columnTypes.convertFileToDataTable(3.0).should.eql(3.0);
-    columnTypes.convertFileToDataTable('3.14').should.eql('3.14');
+    columnTypes.convertFileToDataTable('3.14').should.eql(3.14);
     columnTypes.convertFileToDataTable(3.14).should.eql(3.14);
-    columnTypes.convertFileToDataTable('-71').should.eql('-71');
+    columnTypes.convertFileToDataTable('-71').should.eql(-71);
     columnTypes.convertFileToDataTable(-71).should.eql(-71);
-    columnTypes.convertFileToDataTable('-7.2').should.eql('-7.2');
+    columnTypes.convertFileToDataTable('-7.2').should.eql(-7.2);
     columnTypes.convertFileToDataTable(-7.2).should.eql(-7.2);
-    columnTypes.convertFileToDataTable('.6').should.eql('.6');
+    columnTypes.convertFileToDataTable('.6').should.eql(0.6);
     columnTypes.convertFileToDataTable(.6).should.eql(.6);
   });
 
@@ -136,17 +136,17 @@ describe('Column types', function () {
   });
 
   it('Convert to file format for `number` type', function() {
-    columnTypes.convertDataTableToFile('3', 'number').should.eql('3');
+    columnTypes.convertDataTableToFile('3', 'number').should.eql(3);
     columnTypes.convertDataTableToFile(3, 'number').should.eql(3);
-    columnTypes.convertDataTableToFile('3.0', 'number').should.eql('3.0');
+    columnTypes.convertDataTableToFile('3.0', 'number').should.eql(3.0);
     columnTypes.convertDataTableToFile(3.0, 'number').should.eql(3.0);
-    columnTypes.convertDataTableToFile('3.14', 'number').should.eql('3.14');
+    columnTypes.convertDataTableToFile('3.14', 'number').should.eql(3.14);
     columnTypes.convertDataTableToFile(3.14, 'number').should.eql(3.14);
-    columnTypes.convertDataTableToFile('-71', 'number').should.eql('-71');
+    columnTypes.convertDataTableToFile('-71', 'number').should.eql(-71);
     columnTypes.convertDataTableToFile(-71, 'number').should.eql(-71);
-    columnTypes.convertDataTableToFile('-7.2', 'number').should.eql('-7.2');
+    columnTypes.convertDataTableToFile('-7.2', 'number').should.eql(-7.2);
     columnTypes.convertDataTableToFile(-7.2, 'number').should.eql(-7.2);
-    columnTypes.convertDataTableToFile('.6', 'number').should.eql('.6');
+    columnTypes.convertDataTableToFile('.6', 'number').should.eql(.6);
     columnTypes.convertDataTableToFile(.6, 'number').should.eql(.6);
   });
 

@@ -1,5 +1,5 @@
 ﻿var gulp = require('gulp');
-var exec = require('child_process').exec;
+var shell = require('shelljs');
 
 gulp.task('watch', function () {
   gulp.watch([
@@ -11,13 +11,6 @@ gulp.task('watch', function () {
    ], ['ci:test']);
 });
 
-gulp.task('ci:test', function (cb) {
-  exec('npm test', function (error, stdout, stderr) {
-    if (!error) {
-      console.log(stdout);
-    } else {
-      console.log(stderr);
-    }
-    cb();
-  });
+gulp.task('ci:test', function () {
+  shell.exec('npm test');
 });

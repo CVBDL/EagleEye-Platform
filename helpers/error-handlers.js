@@ -38,14 +38,15 @@ exports.handleInternalError = function (err, req, res, next) {
 };
 
 exports.handle = function (err, req, res, next) {
+
   if (err.status === 422) {
     handleUnprocessableEntity(err, req, res, next);
-  }
 
-  if (err.status === 400) {
+  } else if (err.status === 400) {
     handleBadRequest(err, req, res, next);
-  }
 
-  // default handler
-  exports.handleInternalError(err, req, res, next);
+  } else {
+    // default handler
+    exports.handleInternalError(err, req, res, next);
+  }
 };

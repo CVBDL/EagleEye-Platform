@@ -34,8 +34,9 @@
     "chai-immutable": "^1.6.0",
     "gulp": "^3.9.1",
     "json-loader": "^0.5.4",
-    "mocha": "^1.21.5",
-    "should": "~4.0.4",
+    "mocha": "^3.2.0",
+    "shelljs": "^0.7.6",
+    "should": "^11.1.2",
     "supertest": "^2.0.1"
   },
   "optionalDependencies": {

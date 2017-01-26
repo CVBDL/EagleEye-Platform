@@ -91,20 +91,107 @@ describe('modules: charts', function () {
     }
   });
 
-  it('create', function (done) {
-    charts.create(chart).then(function (chart) {
-      MongoClient.connect(settings.DB_CONNECTION_URI).then(function (db) {
-        var collection = db.collection(CHART_COLLECTION_NAME);
+  describe('create', function () {
 
-        collection.find({}).toArray().then(function (docs) {
-          docs.length.should.eql(3);
+    it('should be able to create a chart', function (done) {
+      charts.create(chart).then(function (newChart) {
 
-          done();
+        newChart.createdAt.should.be.type('string');
+        newChart.updatedAt.should.be.type('string');
+        newChart.createdAt.should.eql(newChart.updatedAt);
+
+        newChart.chartType.should.eql(chart.chartType);
+        newChart.description.should.eql(chart.description);
+        newChart.options.should.eql(chart.options);
+        newChart.datatable.should.eql(chart.datatable);
+        
+        MongoClient.connect(settings.DB_CONNECTION_URI).then(function (db) {
+          let collection = db.collection(CHART_COLLECTION_NAME);
+
+          collection.find({}).toArray().then(function (docs) {
+            docs.length.should.eql(3);
+
+            let found = false;
+
+            docs.forEach(function (chart) {
+              if (chart._id.toHexString() === newChart._id.toHexString()) {
+                found = true;
+              }
+            });
+            
+            should.equal(found, true);
+
+            done();
+          });
         });
       });
     });
-  });
 
+    it('should return error if sent wrong chart type', function (done) {
+      let chart = {
+        chartType: 'unknown'
+      };
+      
+      charts.create(chart).should.be.rejectedWith({
+        status: 422,
+        errors: [{
+          "resource": "chart",
+          "field": "chartType",
+          "code": "missing_field"
+        }]
+      });
+
+      done();
+    });
+
+    it('should contain all chart fields', function (done) {
+      let chart = {
+        chartType: 'LineChart'
+      };
+
+      charts.create(chart).then(function (newChart) {
+        should(newChart._id).not.be.undefined();
+        should(newChart.chartType).equal('LineChart');
+        should(newChart.description).be.null();
+        should(newChart.datatable).be.null();
+        should(newChart.options).be.null();
+        should(newChart.browserDownloadUrl.excel).be.endWith(newChart._id);
+        should(newChart.browserDownloadUrl.image).be.null();
+        should(newChart.createdAt).not.be.undefined();
+        should(newChart.updatedAt).not.be.undefined();
+        done();
+
+      }, function () {
+        should.fail();
+        done();
+      });
+    });
+
+    it('image chart has different fields values', function (done) {
+      let chart = {
+        chartType: 'ImageChart'
+      };
+
+      charts.create(chart).then(function (newChart) {
+        should(newChart._id).not.be.undefined();
+        should(newChart.chartType).equal('ImageChart');
+        should(newChart.description).be.null();
+        should(newChart.datatable).be.null();
+        should(newChart.options).be.null();
+        should(newChart.browserDownloadUrl.image).be.null();
+        should(newChart.browserDownloadUrl.image).be.null();
+        should(newChart.createdAt).not.be.undefined();
+        should(newChart.updatedAt).not.be.undefined();
+        done();
+
+      }, function () {
+        should.fail();
+        done();
+      });
+    });
+
+  });
+  
   it('all', function(done) {
     charts.all(function(err, docs) {
       docs.length.should.eql(2);

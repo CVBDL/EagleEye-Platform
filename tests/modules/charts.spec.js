@@ -27,7 +27,7 @@ describe('modules: charts', function () {
       dbClient.fixtures(fixtures, done);
     });
   });
-
+  
   beforeEach(function() {
     chart = {
       "chartType": "LineChart",

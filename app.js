@@ -100,7 +100,7 @@ app.use(function(req, res, next) {
 //  });
 //});
 
-db.get();
+//db.get();
 
 config.load().then(function(config) {
   var port = config.port || 3000;

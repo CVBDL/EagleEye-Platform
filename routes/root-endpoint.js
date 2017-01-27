@@ -5,25 +5,25 @@ let utils   = require('../helpers/utils');
 
 let router = express.Router();
 
+const rootEndpoint = utils.getRestApiRootEndpoint();
+
 
 // define routes
 router.route('/')
 
   // list all the endpoint categories
   .get(function getRootEndpoint(req, res) {
-    utils.getRestApiRootEndpoint().then(function(rootEndpoint) {
-      res.send({
-        "charts_url":            rootEndpoint + '/charts',
-        "chart_sets_url":        rootEndpoint + '/chart-sets',
-        "search_url":            rootEndpoint + '/search',
-        "search_charts_url":     rootEndpoint + '/search/charts',
-        "search_chart_sets_url": rootEndpoint + '/search/chart-sets',
-        "upload_excels_url":     rootEndpoint + '/upload/excels',
-        "upload_images_url":     rootEndpoint + '/upload/images',
-        "download_excels_url":   rootEndpoint + '/download/excels/:id',
-        "jobs_url":              rootEndpoint + '/jobs',
-        "tasks_url":             rootEndpoint + '/tasks'
-      });
+    res.send({
+      "charts_url": rootEndpoint + '/charts',
+      "chart_sets_url": rootEndpoint + '/chart-sets',
+      "search_url": rootEndpoint + '/search',
+      "search_charts_url": rootEndpoint + '/search/charts',
+      "search_chart_sets_url": rootEndpoint + '/search/chart-sets',
+      "upload_excels_url": rootEndpoint + '/upload/excels',
+      "upload_images_url": rootEndpoint + '/upload/images',
+      "download_excels_url": rootEndpoint + '/download/excels/:id',
+      "jobs_url": rootEndpoint + '/jobs',
+      "tasks_url": rootEndpoint + '/tasks'
     });
   });
 

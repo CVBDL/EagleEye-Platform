@@ -1,33 +1,17 @@
 'use strict';
 
-let os = require('os');
+let os      = require('os');
+let process = require('process');
 
-let config = require('../modules/config');
-
-let protocol = 'http';
+const protocol = 'http';
+const port = process.env.EAGLEEYE_PLATFORM_PORT;
 
 exports.getRootEndpoint = function() {
-  let url = '';
-  let port;
-
-  return config.load().then(function(config) {
-    port = config.port || 3000;
-    url = protocol + '://' + os.hostname() + ':' + port;
-
-    return url;
-  });
+  return protocol + '://' + os.hostname() + ':' + port;
 };
 
 exports.getRestApiRootEndpoint = function() {
-  let url = '';
-  let port;
-
-  return config.load().then(function(config) {
-    port = config.port || 3000;
-    url = protocol + '://' + os.hostname() + ':' + port + '/api/v1';
-
-    return url;
-  });
+  return protocol + '://' + os.hostname() + ':' + port + '/api/v1';;
 };
 
 exports.getQueryParameters = function (req) {

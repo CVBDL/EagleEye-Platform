@@ -1,9 +1,9 @@
 {
-  "name": "EagleEye",
+  "name": "eagleeye-platform",
   "version": "1.0.0-beta.8",
   "private": true,
   "scripts": {
-    "start": "node app.js",
+    "start": "node bin/www",
     "test": "node_modules/.bin/mocha tests/unit.conf.js",
     "start-mongodb": "mongod",
     "install-mongodb-service": "mongod --dbpath=C:\\data\\db --logpath=C:\\data\\db\\log.txt --install --port 27017",

@@ -7,6 +7,7 @@ gulp.task('watch', function () {
     'modules/**/*.js',
     'routes/**/*.js',
     'tests/**/*.js',
+    'app.js',
     'gulpfile.js'
    ], ['ci:test']);
 });

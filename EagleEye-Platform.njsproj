@@ -16,7 +16,7 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
-    <Content Include="config.json" />
+    <Content Include="bin\www" />
     <Content Include="package.json" />
     <Content Include="CHANGELOG.md" />
     <Content Include="README.md" />
@@ -33,7 +33,6 @@
     <Compile Include="helpers\validator.js" />
     <Compile Include="modules\chart-sets.js" />
     <Compile Include="modules\charts.js" />
-    <Compile Include="modules\config.js" />
     <Compile Include="modules\etl.js" />
     <Compile Include="modules\excel.js" />
     <Compile Include="modules\scheduleJobLogModule.js" />
@@ -54,7 +53,6 @@
     <Compile Include="routes\upload.js" />
     <Compile Include="tests\helpers\db.spec.js" />
     <Compile Include="tests\helpers\utils.spec.js" />
-    <Compile Include="tests\modules\config.spec.js" />
     <Compile Include="tests\routes\charts.spec.js" />
     <Compile Include="tests\unit.conf.js" />
     <Compile Include="tests\unit.settings.js" />

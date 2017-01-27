@@ -11,12 +11,7 @@ describe('helpers: utils', function () {
     let hostname = os.hostname();
     let port = 3000;
 
-    utils.getRootEndpoint().then(function (endpoint) {
-      endpoint.should.eql(protocol + '://' + os.hostname() + ':' + port);
-
-    }, function (error) {
-      throw new Error(error);
-    });
+    utils.getRootEndpoint().should.eql(protocol + '://' + os.hostname() + ':' + port);
   });
 
   it('should return API root endpoint', function () {
@@ -24,12 +19,7 @@ describe('helpers: utils', function () {
     let hostname = os.hostname();
     let port = 3000;
 
-    utils.getRestApiRootEndpoint().then(function (endpoint) {
-      endpoint.should.eql(protocol + '://' + os.hostname() + ':' + port + '/api/v1');
-
-    }, function (error) {
-      throw new Error(error);
-    });
+    utils.getRestApiRootEndpoint().should.eql(protocol + '://' + os.hostname() + ':' + port + '/api/v1');
   });
 
   it('should use default query options for charts router', function () {

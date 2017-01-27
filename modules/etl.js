@@ -22,41 +22,41 @@ exports.start = function() {
   /*****************************************************************************
    *  CHART COLLECTION
    ****************************************************************************/
-  utils.getRootEndpoint().then(function(rootEndpoint) {
-    db.collection(CHART_COLLECTION).find({}).forEach(function(doc) {
+  let rootEndpoint = utils.getRootEndpoint();
 
-      if (!doc.browserDownloadUrl) {
-        doc.browserDownloadUrl = {};
+  db.collection(CHART_COLLECTION).find({}).forEach(function (doc) {
+
+    if (!doc.browserDownloadUrl) {
+      doc.browserDownloadUrl = {};
+    }
+
+    // `browserDownloadUrl`
+    if (doc.chartType !== IMAGE_CHART_TYPE) {
+      doc.browserDownloadUrl.excel = rootEndpoint + '/api/v1/download/excels/' + doc._id;
+      doc.browserDownloadUrl.image = null;
+
+    } else {
+      if (!doc.browserDownloadUrl.image && doc.image_file_name) {
+        doc.browserDownloadUrl.image = rootEndpoint + '/uploadChartImages/' + doc.image_file_name;
+
       }
+    }
 
-      // `browserDownloadUrl`
-      if (doc.chartType !== IMAGE_CHART_TYPE) {
-        doc.browserDownloadUrl.excel = rootEndpoint + '/api/v1/download/excels/' + doc._id;
-        doc.browserDownloadUrl.image = null;
+    // `timestamp` to `createdAt`
+    if (!doc.createdAt) {
+      doc.createdAt = new Date(doc.timestamp).toISOString();
+    }
 
-      } else {
-        if (!doc.browserDownloadUrl.image && doc.image_file_name) {
-          doc.browserDownloadUrl.image = rootEndpoint + '/uploadChartImages/' + doc.image_file_name;
+    delete doc.timestamp;
 
-        }
-      }
+    // `lastUpdateTimestamp` to `updatedAt`
+    if (!doc.updatedAt) {
+      doc.updatedAt = new Date(doc.lastUpdateTimestamp).toISOString();
+    }
 
-      // `timestamp` to `createdAt`
-      if (!doc.createdAt) {
-        doc.createdAt = new Date(doc.timestamp).toISOString();
-      }
+    delete doc.lastUpdateTimestamp;
 
-      delete doc.timestamp;
-
-      // `lastUpdateTimestamp` to `updatedAt`
-      if (!doc.updatedAt) {
-        doc.updatedAt = new Date(doc.lastUpdateTimestamp).toISOString();
-      }
-
-      delete doc.lastUpdateTimestamp;
-
-      db.collection(CHART_COLLECTION).save(doc);
-    });
+    db.collection(CHART_COLLECTION).save(doc);
   });
 
 

@@ -25,6 +25,18 @@ let handleUnprocessableEntity = function (err, req, res, next) {
   }
 };
 
+let handleNotFound = function (err, req, res, next) {
+  let message = err.customMessage || 'Not Found';
+
+  res.status(404).send({
+    message: message
+  });
+
+  if (next) {
+    next();
+  }
+};
+
 exports.handleInternalError = function (err, req, res, next) {
   let message = err.customMessage || err.message || 'Internal Server Error';
 
@@ -44,6 +56,9 @@ exports.handle = function (err, req, res, next) {
 
   } else if (err.status === 400) {
     handleBadRequest(err, req, res, next);
+
+  } else if (err.status === 404) {
+    handleNotFound(err, req, res, next);
 
   } else {
     // default handler

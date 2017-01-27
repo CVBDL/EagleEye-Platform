@@ -24,59 +24,57 @@ dbClient.DATABASE_KEYS.push({
 exports.create = function(chart) {
   const db = dbClient.get();
   const id = ObjectId();
+  const rootEndpoint = utils.getRestApiRootEndpoint();
 
-  return utils.getRestApiRootEndpoint().then(function (rootEndpoint) {
+  // chart schema
+  let schema = {
+    _id: null,
+    chartType: null,
+    description: null,
+    datatable: null,
+    options: null,
+    browserDownloadUrl: {
+      excel: null,
+      image: null
+    },
+    createdAt: null,
+    updatedAt: null
+  };
 
-    // chart schema
-    let schema = {
-      _id: null,
-      chartType: null,
-      description: null,
-      datatable: null,
-      options: null,
-      browserDownloadUrl: {
-        excel: null,
-        image: null
-      },
-      createdAt: null,
-      updatedAt: null
-    };
+  schema._id = id;
 
-    schema._id = id;
-    
-    if (validator.isValidChartType(chart.chartType)) {
-      schema.chartType = chart.chartType;
+  if (validator.isValidChartType(chart.chartType)) {
+    schema.chartType = chart.chartType;
 
-    } else {
-      return Promise.reject({
-        status: 422,
-        errors: [{
-          "resource": "chart",
-          "field": "chartType",
-          "code": "missing_field"
-        }]
-      });
-    }
-
-    schema.browserDownloadUrl.excel = (chart.chartType === IMAGE_CHART_TYPE) ? null : (rootEndpoint + '/download/excels/' + id);
-
-    if (validator.isValidDescription(chart.description)) {
-      schema.description = chart.description;
-    }
-
-    if (validator.isValidDataTable(chart.datatable)) {
-      schema.datatable = chart.datatable;
-    }
-
-    if (validator.isValidOptions(chart.options)) {
-      schema.options = chart.options;
-    }
-
-    schema.createdAt = schema.updatedAt = new Date().toISOString();
-
-    return db.collection(COLLECTION).insertOne(schema).then(function (result) {
-      return result.ops[0];
+  } else {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "chart",
+        "field": "chartType",
+        "code": "missing_field"
+      }]
     });
+  }
+
+  schema.browserDownloadUrl.excel = (chart.chartType === IMAGE_CHART_TYPE) ? null : (rootEndpoint + '/download/excels/' + id);
+
+  if (validator.isValidDescription(chart.description)) {
+    schema.description = chart.description;
+  }
+
+  if (validator.isValidDataTable(chart.datatable)) {
+    schema.datatable = chart.datatable;
+  }
+
+  if (validator.isValidOptions(chart.options)) {
+    schema.options = chart.options;
+  }
+
+  schema.createdAt = schema.updatedAt = new Date().toISOString();
+
+  return db.collection(COLLECTION).insertOne(schema).then(function (result) {
+    return result.ops[0];
   });
 };
 
@@ -147,20 +145,19 @@ exports.updateImageChartFile = function(_id, fileName, callback) {
   let now = new Date();
   let regExp = /^c-/g;
   let query = {};
+  let rootEndpoint = utils.getRootEndpoint();
 
   query = { _id: ObjectId(_id) }
 
-  utils.getRootEndpoint().then(function(rootEndpoint) {
-    db.collection(COLLECTION).findOneAndUpdate(query, {
-      $set: {
-        browserDownloadUrl: {
-          excel: null,
-          image: rootEndpoint + '/uploadChartImages/' + fileName  // TODO: make path configurable
-        },
-        updatedAt: now.toISOString()
-      }
-    }, callback);
-  })
+  db.collection(COLLECTION).findOneAndUpdate(query, {
+    $set: {
+      browserDownloadUrl: {
+        excel: null,
+        image: rootEndpoint + '/uploadChartImages/' + fileName  // TODO: make path configurable
+      },
+      updatedAt: now.toISOString()
+    }
+  }, callback);
 };
 
 exports.updateDataTableBy2dArray = function(_id, data, done) {

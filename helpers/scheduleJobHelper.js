@@ -5,7 +5,6 @@
 
 const schedule = require("node-schedule");
 const scheduleJobModule = require('../modules/scheduleJobModule');
-// const jobCodes = require('../modules/taskCodes').getAllTasks();
 const child_process = require('child_process');
 const scheduleJobLogModule = require('../modules/scheduleJobLogModule');
 
@@ -54,14 +53,6 @@ function enableJob(id, jobName, cronString, para) {
     })
   };
 }
-
-// exports.getCodeList = function() {
-//   var codeNames = [];
-//   for (var key in taskCodes) {
-//     codeNames.push(key);
-//   }
-//   return codeNames;
-// };
 
 exports.getJobList = function() {
   var jobList = [];

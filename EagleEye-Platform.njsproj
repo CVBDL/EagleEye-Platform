@@ -38,7 +38,6 @@
     <Compile Include="modules\scheduleJobLogModule.js" />
     <Compile Include="modules\scheduleJobModule.js" />
     <Compile Include="modules\statistics.js" />
-    <Compile Include="modules\taskCodes.js" />
     <Content Include="public\favicon.ico" />
     <Compile Include="routes\chart-sets.js" />
     <Compile Include="routes\charts.js" />

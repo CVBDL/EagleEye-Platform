@@ -21,7 +21,7 @@ var db           = require('./helpers/dbHelper');
 var routes       = require('./routes/index');
 var scheduleTask = require('./routes/schedule-management');
 var utils        = require('./helpers/utils');
-var errHandlers   = require('./helpers/error-handlers');
+var errHandlers  = require('./helpers/error-handlers');
 
 var app = express();
 

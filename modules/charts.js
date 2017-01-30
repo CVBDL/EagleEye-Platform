@@ -99,12 +99,23 @@ exports.all = function(options) {
   return db.collection(COLLECTION).find(query, false, options).toArray();
 };
 
-exports.getOne = function(_id, callback) {
+exports.getOne = function(id) {
   let db = dbClient.get();
 
-  db.collection(COLLECTION).find({
-    "_id": ObjectId(_id)
-  }).toArray(callback);
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "chart",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
+  return db.collection(COLLECTION).find({
+    "_id": ObjectId(id)
+  }).limit(1).toArray();
 };
 
 exports.clearCollection = function(callback) {

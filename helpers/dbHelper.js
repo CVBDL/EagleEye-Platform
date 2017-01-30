@@ -1,13 +1,14 @@
 'use strict';
 
 let MongoClient = require('mongodb').MongoClient;
-let async       = require('async');
+let async = require('async');
+let ObjectId = require('mongodb').ObjectId;
 
 const PRODUCTION_URI = 'mongodb://localhost:27017/eagleEyeDatabase';
-const TEST_URI       = 'mongodb://localhost:27017/testEagleEyeDatabase';
+const TEST_URI = 'mongodb://localhost:27017/testEagleEyeDatabase';
 
 exports.MODE_PRODUCTION = 'mode_production';
-exports.MODE_TEST       = 'mode_test';
+exports.MODE_TEST = 'mode_test';
 
 exports.DATABASE_KEYS = [];
 
@@ -92,7 +93,14 @@ exports.fixtures = function(data, done) {
   async.each(names, function(name, cb) {
     db.createCollection(name, function(err, collection) {
       if (err) return cb(err);
-      collection.insert(data.collections[name], cb);
+
+      data.collections[name].forEach(function (item) {
+        if (item._id) {
+          item._id = ObjectId(item._id);
+        }
+      });
+
+      collection.insertMany(data.collections[name], cb);
     })
   }, done);
 };

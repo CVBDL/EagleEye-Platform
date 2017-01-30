@@ -38,7 +38,7 @@ let handleNotFound = function (err, req, res, next) {
 };
 
 exports.handleInternalError = function (err, req, res, next) {
-  let message = err.customMessage || err.message || 'Internal Server Error';
+  let message = err.customMessage || 'Internal Server Error';
 
   res.status(500).send({
     message: err.message 

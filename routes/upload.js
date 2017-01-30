@@ -1,14 +1,15 @@
 'use strict';
 
 let express = require('express');
-let fs      = require('fs');
-let path    = require('path');
+let fs = require('fs');
+let path = require('path');
 
-let charts      = require('../modules/charts');
+let charts = require('../modules/charts');
 let excelHelper = require('../helpers/excelHelper');
-let excel       = require('../modules/excel');
+let excel = require('../modules/excel');
+let errHandlers = require('../helpers/error-handlers');
 
-let router  = express.Router();
+let router = express.Router();
 
 
 // define routes
@@ -26,21 +27,25 @@ router.route('/upload/excels')
       let pathArray = file.path.split("\\");
       fileName = pathArray[pathArray.length - 1];
     }
-
-    charts.getOne(req.body.id, function(err, docs) {
-      if (docs.length < 1) {
-        multipartyMiddleware.send('failed');
-        return;
-      }
-
-      excel.updateFromFileToDB(docs[0], { filename: fileName, worksheet: "Data" }, function(result) {
-        multipartyMiddleware.send('ok');
-
-        if (fs.existsSync(file.path)) {
-          fs.unlinkSync(file.path);
+    
+    charts.getOne(req.body.id)
+      .then(function (docs) {
+        if (docs.length < 1) {
+          multipartyMiddleware.send('failed');
+          return;
         }
+
+        excel.updateFromFileToDB(docs[0], { filename: fileName, worksheet: "Data" }, function (result) {
+          multipartyMiddleware.send('ok');
+
+          if (fs.existsSync(file.path)) {
+            fs.unlinkSync(file.path);
+          }
+        });
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
       });
-    });
   });
 
 

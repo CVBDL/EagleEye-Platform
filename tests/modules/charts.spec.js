@@ -116,7 +116,9 @@ describe('modules: charts', function () {
             let found = false;
             
             docs.forEach(function (chart) {
-              if (ObjectId(chart._id).toHexString() === ObjectId(newChart._id).toHexString()) {
+              if (ObjectId(chart._id).toHexString() ===
+                  ObjectId(newChart._id).toHexString()) {
+
                 found = true;
               }
             });
@@ -268,7 +270,9 @@ describe('modules: charts', function () {
 
       }).then(function (docs) {
         docs.length.should.eql(1);
-        ObjectId(docs[0]._id).toHexString().should.eql(fixtures.collections.chart_collection[1]._id);
+        docs[0]._id
+          .should
+          .eql(fixtures.collections.chart_collection[1]._id);
 
         done();
 
@@ -284,7 +288,9 @@ describe('modules: charts', function () {
 
       }).then(function (docs) {
         docs.length.should.eql(1);
-        ObjectId(docs[0]._id).toHexString().should.eql(fixtures.collections.chart_collection[0]._id);
+        docs[0]._id
+          .should
+          .eql(fixtures.collections.chart_collection[0]._id);
 
         done();
 
@@ -296,6 +302,59 @@ describe('modules: charts', function () {
   });
 
 
+  describe('getOne', function () {
+
+    it('should select one chart by _id', function (done) {
+      charts.getOne(fixtures.collections.chart_collection[0]._id)
+        .then(function (docs) {
+          docs.length.should.eql(1);
+          docs[0]._id
+            .should
+            .eql(fixtures.collections.chart_collection[0]._id);
+          docs[0].chartType
+            .should
+            .eql(fixtures.collections.chart_collection[0].chartType);
+          docs[0].description
+            .should
+            .eql(fixtures.collections.chart_collection[0].description);
+
+          done();
+        });
+    });
+
+    it('should return empty list if cannot find a record', function (done) {
+      let nonexistentId = '000000000000000000000000';
+
+      charts.getOne(nonexistentId)
+        .then(function (docs) {
+          docs.length.should.eql(0);
+          done();
+        });
+    });
+
+    it('should return 422 error when passing invalid id', function (done) {
+      let invalidId = '0';
+
+      charts.getOne(invalidId)
+        .then(function (docs) {
+          should.fail();
+          done();
+        })
+        .catch(function (error) {
+          error.should.eql({
+            status: 422,
+            errors: [{
+              "resource": "chart",
+              "field": "_id",
+              "code": "invalid"
+            }]
+          });
+
+          done();
+        });
+    });
+  });
+
   //it('clear', function(done) {
   //  charts.clearCollection(function(err, result) {
   //    charts.all(function(err, result) {
@@ -305,21 +364,7 @@ describe('modules: charts', function () {
   //  });
   //});
 
-  //it('getOne: id', function(done) {
-  //  charts.create(chart, function(err, newChart) {
-  //    let id = newChart._id;
 
-  //    charts.getOne(id, function(err, docs) {
-  //      docs.length.should.eql(1);
-
-  //      for (let key in fixtures.collections.chart_collection[0]) {
-  //        docs[0][key].should.eql(chart[key]);
-  //      }
-
-  //      done();
-  //    });
-  //  });
-  //});
 
   //it('updateOne', function(done) {
   //  charts.create(chart, function(err, newChart) {

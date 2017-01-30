@@ -48,15 +48,19 @@ router.route('/charts/:id')
   // read a single chart
   .get(function getChart(req, res) {
     let id = req.params.id;
+    
+    charts.getOne(id)
+      .then(function (docs) {
+        if (docs[0] === undefined) {
+          res.status(404).send('');
 
-    charts.getOne(id, function(err, docs) {
-      if (docs[0] === undefined) {
-        res.status(404).send('');
-
-      } else {
-        res.send(docs[0]);
-      }
-    });
+        } else {
+          res.send(docs[0]);
+        }
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
+      });
   })
 
   // update a single chart

@@ -16,6 +16,11 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Content Include=".editorconfig" />
+    <Content Include=".gitattributes" />
+    <Content Include=".gitignore" />
+    <Content Include=".jsbeautifyrc" />
+    <Content Include=".travis.yml" />
     <Content Include="bin\www" />
     <Content Include="package.json" />
     <Content Include="CHANGELOG.md" />

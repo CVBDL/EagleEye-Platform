@@ -14,18 +14,24 @@ router.route('/charts')
 
   // read all charts
   .get(function getCharts(req, res) {
-    charts.all(utils.getQueryParameters(req), function(err, docs) {
-      res.send(docs);
-    });
+    charts.all(utils.getQueryParameters(req))
+      .then(function (docs) {
+        res.send(docs);
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
+      });
   })
 
   // create a chart
   .post(function postCharts(req, res) {
-    charts.create(req.body).then(function (result) {
-      res.send(result);
-    }, function (err) {
-      errHandlers.handle(err, req, res);
-    });
+    charts.create(req.body)
+      .then(function (result) {
+        res.send(result);
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
+      });
   })
 
   // delete all charts

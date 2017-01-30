@@ -1,11 +1,12 @@
 'use strict';
 
 let MongoClient = require('mongodb').MongoClient
-let should      = require('should');
+let ObjectId = require('mongodb').ObjectId;
+let should = require('should');
 
-let charts   = require('../../modules/charts');
+let charts = require('../../modules/charts');
 let dbClient = require('../../helpers/dbHelper');
-let fixtures = require('../fixtures/chartModule');
+let fixtures = require('../fixtures/charts');
 let settings = require('../unit.settings');
 
 const CHART_COLLECTION_NAME = "chart_collection";
@@ -30,8 +31,8 @@ describe('modules: charts', function () {
   
   beforeEach(function() {
     chart = {
-      "chartType": "LineChart",
-      "description": "This is a line chart.",
+      "chartType": "BarChart",
+      "description": "This is a bar chart.",
       "options": {
         "title": "Population"
       },
@@ -91,6 +92,7 @@ describe('modules: charts', function () {
     }
   });
 
+
   describe('create', function () {
 
     it('should be able to create a chart', function (done) {
@@ -112,16 +114,16 @@ describe('modules: charts', function () {
             docs.length.should.eql(3);
 
             let found = false;
-
+            
             docs.forEach(function (chart) {
-              if (chart._id.toHexString() === newChart._id.toHexString()) {
+              if (ObjectId(chart._id).toHexString() === ObjectId(newChart._id).toHexString()) {
                 found = true;
               }
             });
             
             should.equal(found, true);
-
-            done();
+            
+            db.close(true, done);
           });
         });
       });
@@ -189,24 +191,103 @@ describe('modules: charts', function () {
         done();
       });
     });
-
   });
-  
-  it('all', function(done) {
-    charts.all(function(err, docs) {
-      docs.length.should.eql(2);
-      done();
+
+
+  describe('all', function () {
+
+    it('should list all charts', function (done) {
+      charts.all().then(function (docs) {
+        docs.length.should.eql(2);
+        done();
+      });
     });
-  });
 
-  it('clear', function(done) {
-    charts.clearCollection(function(err, result) {
-      charts.all(function(err, result) {
-        result.length.should.eql(0);
+    it('should sort on "createdAt" field in "asc" order', function (done) {
+      charts.all({
+        sort: [
+          ['createdAt', 'asc']
+        ]
+
+      }).then(function (docs) {
+        let chartA = docs[0];
+        let chartB = docs[1];
+        let timestampA = new Date(chartA.createdAt).getTime();
+        let timestampB = new Date(chartB.createdAt).getTime();
+
+        timestampA.should.be.belowOrEqual(timestampB);
+
+        done();
+
+      }, function (error) {
+        should.fail(error);
+        done();
+      });
+    });
+
+    it('should sort on "updatedAt" field in "desc" order', function (done) {
+      charts.all({
+        sort: [
+          ['updatedAt', 'desc']
+        ]
+
+      }).then(function (docs) {
+        let chartA = docs[0];
+        let chartB = docs[1];
+        let timestampA = new Date(chartA.updatedAt).getTime();
+        let timestampB = new Date(chartB.updatedAt).getTime();
+
+        timestampA.should.be.aboveOrEqual(timestampB);
+
+        done();
+
+      }, function (error) {
+        should.fail(error);
+        done();
+      });
+    });
+
+    it('should apply limit option on result set', function (done) {
+      charts.all({
+        limit: 1
+
+      }).then(function (docs) {
+        docs.length.should.eql(1);
+
+        done();
+
+      }, function (error) {
+        should.fail(error);
+        done();
+      });
+    });
+
+    it('should apply skip option on result set', function (done) {
+      charts.all({
+        skip: 1
+
+      }).then(function (docs) {
+        docs.length.should.eql(1);
+        ObjectId(docs[0]._id).toHexString().should.eql(fixtures.collections.chart_collection[1]._id);
+
+        done();
+
+      }, function (error) {
+        should.fail(error);
         done();
       });
     });
   });
+
+
+  //it('clear', function(done) {
+  //  charts.clearCollection(function(err, result) {
+  //    charts.all(function(err, result) {
+  //      result.length.should.eql(0);
+  //      done();
+  //    });
+  //  });
+  //});
 
   //it('getOne: id', function(done) {
   //  charts.create(chart, function(err, newChart) {
@@ -241,16 +322,16 @@ describe('modules: charts', function () {
   //  });
   //});
 
-  it('remove', function(done) {
-    charts.all(function(err, docs) {
-      charts.remove(docs[0]._id, function(err) {
-        charts.all(function(err, result) {
-          result.length.should.eql(1);
-          result[0]._id.should.not.eql(docs[0]._id);
-          done();
-        });
-      });
-    });
-  });
+  //it('remove', function(done) {
+  //  charts.all(function(err, docs) {
+  //    charts.remove(docs[0]._id, function(err) {
+  //      charts.all(function(err, result) {
+  //        result.length.should.eql(1);
+  //        result[0]._id.should.not.eql(docs[0]._id);
+  //        done();
+  //      });
+  //    });
+  //  });
+  //});
 
 });

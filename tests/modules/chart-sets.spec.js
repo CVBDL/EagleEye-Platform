@@ -7,7 +7,7 @@ let should = require('should');
 
 let chartSets = require('../../modules/chart-sets');
 let DB = require('../../helpers/dbHelper');
-let fixtures = require('../fixtures/chartSetModule');
+let fixtures = require('../fixtures/chart-sets');
 
 describe('Model chart set tests', function() {
   let chartSet = {

@@ -32,6 +32,7 @@
     <Compile Include="helpers\utils.js" />
     <Compile Include="helpers\validator.js" />
     <Compile Include="modules\chart-sets.js" />
+    <Compile Include="modules\chart-types.js" />
     <Compile Include="modules\charts.js" />
     <Compile Include="modules\etl.js" />
     <Compile Include="modules\excel.js" />
@@ -70,8 +71,8 @@
     <Content Include="public\uploadChartImages\IC_692172pSpXvjOCgEw-Aj99bG7x2j5U.jpg" />
     <Content Include="public\uploadChartImages\IC_9892576FFY3OKfsoNCgYjC7gTbnkt4.jpg" />
     <Content Include="public\uploadChartImages\README.md" />
-    <Content Include="tests\fixtures\chartModule.json" />
-    <Content Include="tests\fixtures\chartSetModule.json" />
+    <Content Include="tests\fixtures\charts.json" />
+    <Content Include="tests\fixtures\chart-sets.json" />
     <Content Include="tests\fixtures\datatable.json" />
     <Content Include="tests\fixtures\excelHelper.json" />
     <Content Include="tests\fixtures\excelModule.json" />

@@ -1,17 +1,18 @@
 'use strict';
 
-let Promise  = require('es6-promise').Promise;
+let Promise = require('es6-promise').Promise;
 let ObjectId = require('mongodb').ObjectId;
 
-let chartSets          = require('./chart-sets');
+let chartSets = require('./chart-sets');
 let chartOptionsHelper = require('../helpers/chart-options-helper');
-let dbClient           = require('../helpers/dbHelper');
-let utils              = require('../helpers/utils');
-let columnTypes        = require('../helpers/column-types');
-let validator          = require('../helpers/validator');
+let dbClient = require('../helpers/dbHelper');
+let utils = require('../helpers/utils');
+let columnTypes = require('../helpers/column-types');
+let validator = require('../helpers/validator');
+let CHART_TYPES = require('../modules/chart-types');
 
-const COLLECTION       = "chart_collection";
-const IMAGE_CHART_TYPE = "ImageChart";
+const ROOT_ENDPOINT = utils.getRestApiRootEndpoint();
+const COLLECTION = "chart_collection";
 
 dbClient.DATABASE_KEYS.push({
   COLLECTION: COLLECTION,
@@ -22,9 +23,9 @@ dbClient.DATABASE_KEYS.push({
 });
 
 exports.create = function(chart) {
-  const db = dbClient.get();
+  let db = dbClient.get();
+
   const id = ObjectId();
-  const rootEndpoint = utils.getRestApiRootEndpoint();
 
   // chart schema
   let schema = {
@@ -57,7 +58,7 @@ exports.create = function(chart) {
     });
   }
 
-  schema.browserDownloadUrl.excel = (chart.chartType === IMAGE_CHART_TYPE) ? null : (rootEndpoint + '/download/excels/' + id);
+  schema.browserDownloadUrl.excel = (chart.chartType === CHART_TYPES.ImageChart) ? null : (ROOT_ENDPOINT + '/download/excels/' + id);
 
   if (validator.isValidDescription(chart.description)) {
     schema.description = chart.description;
@@ -78,23 +79,21 @@ exports.create = function(chart) {
   });
 };
 
-exports.all = function(option, callback) {
+exports.all = function(options) {
   let db = dbClient.get();
   let query = {};
-  if (arguments.length == 1) {
-    callback = option;
-    option = {};
-  }
-  if (option.skip) {
-    option.skip--;
-  }
-  if (option.query) {
+
+  options = options || {};
+
+  if (options.query) {
     query["$text"] = {
-      "$search": option.query
+      "$search": options.query
     };
-    delete option.query;
+
+    delete options.query;
   }
-  db.collection(COLLECTION).find(query, false, option).toArray(callback);
+
+  return db.collection(COLLECTION).find(query, false, options).toArray();
 };
 
 exports.getOne = function(_id, callback) {

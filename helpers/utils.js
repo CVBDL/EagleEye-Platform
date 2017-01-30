@@ -36,7 +36,7 @@ exports.getQueryParameters = function (req) {
   queryOption.sort.push([para.sort, para.order.toLowerCase()]);
 
   if (para.start) {
-    queryOption.skip = para.start;
+    queryOption.skip = para.start - 1;
   }
 
   if (para.limit) {

@@ -6,7 +6,7 @@
 var should = require('should'),
   DB = require('../../helpers/dbHelper'),
   excelHelper = require('../../helpers/excelHelper'),
-  fixtures = require('../fixtures/chartModule'),
+  fixtures = require('../fixtures/charts'),
   writeFixtures = require('../fixtures/excelModule.json'),
   datatableFixture = require('../fixtures/datatable.json');
 

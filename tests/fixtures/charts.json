@@ -2,6 +2,7 @@
   "collections": {
     "chart_collection": [
       {
+        "_id": "588edf0a60514b38109e7f41",
         "chartType": "LineChart",
         "description": "This is a line chart.",
         "options": {
@@ -59,9 +60,12 @@
               ]
             }
           ]
-        }
+        },
+        "createdAt": "2016-06-08T08:00:00.000Z",
+        "updatedAt": "2016-06-08T08:00:00.000Z"
       },
       {
+        "_id": "588edf0a60514b38109e7f42",
         "chartType": "PieChart",
         "description": "This is a pie chart.",
         "options": {
@@ -110,7 +114,9 @@
               ]
             }
           ]
-        }
+        },
+        "createdAt": "2016-06-01T11:11:00.000Z",
+        "updatedAt": "2016-06-01T11:11:00.000Z"
       }
     ]
   }

@@ -1,14 +1,6 @@
 ﻿'use strict';
 
-const CHART_TYPES = [
-  'LineChart',
-  'ColumnChart',
-  'BarChart',
-  'ComboChart',
-  'AreaChart',
-  'PieChart',
-  'ImageChart'
-];
+const CHART_TYPES = require('../modules/chart-types');
 
 exports.isUndefined = function (value) {
   return typeof value === 'undefined';
@@ -27,7 +19,15 @@ exports.isObject = function (value) {
 };
 
 exports.isValidChartType = function (chartType) {
-  return CHART_TYPES.indexOf(chartType) > -1;
+  let isValid = false;
+
+  Object.keys(CHART_TYPES).forEach(function (type) {
+    if (type === chartType) {
+      isValid = true;
+    }
+  });
+
+  return isValid;
 };
 
 exports.isValidDescription = function (description) {

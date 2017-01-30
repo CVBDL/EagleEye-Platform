@@ -82,7 +82,7 @@ describe('helpers: utils', function () {
     params.should.eql({
       sort: [['createdAt', 'desc']],
       limit: 30,
-      skip: 10
+      skip: 9
     });
   });
 
@@ -98,7 +98,7 @@ describe('helpers: utils', function () {
     params.should.eql({
       sort: [['createdAt', 'desc']],
       limit: 30,
-      skip: 10,
+      skip: 9,
       query: 'code ccollaborator'
     });
   });

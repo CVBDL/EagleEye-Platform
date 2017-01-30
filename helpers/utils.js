@@ -3,6 +3,8 @@
 let os      = require('os');
 let process = require('process');
 
+let validator = require('./validator');
+
 const protocol = 'http';
 const port = process.env.EAGLEEYE_PLATFORM_PORT;
 
@@ -11,40 +13,50 @@ exports.getRootEndpoint = function() {
 };
 
 exports.getRestApiRootEndpoint = function() {
-  return protocol + '://' + os.hostname() + ':' + port + '/api/v1';;
+  return protocol + '://' + os.hostname() + ':' + port + '/api/v1';
 };
 
 exports.getQueryParameters = function (req) {
-  let para = {};
+  const queryParameters = ["sort", "order", "limit", "start", "q"];
+
+  let params = {};
   let queryOption = {};
+  
+  queryParameters.forEach(function (queryParameter) {
+    if (validator.isDefined(req.query[queryParameter])) {
+      params[queryParameter] = req.query[queryParameter];
+    }
+  });
 
-  ["sort", "order", "limit", "start", "q"].forEach(
-    (key) => (
-      req.query[key] ? (para[key] = isNaN(req.query[key]) ? req.query[key] : parseInt(req.query[key])) : null
-    )
-  );
+  if (!params.sort ||
+      !new Set(["createdAt", "updatedAt"]).has(params.sort)) {
 
-  if (!para.sort || !new Set(["createdAt", "updatedAt"]).has(para.sort)) {
-    para.sort = "createdAt";
+    params.sort = "createdAt";
   }
 
-  if (!para.order || !new Set(["asc", "desc"]).has(para.order.toLowerCase())) {
-    para.order = "desc";
+  if (!params.order ||
+      !new Set(["asc", "desc"]).has(params.order.toLowerCase())) {
+
+    params.order = "desc";
   }
 
   queryOption.sort = [];
-  queryOption.sort.push([para.sort, para.order.toLowerCase()]);
+  queryOption.sort.push([params.sort, params.order.toLowerCase()]);
 
-  if (para.start) {
-    queryOption.skip = para.start - 1;
+  let start = parseInt(params.start, 10);
+
+  if (!isNaN(start)) {
+    queryOption.skip = start - 1;
   }
 
-  if (para.limit) {
-    queryOption.limit = para.limit;
+  let limit = parseInt(params.limit, 10);
+
+  if (!isNaN(limit)) {
+    queryOption.limit = limit;
   }
 
-  if (para.q) {
-    queryOption.query = para.q;
+  if (params.q) {
+    queryOption.query = params.q;
   }
 
   return queryOption;

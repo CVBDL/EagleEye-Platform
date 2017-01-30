@@ -11,7 +11,10 @@ describe('helpers: utils', function () {
     let hostname = os.hostname();
     let port = 3000;
 
-    utils.getRootEndpoint().should.eql(protocol + '://' + os.hostname() + ':' + port);
+    utils
+      .getRootEndpoint()
+      .should
+      .eql(protocol + '://' + os.hostname() + ':' + port);
   });
 
   it('should return API root endpoint', function () {
@@ -19,7 +22,10 @@ describe('helpers: utils', function () {
     let hostname = os.hostname();
     let port = 3000;
 
-    utils.getRestApiRootEndpoint().should.eql(protocol + '://' + os.hostname() + ':' + port + '/api/v1');
+    utils
+      .getRestApiRootEndpoint()
+      .should
+      .eql(protocol + '://' + os.hostname() + ':' + port + '/api/v1');
   });
 
   it('should use default query options for charts router', function () {
@@ -100,6 +106,20 @@ describe('helpers: utils', function () {
       limit: 30,
       skip: 9,
       query: 'code ccollaborator'
+    });
+  });
+
+  it('should be able to handle invalid parameters types', function () {
+    let params = utils.getQueryParameters({
+      query: {
+        limit: 'invalid',
+        start: 'invalid',
+        q: ''
+      }
+    });
+
+    params.should.eql({
+      sort: [['createdAt', 'desc']]
     });
   });
 });

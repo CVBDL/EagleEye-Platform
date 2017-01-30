@@ -277,6 +277,22 @@ describe('modules: charts', function () {
         done();
       });
     });
+
+    it('should apply q query parameter', function (done) {
+      charts.all({
+        query: 'Population'
+
+      }).then(function (docs) {
+        docs.length.should.eql(1);
+        ObjectId(docs[0]._id).toHexString().should.eql(fixtures.collections.chart_collection[0]._id);
+
+        done();
+
+      }, function (error) {
+        should.fail(error);
+        done();
+      });
+    });
   });
 
 

@@ -58,7 +58,10 @@ exports.create = function(chart) {
     });
   }
 
-  schema.browserDownloadUrl.excel = (chart.chartType === CHART_TYPES.ImageChart) ? null : (ROOT_ENDPOINT + '/download/excels/' + id);
+  schema.browserDownloadUrl.excel =
+    (chart.chartType === CHART_TYPES.ImageChart)
+      ? null
+      : (ROOT_ENDPOINT + '/download/excels/' + id);
 
   if (validator.isValidDescription(chart.description)) {
     schema.description = chart.description;

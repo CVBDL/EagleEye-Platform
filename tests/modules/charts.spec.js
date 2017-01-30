@@ -287,6 +287,7 @@ describe('modules: charts', function () {
         query: 'Population'
 
       }).then(function (docs) {
+        console.log(docs);
         docs.length.should.eql(1);
         docs[0]._id
           .should

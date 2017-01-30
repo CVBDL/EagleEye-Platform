@@ -332,7 +332,7 @@ describe('modules: charts', function () {
         });
     });
 
-    it('should return 422 error when passing invalid id', function (done) {
+    it('should return error 422 when passing invalid id', function (done) {
       let invalidId = '0';
 
       charts.getOne(invalidId)
@@ -355,44 +355,118 @@ describe('modules: charts', function () {
     });
   });
 
-  //it('clear', function(done) {
-  //  charts.clearCollection(function(err, result) {
-  //    charts.all(function(err, result) {
-  //      result.length.should.eql(0);
-  //      done();
-  //    });
-  //  });
-  //});
+
+  describe('deleteAll', function () {
+
+    it('should delete all charts', function (done) {
+      charts.deleteAll()
+        .then(function (result) {
+          result.deletedCount.should.eql(2);
+          done();
+        })
+        .catch(function () {
+          should.fail();
+          done();
+        });
+    });
+  });
 
 
+  describe('deleteOne', function () {
 
-  //it('updateOne', function(done) {
-  //  charts.create(chart, function(err, newChart) {
-  //    let id = newChart._id;
+    it('should delete one chart according to id', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id;
 
-  //    charts.updateOne(id, {
-  //      'test_key': 'test_value'
-  //    }, function(err, docs) {
+      charts.deleteOne(id)
+        .then(function (result) {
+          result.deletedCount.should.eql(1);
+          done();
+        })
+        .catch(function () {
+          should.fail();
+          done();
+        });
+    });
 
-  //      charts.getOne(id, function(err, docs) {
-  //        docs.length.should.eql(1);
-  //        docs[0].test_key.should.eql('test_value');
-  //        done();
-  //      });
-  //    });
-  //  });
-  //});
+    it('should return error 404 if no record to delete', function (done) {
+      let nonexistentId = '000000000000000000000000';
 
-  //it('remove', function(done) {
-  //  charts.all(function(err, docs) {
-  //    charts.remove(docs[0]._id, function(err) {
-  //      charts.all(function(err, result) {
-  //        result.length.should.eql(1);
-  //        result[0]._id.should.not.eql(docs[0]._id);
-  //        done();
-  //      });
-  //    });
-  //  });
-  //});
+      charts.deleteOne(nonexistentId)
+        .should
+        .rejectedWith({
+          status: 404
+        });
 
+      done();
+    });
+  });
+
+
+  describe('updateOne', function () {
+
+    it('should update an existing chart', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id;
+      let data = {
+        description: 'An updated description.',
+        datatable: null,
+        options: null
+      };
+
+      charts.updateOne(id, data)
+        .then(function (doc) {
+          doc._id.should.eql(id);
+          should.equal(doc.description, data.description);
+          should.equal(doc.datatable, data.datatable);
+          should.equal(doc.options, data.options);
+          new Date(doc.updatedAt).getTime()
+            .should
+            .be
+            .aboveOrEqual(Date.now() - 1000);
+
+          done();
+        })
+        .catch(function () {
+          should.fail();
+        });
+    });
+
+    it('should return error 404 if no record to update', function (done) {
+      let nonexistentId = '000000000000000000000000';
+      let data = {
+        description: 'An updated description.',
+        datatable: null,
+        options: null
+      };
+
+      charts.updateOne(nonexistentId, data)
+        .should
+        .rejectedWith({
+          status: 404
+        });
+
+      done();
+    });
+
+    it('should return error 422 when passing invalid id', function (done) {
+      let invalidId = '0';
+      let data = {
+        description: 'An updated description.',
+        datatable: null,
+        options: null
+      };
+
+      charts.updateOne(invalidId, data)
+        .should
+        .rejectedWith({
+          status: 422,
+          errors: [{
+            "resource": "chart",
+            "field": "_id",
+            "code": "invalid"
+          }]
+        });
+
+      done();
+    });
+  });
 });

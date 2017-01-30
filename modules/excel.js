@@ -96,7 +96,10 @@ exports.updateFromFileToDB = function(doc, setting, done, mode) {
       updateData.datatable.rows.push(row);
     }
 
-    charts.updateOne(doc._id, updateData, done);
+    charts.updateOne(doc._id, updateData)
+      .then(function () {
+        done();
+      });
   }, mode);
 }
 

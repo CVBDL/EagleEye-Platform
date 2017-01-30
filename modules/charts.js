@@ -22,11 +22,10 @@ dbClient.DATABASE_KEYS.push({
   }]
 });
 
-exports.create = function(chart) {
+
+exports.create = function(data) {
   let db = dbClient.get();
-
-  const id = ObjectId();
-
+  
   // chart schema
   let schema = {
     _id: null,
@@ -42,10 +41,12 @@ exports.create = function(chart) {
     updatedAt: null
   };
 
+  const id = ObjectId();
+
   schema._id = id;
 
-  if (validator.isValidChartType(chart.chartType)) {
-    schema.chartType = chart.chartType;
+  if (validator.isValidChartType(data.chartType)) {
+    schema.chartType = data.chartType;
 
   } else {
     return Promise.reject({
@@ -59,28 +60,31 @@ exports.create = function(chart) {
   }
 
   schema.browserDownloadUrl.excel =
-    (chart.chartType === CHART_TYPES.ImageChart)
+    (data.chartType === CHART_TYPES.ImageChart)
       ? null
       : (ROOT_ENDPOINT + '/download/excels/' + id);
 
-  if (validator.isValidDescription(chart.description)) {
-    schema.description = chart.description;
+  if (validator.isValidDescription(data.description)) {
+    schema.description = data.description;
   }
 
-  if (validator.isValidDataTable(chart.datatable)) {
-    schema.datatable = chart.datatable;
+  if (validator.isValidDataTable(data.datatable)) {
+    schema.datatable = data.datatable;
   }
 
-  if (validator.isValidOptions(chart.options)) {
-    schema.options = chart.options;
+  if (validator.isValidOptions(data.options)) {
+    schema.options = data.options;
   }
 
   schema.createdAt = schema.updatedAt = new Date().toISOString();
 
-  return db.collection(COLLECTION).insertOne(schema).then(function (result) {
-    return result.ops[0];
-  });
+  return db.collection(COLLECTION)
+    .insertOne(schema)
+    .then(function (result) {
+      return result.ops[0];
+    });
 };
+
 
 exports.all = function(options) {
   let db = dbClient.get();
@@ -96,8 +100,11 @@ exports.all = function(options) {
     delete options.query;
   }
 
-  return db.collection(COLLECTION).find(query, false, options).toArray();
+  return db.collection(COLLECTION)
+    .find(query, false, options)
+    .toArray();
 };
+
 
 exports.getOne = function(id) {
   let db = dbClient.get();
@@ -113,45 +120,97 @@ exports.getOne = function(id) {
     });
   }
 
-  return db.collection(COLLECTION).find({
-    "_id": ObjectId(id)
-  }).limit(1).toArray();
+  return db.collection(COLLECTION)
+    .find({ "_id": ObjectId(id) })
+    .limit(1)
+    .toArray();
 };
 
-exports.clearCollection = function(callback) {
+
+exports.deleteAll = function() {
   let db = dbClient.get();
 
-  db.collection(COLLECTION).remove({}, function(err, result) {
-    callback(err);
-  });
+  return db.collection(COLLECTION).deleteMany();
 };
 
-exports.remove = function(_id, callback) {
+
+exports.deleteOne = function(id) {
   let db = dbClient.get();
-  db.collection(COLLECTION).removeOne({
-    _id: ObjectId(_id)
-  }, function(err, result) {
-    callback(err);
-    chartSets.removeChartFromCharts(_id);
-  });
+  
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "chart",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
+  return db.collection(COLLECTION)
+    .deleteOne({ _id: ObjectId(id) })
+    .then(function (result) {
+      if (result.deletedCount === 0) {
+        return Promise.reject({
+          status: 404
+        });
+
+      } else {
+        chartSets.removeChartFromCharts(id);
+
+        return result;
+      }
+    });
 };
 
-exports.updateOne = function(_id, updateData, callback) {
+
+exports.updateOne = function (id, data) {
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "chart",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
   let db = dbClient.get();
-  let now = new Date();
-  let update = {
-    "$set": updateData
+  let fields = ['description', 'datatable', 'options'];
+  let updateData = {
+    updatedAt: new Date().toISOString()
   };
 
-  updateData.updatedAt = now.toISOString();
-
-  db.collection(COLLECTION).findAndModify({
-    _id: ObjectId(_id)
-
-  }, [], update, { new: true }, function(err, result) {
-    callback(err, result);
+  fields.forEach(function (field) {
+    if (validator.isDefined(data[field])) {
+      updateData[field] = data[field];
+    }
   });
+  
+  return db.collection(COLLECTION)
+    .findOneAndUpdate({
+      _id: ObjectId(id)
+    }, {
+      $set: updateData
+    }, {
+      // When false, returns the updated document rather than
+      // the original.The default is true.
+      returnOriginal: false
+    })
+    .then(function (result) {
+      if (result.value === null) {
+        return Promise.reject({
+          status: 404
+        });
+
+      } else {
+        return result.value;
+      }
+    });
 };
+
 
 exports.updateImageChartFile = function(_id, fileName, callback) {
   let db = dbClient.get();
@@ -172,6 +231,7 @@ exports.updateImageChartFile = function(_id, fileName, callback) {
     }
   }, callback);
 };
+
 
 exports.updateDataTableBy2dArray = function(_id, data, done) {
   let defaultDomainType = 'string';
@@ -228,6 +288,7 @@ exports.updateDataTableBy2dArray = function(_id, data, done) {
   console.log(updateData)
   this.updateOne(_id, updateData, done);
 };
+
 
 exports.updateDataTable = function(_id, data, done) {
   this.updateOne(_id, { datatable: data }, done);

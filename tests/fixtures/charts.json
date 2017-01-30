@@ -61,6 +61,10 @@
             }
           ]
         },
+        "browserDownloadUrl": {
+          "excel": "http://localhost:3000/api/v1/download/excels/588edf0a60514b38109e7f41",
+          "image": null
+        },
         "createdAt": "2016-06-08T08:00:00.000Z",
         "updatedAt": "2016-06-08T08:00:00.000Z"
       },
@@ -114,6 +118,10 @@
               ]
             }
           ]
+        },
+        "browserDownloadUrl": {
+          "excel": "http://localhost:3000/api/v1/download/excels/588edf0a60514b38109e7f42",
+          "image": null
         },
         "createdAt": "2016-06-01T11:11:00.000Z",
         "updatedAt": "2016-06-01T11:11:00.000Z"

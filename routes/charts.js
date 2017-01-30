@@ -36,9 +36,13 @@ router.route('/charts')
 
   // delete all charts
   .delete(function deleteCharts(req, res) {
-    charts.clearCollection(function(err, result) {
-      res.status(204).send('');
-    });
+    charts.deleteAll()
+      .then(function () {
+        res.status(204).send('');
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
+      });
   });
 
 
@@ -67,18 +71,26 @@ router.route('/charts/:id')
   .post(function putChart(req, res) {
     let id = req.params.id;
 
-    charts.updateOne(id, req.body, function(err, doc) {
-      return err ? errHandlers.handleInternalError(err, req, res) : res.send(doc.value);
-    });
+    charts.updateOne(id, req.body)
+      .then(function (doc) {
+        res.send(doc);
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
+      });
   })
 
   // delete a single chart
   .delete(function deleteChart(req, res) {
     let id = req.params.id;
-
-    charts.remove(id, function(err, result) {
-      res.status(204).send('');
-    });
+    
+    charts.deleteOne(id)
+      .then(function () {
+        res.status(204).send('');
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
+      });
   });
 
 

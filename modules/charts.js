@@ -27,7 +27,11 @@ dbClient.DATABASE_KEYS.push({
  * Create a new chart.
  *
  * @method
- * @param {Object} data  The new chart object.
+ * @param {Object} data The new chart object.
+ * @param {string} data.chartType The chart's type.
+ * @param {string} [data.description=null] The chart's description.
+ * @param {Object} [data.datatable=null] The chart's data table.
+ * @param {Object} [data.options=null] The chart's options.
  * @returns {Promise} A promise will be resolved with new created chart.
  *                    Or rejected with defined errors.
  */
@@ -99,12 +103,12 @@ exports.create = function(data) {
  *
  * @method
  * @param {Object} params URL query parameters.
- * @param {Object} [params.query] Query for find operation.
- * @param {Object} [params.sort] Set to sort the documents coming back
+ * @param {string} [params.query] Query for find operation.
+ * @param {Array} [params.sort] Set to sort the documents coming back
  *                               from the query.
- * @param {Object} [params.skip] Set to skip N documents ahead in your
+ * @param {number} [params.skip] Set to skip N documents ahead in your
  *                               query (useful for pagination).
- * @param {Object} [params.limit] Sets the limit of documents returned in
+ * @param {number} [params.limit] Sets the limit of documents returned in
  *                                the query.
  * @returns {Promise} A promise will be resolved with new created chart.
  *                    Or rejected with defined errors.
@@ -217,7 +221,7 @@ exports.deleteOne = function(id) {
  * @method
  * @param {ObjectId} id The chart's ObjectId.
  * @param {Object} data The updated chart data object.
- * @param {Object} [data.description] The chart description field.
+ * @param {string} [data.description] The chart description field.
  * @param {Object} [data.datatable] The chart datatable field.
  * @param {Object} [data.options] The chart options field.
  * @returns {Promise} A promise will be resolved when delete successfully.

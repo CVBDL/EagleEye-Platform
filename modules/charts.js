@@ -158,7 +158,16 @@ exports.getOne = function(id) {
   return db.collection(COLLECTION)
     .find({ "_id": ObjectId(id) })
     .limit(1)
-    .toArray();
+    .toArray()
+    .then(function (docs) {
+      if (!docs.length) {
+        return Promise.reject({
+          status: 404
+        });
+      } else {
+        return docs;
+      }
+    });
 };
 
 

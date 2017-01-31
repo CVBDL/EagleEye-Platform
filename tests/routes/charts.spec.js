@@ -333,3 +333,77 @@ describe('routes: /charts', function () {
   });
 
 });
+
+
+describe('routes: /charts/:id', function () {
+
+  before(function (done) {
+    dbClient.connect(dbClient.MODE_TEST, done);
+  });
+
+  beforeEach(function (done) {
+    dbClient.drop(function (err) {
+      if (err) {
+        return done(err);
+      }
+
+      dbClient.fixtures(fixtures, done);
+    });
+  });
+
+
+  /**
+   * Delete all charts.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#get-a-single-chart>
+   */
+  describe('GET /api/v1/charts/:_id', function () {
+
+    it('should fetch a single with the given id', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+
+      request(app)
+        .get('/api/v1/charts/' + id)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.eql(id);
+        })
+        .expect(200, done);
+    });
+
+    it('should response 422 if sent invalid id', function (done) {
+      let invalidId = '0';
+
+      request(app)
+        .get('/api/v1/charts/' + invalidId)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Validation Failed');
+          res.body.errors.should.eql([
+            {
+              "resource": "chart",
+              "field": "_id",
+              "code": "invalid"
+            }
+          ]);
+        })
+        .expect(422, done);
+    });
+
+    it('should response 404 cannot find the record', function (done) {
+      let nonexistentId = '000000000000000000000000';
+
+      request(app)
+        .get('/api/v1/charts/' + nonexistentId)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Not Found');
+        })
+        .expect(404, done);
+    });
+  });
+
+
+});

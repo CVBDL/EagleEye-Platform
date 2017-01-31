@@ -324,14 +324,16 @@ describe('modules: charts', function () {
         });
     });
 
-    it('should return empty list if cannot find a record', function (done) {
+    it('should return error 404 if cannot find the record', function (done) {
       let nonexistentId = '000000000000000000000000';
 
       charts.getOne(nonexistentId)
-        .then(function (docs) {
-          docs.length.should.eql(0);
-          done();
+        .should
+        .rejectedWith({
+          status: 404
         });
+
+      done();
     });
 
     it('should return error 422 when passing invalid id', function (done) {

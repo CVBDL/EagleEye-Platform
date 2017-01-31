@@ -55,12 +55,7 @@ router.route('/charts/:id')
     
     charts.getOne(id)
       .then(function (docs) {
-        if (docs[0] === undefined) {
-          res.status(404).send('');
-
-        } else {
-          res.send(docs[0]);
-        }
+        res.send(docs[0]);
       })
       .catch(function (err) {
         errHandlers.handle(err, req, res);

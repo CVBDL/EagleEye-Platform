@@ -4,7 +4,6 @@ let Promise = require('es6-promise').Promise;
 let ObjectId = require('mongodb').ObjectId;
 
 let chartSets = require('./chart-sets');
-let chartOptionsHelper = require('../helpers/chart-options-helper');
 let dbClient = require('../helpers/dbHelper');
 let utils = require('../helpers/utils');
 let columnTypes = require('../helpers/column-types');
@@ -324,61 +323,4 @@ exports.updateImageBrowserDownloadUrl = function (id, filename) {
         return result.value;
       }
     });
-};
-
-
-exports.updateDataTableBy2dArray = function(_id, data, done) {
-  let defaultDomainType = 'string';
-  let defaultDataType = 'number';
-
-  let updateData = {};
-
-  // response if data table is empty
-  if (typeof data === 'undefined' || data.length === 0) {
-    done({
-      message: 'Data table has no data.'
-    });
-  }
-
-  let firstRow = data[0];
-
-  updateData.datatable = {
-    "cols": [{
-      "type": defaultDomainType,
-      "label": firstRow[0] || ''
-    }],
-    "rows": []
-  };
-
-  if (data.length === 1) {
-    for (let i = 1; i < firstRow.length; i++) {
-      updateData.datatable.cols.push({
-        "label": firstRow[i],
-        "type": defaultDataType
-      });
-    }
-
-  } else {
-    updateData.datatable.cols[0].type = columnTypes.infer(data[1][0]);
-
-    for (let i = 1; i < firstRow.length; i++) {
-      updateData.datatable.cols.push({
-        "label": firstRow[i],
-        "type": "number"
-      });
-    }
-    for (let i = 1; i < data.length; i++) {
-      let row = {
-        c: []
-      };
-      for (let j = 0; j < firstRow.length; j++) {
-        row.c.push({
-          v: data[i][j]
-        });
-      }
-      updateData.datatable.rows.push(row);
-    }
-  }
-  console.log(updateData)
-  this.updateOne(_id, updateData, done);
 };

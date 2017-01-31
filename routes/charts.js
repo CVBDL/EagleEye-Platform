@@ -38,7 +38,7 @@ router.route('/charts')
   .delete(function deleteCharts(req, res) {
     charts.deleteAll()
       .then(function () {
-        res.status(204).send('');
+        res.status(204).send();
       })
       .catch(function (err) {
         errHandlers.handle(err, req, res);
@@ -86,7 +86,7 @@ router.route('/charts/:id')
     
     charts.deleteOne(id)
       .then(function () {
-        res.status(204).send('');
+        res.status(204).send();
       })
       .catch(function (err) {
         errHandlers.handle(err, req, res);

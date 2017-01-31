@@ -97,7 +97,6 @@ describe('routes: /charts', function () {
     it('should fetch all charts', function (done) {
       request(app)
         .get('/api/v1/charts')
-        .set('Content-Type', 'application/json')
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
@@ -111,7 +110,6 @@ describe('routes: /charts', function () {
     it('should sort list by "createdAt" in "asc" desc by default', function (done) {
       request(app)
         .get('/api/v1/charts')
-        .set('Content-Type', 'application/json')
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
@@ -132,7 +130,6 @@ describe('routes: /charts', function () {
     it('should sort list by "updatedAt" in "asc" order', function (done) {
       request(app)
         .get('/api/v1/charts?sort=updatedAt&order=asc')
-        .set('Content-Type', 'application/json')
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
@@ -153,7 +150,6 @@ describe('routes: /charts', function () {
     it('should set limit on result list', function (done) {
       request(app)
         .get('/api/v1/charts?limit=1')
-        .set('Content-Type', 'application/json')
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
@@ -167,7 +163,6 @@ describe('routes: /charts', function () {
     it('should set start and limit on result list', function (done) {
       request(app)
         .get('/api/v1/charts?start=2&limit=1')
-        .set('Content-Type', 'application/json')
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
@@ -185,7 +180,6 @@ describe('routes: /charts', function () {
     it('should set a query on result list', function (done) {
       request(app)
         .get('/api/v1/charts?q=Work')
-        .set('Content-Type', 'application/json')
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
@@ -323,5 +317,19 @@ describe('routes: /charts', function () {
     });
   });
 
-});
 
+  /**
+   * Delete all charts.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#delete-a-chart>
+   */
+  describe('DELETE /api/v1/charts', function () {
+
+    it('should delete all charts', function (done) {
+      request(app)
+        .delete('/api/v1/charts')
+        .send()
+        .expect(204, done);
+    });
+  });
+
+});

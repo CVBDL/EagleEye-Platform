@@ -29,9 +29,9 @@ dbClient.DATABASE_KEYS.push({
  * @method
  * @param {Object} data The new chart object.
  * @param {string} data.chartType The chart's type.
- * @param {string} [data.description=null] The chart's description.
- * @param {Object} [data.datatable=null] The chart's data table.
- * @param {Object} [data.options=null] The chart's options.
+ * @param {?string} [data.description=null] The chart's description.
+ * @param {?Object} [data.datatable=null] The chart's data table.
+ * @param {?Object} [data.options=null] The chart's options.
  * @returns {Promise} A promise will be resolved with new created chart.
  *                    Or rejected with defined errors.
  */
@@ -104,8 +104,8 @@ exports.create = function(data) {
  * @method
  * @param {Object} params URL query parameters.
  * @param {string} [params.query] Query for find operation.
- * @param {Array} [params.sort] Set to sort the documents coming back
- *                               from the query.
+ * @param {Array<Array<string>>} [params.sort] Set to sort the documents
+ *                                             coming back from the query.
  * @param {number} [params.skip] Set to skip N documents ahead in your
  *                               query (useful for pagination).
  * @param {number} [params.limit] Sets the limit of documents returned in
@@ -221,9 +221,9 @@ exports.deleteOne = function(id) {
  * @method
  * @param {ObjectId} id The chart's ObjectId.
  * @param {Object} data The updated chart data object.
- * @param {string} [data.description] The chart description field.
- * @param {Object} [data.datatable] The chart datatable field.
- * @param {Object} [data.options] The chart options field.
+ * @param {?string} [data.description] The chart description field.
+ * @param {?Object} [data.datatable] The chart datatable field.
+ * @param {?Object} [data.options] The chart options field.
  * @returns {Promise} A promise will be resolved when delete successfully.
  *                    Or rejected with defined errors.
  */
@@ -258,7 +258,7 @@ exports.updateOne = function (id, data) {
       $set: updateData
     }, {
       // When false, returns the updated document rather than
-      // the original.The default is true.
+      // the original.
       returnOriginal: false
     })
     .then(function (result) {

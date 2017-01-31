@@ -17,13 +17,13 @@ let state = {
   mode: null
 };
 
-let ensureIndex = function(keyObject, collection) {
+let createIndex = function(keyObject, collection) {
   keyObject.keys.forEach(function(keyConfig) {
     if (keyConfig.option) {
-      collection.ensureIndex(keyConfig.key, keyConfig.option);
+      collection.createIndex(keyConfig.key, keyConfig.option);
 
     } else {
-      collection.ensureIndex(keyConfig);
+      collection.createIndex(keyConfig);
     }
   });
 };
@@ -43,10 +43,10 @@ exports.connect = function(mode, done) {
       let collection = db.collection[keyObject.COLLECTION];
       if (!collection) {
         db.createCollection(keyObject.COLLECTION, function(err, collection) {
-          ensureIndex(keyObject, collection);
+          createIndex(keyObject, collection);
         });
       } else {
-        ensureIndex(keyObject, collection);
+        createIndex(keyObject, collection);
       }
     });
     done();

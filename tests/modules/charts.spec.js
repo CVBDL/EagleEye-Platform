@@ -3,6 +3,7 @@
 let MongoClient = require('mongodb').MongoClient
 let ObjectId = require('mongodb').ObjectId;
 let should = require('should');
+let os = require('os');
 
 let charts = require('../../modules/charts');
 let dbClient = require('../../helpers/dbHelper');
@@ -456,6 +457,67 @@ describe('modules: charts', function () {
       };
 
       charts.updateOne(invalidId, data)
+        .should
+        .rejectedWith({
+          status: 422,
+          errors: [{
+            "resource": "chart",
+            "field": "_id",
+            "code": "invalid"
+          }]
+        });
+
+      done();
+    });
+  });
+
+  describe('updateImageBrowserDownloadUrl', function () {
+
+    it('should update image chart download URL', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id;
+
+      charts.updateImageBrowserDownloadUrl(id, 'sample-image.png')
+        .then(function (doc) {
+          doc._id.should.eql(id);
+          should.equal(doc.browserDownloadUrl.excel, null);
+          doc.browserDownloadUrl.image
+            .should
+            .eql('http://' + os.hostname() + ':3000/uploadChartImages/sample-image.png');
+
+          done();
+        })
+        .catch(function () {
+          should.fail();
+          done();
+        })
+    });
+
+    it('should return error 404 if no record to update', function (done) {
+      let nonexistentId = '000000000000000000000000';
+      let data = {
+        description: 'An updated description.',
+        datatable: null,
+        options: null
+      };
+
+      charts.updateImageBrowserDownloadUrl(nonexistentId, 'sample-image.png')
+        .should
+        .rejectedWith({
+          status: 404
+        });
+
+      done();
+    });
+
+    it('should return error 422 when passing invalid id', function (done) {
+      let invalidId = '0';
+      let data = {
+        description: 'An updated description.',
+        datatable: null,
+        options: null
+      };
+
+      charts.updateImageBrowserDownloadUrl(invalidId, 'sample-image.png')
         .should
         .rejectedWith({
           status: 422,

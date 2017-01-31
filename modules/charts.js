@@ -11,7 +11,8 @@ let columnTypes = require('../helpers/column-types');
 let validator = require('../helpers/validator');
 let CHART_TYPES = require('../modules/chart-types');
 
-const ROOT_ENDPOINT = utils.getRestApiRootEndpoint();
+const ROOT_ENDPOINT = utils.getRootEndpoint();
+const API_ROOT_ENDPOINT = utils.getRestApiRootEndpoint();
 const COLLECTION = "chart_collection";
 
 dbClient.DATABASE_KEYS.push({
@@ -74,7 +75,7 @@ exports.create = function(data) {
   schema.browserDownloadUrl.excel =
     (data.chartType === CHART_TYPES.ImageChart)
       ? null
-      : (ROOT_ENDPOINT + '/download/excels/' + id);
+      : (API_ROOT_ENDPOINT + '/download/excels/' + id);
 
   if (validator.isValidDescription(data.description)) {
     schema.description = data.description;
@@ -274,24 +275,55 @@ exports.updateOne = function (id, data) {
 };
 
 
-exports.updateImageChartFile = function(_id, fileName, callback) {
+/**
+ * Update an image chart's browserDownloadUrl.
+ *
+ * @method
+ * @param {ObjectId} id The chart's ObjectId.
+ * @param {string} filename The image filename.
+ * @returns {Promise} A promise will be resolved when delete successfully.
+ *                    Or rejected with defined errors.
+ */
+exports.updateImageBrowserDownloadUrl = function (id, filename) {
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "chart",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
   let db = dbClient.get();
-  let now = new Date();
-  let regExp = /^c-/g;
-  let query = {};
-  let rootEndpoint = utils.getRootEndpoint();
+  
+  return db.collection(COLLECTION)
+    .findOneAndUpdate({
+      _id: ObjectId(id)
+    }, {
+      $set: {
+        browserDownloadUrl: {
+          excel: null,
+          image: ROOT_ENDPOINT + '/uploadChartImages/' + filename
+        },
+        updatedAt: new Date().toISOString()
+      }
+    }, {
+      // When false, returns the updated document rather than
+      // the original.
+      returnOriginal: false
+    })
+    .then(function (result) {
+      if (result.value === null) {
+        return Promise.reject({
+          status: 404
+        });
 
-  query = { _id: ObjectId(_id) }
-
-  db.collection(COLLECTION).findOneAndUpdate(query, {
-    $set: {
-      browserDownloadUrl: {
-        excel: null,
-        image: rootEndpoint + '/uploadChartImages/' + fileName  // TODO: make path configurable
-      },
-      updatedAt: now.toISOString()
-    }
-  }, callback);
+      } else {
+        return result.value;
+      }
+    });
 };
 
 
@@ -349,9 +381,4 @@ exports.updateDataTableBy2dArray = function(_id, data, done) {
   }
   console.log(updateData)
   this.updateOne(_id, updateData, done);
-};
-
-
-exports.updateDataTable = function(_id, data, done) {
-  this.updateOne(_id, { datatable: data }, done);
 };

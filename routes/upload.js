@@ -66,22 +66,25 @@ router.route('/upload/images')
     }
 
     let targetFileName = 'IC_' + Math.ceil(Math.random() * 1000000) + fileName;
-    let targetPath = path.join(__dirname, '../public/uploadChartImages/' + targetFileName)
-
-    charts.updateImageChartFile(req.body.id, targetFileName, function(err, result) {
-      if (err) {
-        multipartyMiddleware.send('failed');
-        return;
-      } else
+    let targetPath = path.join(
+      __dirname, '../public/uploadChartImages/' + targetFileName);
+    
+    charts.updateImageBrowserDownloadUrl(req.body.id, targetFileName)
+      .then(function (doc) {
         multipartyMiddleware.send('ok');
 
-      let stream = fs.createReadStream(file.path).pipe(fs.createWriteStream(targetPath));
-      stream.on('finish', () => {
-        if (fs.existsSync(file.path)) {
-          fs.unlinkSync(file.path);
-        }
+        let stream = fs.createReadStream(file.path)
+          .pipe(fs.createWriteStream(targetPath));
+
+        stream.on('finish', function () {
+          if (fs.existsSync(file.path)) {
+            fs.unlinkSync(file.path);
+          }
+        });
+      })
+      .catch(function (error) {
+        multipartyMiddleware.send('failed');
       });
-    });
   });
 
 

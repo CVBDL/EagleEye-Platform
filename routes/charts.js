@@ -100,10 +100,14 @@ router.route('/charts/:id/datatable')
   // update a single chart data table
   .put(function putChartDataTable(req, res) {
     let id = req.params.id;
-
-    charts.updateDataTable(id, req.body, function(err, result) {
-      return err ? errHandlers.handleInternalError(err, req, res) : res.send(result.value);
-    });
+    
+    charts.updateOne(id, { datatable: req.body })
+      .then(function (doc) {
+        res.send(doc);
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
+      });
   });
 
 

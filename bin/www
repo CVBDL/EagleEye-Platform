@@ -1,6 +1,14 @@
 #!/usr/bin/env node
 
 /**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.EAGLEEYE_PLATFORM_PORT || '3000');
+
+process.env.EAGLEEYE_PLATFORM_PORT = port;
+
+/**
  * Module dependencies.
  */
 
@@ -8,12 +16,6 @@ var app = require('../app');
 var debug = require('debug')('EagleEye:server');
 var http = require('http');
 
-/**
- * Get port from environment and store in Express.
- */
-
-var port = normalizePort(process.env.PORT || '3000');
-process.env.EAGLEEYE_PLATFORM_PORT = port;
 app.set('port', port);
 
 /**

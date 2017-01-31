@@ -6,7 +6,7 @@ let process = require('process');
 let validator = require('./validator');
 
 const protocol = 'http';
-const port = process.env.EAGLEEYE_PLATFORM_PORT;
+const port = process.env.EAGLEEYE_PLATFORM_PORT || '3000';
 
 exports.getRootEndpoint = function() {
   return protocol + '://' + os.hostname() + ':' + port;

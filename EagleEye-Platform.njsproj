@@ -58,7 +58,6 @@
     <Compile Include="tests\helpers\utils.spec.js" />
     <Compile Include="tests\routes\charts.spec.js" />
     <Compile Include="tests\unit.conf.js" />
-    <Compile Include="tests\unit.settings.js" />
     <Compile Include="tools\start-express.js" />
     <Compile Include="tools\terminate-express.js" />
     <Content Include="views\cron.ejs" />

@@ -3,14 +3,15 @@
 let MongoClient = require('mongodb').MongoClient
 let ObjectId = require('mongodb').ObjectId;
 let should = require('should');
+let process = require('process');
 let os = require('os');
 
 let charts = require('../../modules/charts');
 let dbClient = require('../../helpers/dbHelper');
 let fixtures = require('../fixtures/charts');
-let settings = require('../unit.settings');
 
 const CHART_COLLECTION_NAME = "chart_collection";
+const DB_CONNECTION_URI = process.env.DB_CONNECTION_URI;
 
 let chart;
 
@@ -108,7 +109,7 @@ describe('modules: charts', function () {
         newChart.options.should.eql(chart.options);
         newChart.datatable.should.eql(chart.datatable);
         
-        MongoClient.connect(settings.DB_CONNECTION_URI).then(function (db) {
+        MongoClient.connect(DB_CONNECTION_URI).then(function (db) {
           let collection = db.collection(CHART_COLLECTION_NAME);
 
           collection.find({}).toArray().then(function (docs) {

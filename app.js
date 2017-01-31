@@ -1,29 +1,29 @@
 'use strict';
 
-var bodyParser   = require('body-parser');
-var cookieParser = require('cookie-parser');
-var express      = require('express');
-var favicon      = require('serve-favicon');
-var logger       = require('morgan');
-var multipart    = require('connect-multiparty');
-var path         = require('path');
+let bodyParser = require('body-parser');
+let cookieParser = require('cookie-parser');
+let express = require('express');
+let favicon = require('serve-favicon');
+let logger = require('morgan');
+let multipart = require('connect-multiparty');
+let path = require('path');
 
-var rootApi      = require('./routes/root-endpoint');
-var chartsApi    = require('./routes/charts');
-var chartSetsApi = require('./routes/chart-sets');
-var jobsApi      = require('./routes/jobs');
-var tasksApi     = require('./routes/tasks');
-var searchApi    = require('./routes/search');
-var uploadApi    = require('./routes/upload');
-var downloadApi  = require('./routes/download');
-var etlApi       = require('./routes/etl');
-var db           = require('./helpers/dbHelper');
-var routes       = require('./routes/index');
-var scheduleTask = require('./routes/schedule-management');
-var utils        = require('./helpers/utils');
-var errHandlers  = require('./helpers/error-handlers');
+let db = require('./helpers/dbHelper');
+let utils = require('./helpers/utils');
+let errHandlers = require('./helpers/error-handlers');
+let rootApi = require('./routes/root-endpoint');
+let chartsApi = require('./routes/charts');
+let chartSetsApi = require('./routes/chart-sets');
+let jobsApi = require('./routes/jobs');
+let tasksApi = require('./routes/tasks');
+let searchApi = require('./routes/search');
+let uploadApi = require('./routes/upload');
+let downloadApi = require('./routes/download');
+let etlApi = require('./routes/etl');
+let routes = require('./routes/index');
+let scheduleTask = require('./routes/schedule-management');
 
-var app = express();
+let app = express();
 
 // CORS support
 app.use(function(req, res, next) {
@@ -68,7 +68,7 @@ app.use('/schedule', scheduleTask);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });

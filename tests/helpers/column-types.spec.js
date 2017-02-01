@@ -6,6 +6,13 @@ let columnTypes = require('../../helpers/column-types');
 
 describe('helpers: column types', function () {
 
+  it('should infer to `null` type', function (done) {
+    should.equal('null', columnTypes.infer(null));
+    should.equal('null', columnTypes.infer('null'));
+
+    done();
+  });
+
   it('should infer to `boolean` type', function(done) {
     columnTypes.infer('true').should.eql('boolean');
     columnTypes.infer(true).should.eql('boolean');
@@ -66,8 +73,6 @@ describe('helpers: column types', function () {
     columnTypes.infer('12-00-00').should.eql('string');
     columnTypes.infer('11/11/2016').should.eql('string');
     columnTypes.infer('2016-11-11T12:00:00').should.eql('string');
-    columnTypes.infer(null).should.eql('string');
-    columnTypes.infer('null').should.eql('string');
 
     done();
   });

@@ -3,11 +3,10 @@
  */
 'use strict';
 
-let charts = require('../modules/charts');
 let excelHelper = require('../helpers/excelHelper');
 let columnTypes = require('../helpers/column-types');
 
-exports.writeOne = function(doc, setting, done, mode) {
+exports.writeOne = function (doc, setting, done, mode) {
   setting.columns = doc.datatable.cols;
   for (var i = 0; i < setting.columns.length; i++) {
     setting.columns[i].header = setting.columns[i].label;
@@ -23,90 +22,4 @@ exports.writeOne = function(doc, setting, done, mode) {
     datas.push(row);
   }
   excelHelper.writeXlsx(setting, datas, done, mode);
-}
-
-exports.updateFromFileToDB = function(doc, setting, done, mode) {
-  excelHelper.readFile(setting, function(result) {
-    // Result format:
-    // [
-    //   [
-    //     'name(string)',
-    //     'dept(string)',
-    //     'lunchTime(timeofday)',
-    //     'salary(number)',
-    //     'hireDate(date)',
-    //     'age(number)',
-    //     'isSenior(boolean)',
-    //     'seniorityStartTime(datetime)'
-    //   ],
-    //   [
-    //     'John',
-    //     'Eng',
-    //     '12:00:00',
-    //     1000,
-    //     '2005-03-19',
-    //     35,
-    //     'true',
-    //     '2007-12-02 15:56:00'
-    //   ],
-    //   [
-    //     'Dave',
-    //     'Eng',
-    //     '12:00:00',
-    //     500,
-    //     '2006-04-19',
-    //     27,
-    //     'false',
-    //     'null'
-    //   ]
-    // ]
-
-    var updateData = {};
-    var column = result[0];
-    updateData.datatable = {
-      "cols": [{
-        "type": "string",
-        "label": column[0] ? column[0] : "Category"
-      }],
-      "rows": []
-    };
-
-    // remove this property
-    // if (doc.domainDataType) {
-    //   doc.datatable.cols[0].type = doc.domainDataType;
-    // }
-    if (result.length > 0) {
-        updateData.datatable.cols[0].type = columnTypes.infer(result[1][0]);
-    }
-    for (let i = 1; i < column.length; i++) {
-      updateData.datatable.cols.push({
-        "label": column[i],
-        "type": "number"
-      });
-    }
-    for (let i = 1; i < result.length; i++) {
-      var row = {
-        c: []
-      };
-      for (let j = 0; j < column.length; j++) {
-        row.c.push({
-          v: columnTypes.convertFileToDataTable(result[i][j])
-        });
-      }
-      updateData.datatable.rows.push(row);
-    }
-
-    charts.updateOne(doc._id, updateData)
-      .then(function () {
-        done();
-      });
-  }, mode);
-}
-
-exports.remove = function() {
-
-}
-
-exports.import = function() {
-
-}
+};

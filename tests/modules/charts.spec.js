@@ -1,10 +1,12 @@
 'use strict';
 
+let Exceljs = require('exceljs');
 let MongoClient = require('mongodb').MongoClient
 let ObjectId = require('mongodb').ObjectId;
-let should = require('should');
-let process = require('process');
 let os = require('os');
+let path = require('path');
+let process = require('process');
+let should = require('should');
 
 let charts = require('../../modules/charts');
 let dbClient = require('../../helpers/dbHelper');
@@ -13,7 +15,6 @@ let fixtures = require('../fixtures/charts');
 const CHART_COLLECTION_NAME = "chart_collection";
 const DB_CONNECTION_URI = process.env.DB_CONNECTION_URI;
 
-let chart;
 
 describe('modules: charts', function () {
 
@@ -30,7 +31,9 @@ describe('modules: charts', function () {
       dbClient.fixtures(fixtures, done);
     });
   });
-  
+
+  let chart;
+
   beforeEach(function() {
     chart = {
       "chartType": "BarChart",
@@ -167,8 +170,8 @@ describe('modules: charts', function () {
         should(newChart.updatedAt).not.be.undefined();
         done();
 
-      }, function () {
-        should.fail();
+      }, function (error) {
+        should.fail(error);
         done();
       });
     });
@@ -190,8 +193,8 @@ describe('modules: charts', function () {
         should(newChart.updatedAt).not.be.undefined();
         done();
 
-      }, function () {
-        should.fail();
+      }, function (error) {
+        should.fail(error);
         done();
       });
     });
@@ -331,9 +334,14 @@ describe('modules: charts', function () {
         .should
         .rejectedWith({
           status: 404
+        })
+        .then(function () {
+          done();
+        })
+        .catch(function (error) {
+          should.fail(error);
+          done();
         });
-
-      done();
     });
 
     it('should return error 422 when passing invalid id', function (done) {
@@ -368,8 +376,8 @@ describe('modules: charts', function () {
           result.deletedCount.should.eql(2);
           done();
         })
-        .catch(function () {
-          should.fail();
+        .catch(function (error) {
+          should.fail(error);
           done();
         });
     });
@@ -386,8 +394,8 @@ describe('modules: charts', function () {
           result.deletedCount.should.eql(1);
           done();
         })
-        .catch(function () {
-          should.fail();
+        .catch(function (error) {
+          should.fail(error);
           done();
         });
     });
@@ -399,9 +407,14 @@ describe('modules: charts', function () {
         .should
         .rejectedWith({
           status: 404
+        })
+        .then(function () {
+          done();
+        })
+        .catch(function (error) {
+          should.fail(error);
+          done();
         });
-
-      done();
     });
   });
 
@@ -431,8 +444,8 @@ describe('modules: charts', function () {
 
           done();
         })
-        .catch(function () {
-          should.fail();
+        .catch(function (error) {
+          should.fail(error);
         });
     });
 
@@ -448,9 +461,14 @@ describe('modules: charts', function () {
         .should
         .rejectedWith({
           status: 404
+        })
+        .then(function () {
+          done();
+        })
+        .catch(function (error) {
+          should.fail(error);
+          done();
         });
-
-      done();
     });
 
     it('should return error 422 when passing invalid id', function (done) {
@@ -470,11 +488,17 @@ describe('modules: charts', function () {
             "field": "_id",
             "code": "invalid"
           }]
+        })
+        .then(function () {
+          done();
+        })
+        .catch(function (error) {
+          should.fail(error);
+          done();
         });
-
-      done();
     });
   });
+
 
   describe('updateImageBrowserDownloadUrl', function () {
 
@@ -491,8 +515,8 @@ describe('modules: charts', function () {
 
           done();
         })
-        .catch(function () {
-          should.fail();
+        .catch(function (error) {
+          should.fail(error);
           done();
         })
     });
@@ -509,9 +533,14 @@ describe('modules: charts', function () {
         .should
         .rejectedWith({
           status: 404
+        })
+        .then(function () {
+          done();
+        })
+        .catch(function (error) {
+          should.fail(error);
+          done();
         });
-
-      done();
     });
 
     it('should return error 422 when passing invalid id', function (done) {
@@ -531,9 +560,279 @@ describe('modules: charts', function () {
             "field": "_id",
             "code": "invalid"
           }]
+        })
+        .then(function () {
+          done();
+        })
+        .catch(function (error) {
+          should.fail(error);
+          done();
         });
-
-      done();
     });
   });
+
+
+  describe('updateDataTableFromXlsx', function () {
+
+    it('should update chart data table from xlsx file', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id;
+      let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable0.xlsx');
+      let workbook = new Exceljs.Workbook();
+
+      let datatable = {
+        "cols": [{
+          "label": "name(string)",
+          "type": "string"
+        }, {
+            "label": "dept(string)",
+            "type": "string"
+          }, {
+            "label": "lunchTime(timeofday)",
+            "type": "timeofday"
+          }, {
+            "label": "salary(number)",
+            "type": "number"
+          }, {
+            "label": "hireDate(date)",
+            "type": "date"
+          }, {
+            "label": "age(number)",
+            "type": "number"
+          }, {
+            "label": "isSenior(boolean)",
+            "type": "boolean"
+          }, {
+            "label": "seniorityStartTime(datetime)",
+            "type": "datetime"
+          }],
+        "rows": [{
+          "c": [{
+            "v": "John"
+          }, {
+              "v": "Eng"
+            }, {
+              "v": [12, 0, 0]
+            }, {
+              "v": 1000
+            }, {
+              "v": "Date(2005,2,19)"
+            }, {
+              "v": 35
+            }, {
+              "v": true
+            }, {
+              "v": "Date(2007,11,2,15,56,0)"
+            }]
+        }, {
+            "c": [{
+              "v": "Dave"
+            }, {
+                "v": "Eng"
+              }, {
+                "v": [13, 1, 30, 123]
+              }, {
+                "v": 500.5
+              }, {
+                "v": "Date(2006,3,19)"
+              }, {
+                "v": 27
+              }, {
+                "v": false
+              }, {
+                "v": "Date(2005,2,9,12,30,0,32)"
+              }]
+          }, {
+            "c": [{
+              "v": "Sally"
+            }, {
+                "v": "Eng"
+              }, {
+                "v": [9, 30, 5]
+              }, {
+                "v": 600
+              }, {
+                "v": "Date(2005,9,10)"
+              }, {
+                "v": 30
+              }, {
+                "v": false
+              }, {
+                "v": null
+              }]
+          }]
+      };
+
+      workbook.xlsx.readFile(testXlsxFilePath)
+        .then(function (workbook) {
+          return charts.updateDataTableFromXlsx(id, workbook);
+        })
+        .then(function (doc) {
+          doc._id.should.eql(id);
+          doc.datatable.should.eql(datatable);
+          done();
+        })
+        .catch(function (error) {
+          should.fail(error);
+          done();
+        })
+    });
+
+    it('should determine column data type', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id;
+      let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable1.xlsx');
+      let workbook = new Exceljs.Workbook();
+
+      let datatable = {
+        "cols": [{
+          "label": "name(string)",
+          "type": "string"
+        }, {
+          "label": "salary(number)",
+          "type": "number"
+        }],
+        "rows": [{
+          "c": [{
+            "v": "John"
+          }, {
+            "v": null
+          }]
+        }, {
+          "c": [{
+            "v": "Dave"
+          }, {
+            "v": null
+          }]
+        }, {
+          "c": [{
+            "v": "Sally"
+          }, {
+            "v": 600
+          }]
+        }]
+      };
+
+      workbook.xlsx.readFile(testXlsxFilePath)
+        .then(function (workbook) {
+          return charts.updateDataTableFromXlsx(id, workbook);
+        })
+        .then(function (doc) {
+          doc._id.should.eql(id);
+          doc.datatable.should.eql(datatable);
+          done();
+        })
+        .catch(function (error) {
+          should.fail(error);
+          done();
+        });
+    });
+
+    it('should update chart with data table only has headers', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id;
+      let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable3.xlsx');
+      let workbook = new Exceljs.Workbook();
+
+      let datatable = {
+        "cols": [{
+          "label": "name(string)",
+          "type": "string"
+        }, {
+          "label": "salary(number)",
+          "type": "number"
+        }],
+        "rows": []
+      };
+
+      workbook.xlsx.readFile(testXlsxFilePath)
+        .then(function (workbook) {
+          return charts.updateDataTableFromXlsx(id, workbook);
+        })
+        .then(function (doc) {
+          doc._id.should.eql(id);
+          doc.datatable.should.eql(datatable);
+          done();
+        })
+        .catch(function (error) {
+          should.fail(error);
+          done();
+        });
+    });
+
+    it('should return error 404 if no record to update', function (done) {
+      let nonexistentId = '000000000000000000000000';
+      let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable0.xlsx');
+      let workbook = new Exceljs.Workbook();
+
+      workbook.xlsx.readFile(testXlsxFilePath)
+        .then(function (workbook) {
+          return charts.updateDataTableFromXlsx(nonexistentId, workbook);
+        })
+        .should
+        .rejectedWith({
+          status: 404
+        })
+        .then(function () {
+          done();
+        })
+        .catch(function (error) {
+          should.fail(error);
+          done();
+        });
+    });
+
+    it('should return error 422 when passing invalid id', function (done) {
+      let invalidId = '0';
+      let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable0.xlsx');
+      let workbook = new Exceljs.Workbook();
+
+      workbook.xlsx.readFile(testXlsxFilePath)
+        .then(function (workbook) {
+          return charts.updateDataTableFromXlsx(invalidId, workbook);
+        })
+        .should
+        .rejectedWith({
+          status: 422,
+          errors: [{
+            "resource": "chart",
+            "field": "_id",
+            "code": "invalid"
+          }]
+        })
+        .then(function () {
+          done();
+        })
+        .catch(function (error) {
+          should.fail(error);
+          done();
+        });
+    });
+
+    it('should return error 422 when passing invalid data table', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id;
+      let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable2.xlsx');
+      let workbook = new Exceljs.Workbook();
+
+      workbook.xlsx.readFile(testXlsxFilePath)
+        .then(function (workbook) {
+          return charts.updateDataTableFromXlsx(id, workbook);
+        })
+        .should
+        .rejectedWith({
+          status: 422,
+          errors: [{
+            "resource": "chart",
+            "field": "datatable",
+            "code": "invalid"
+          }]
+        })
+        .then(function () {
+          done();
+        })
+        .catch(function (error) {
+          should.fail(error);
+          done();
+        });
+    });
+  });
+
+
 });

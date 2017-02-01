@@ -19,4 +19,4 @@ before_install:
   - export PATH=`pwd`/mongodb-linux-x86_64-$MONGODB_VERSION/bin:$PATH
   - mkdir -p data/db
   - mongod --dbpath=data/db &
-  - sleep 5
+  - sleep 15

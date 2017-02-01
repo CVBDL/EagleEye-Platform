@@ -13,57 +13,24 @@ let chart = {
   "chartType": "LineChart",
   "description": "This is a line chart.",
   "options": {
-    "title": "Population"
+    "title": "Years"
   },
   "datatable": {
     "cols": [
       {
-        "label": "City",
+        "label": "Year",
         "type": "string"
-      },
-      {
-        "label": "2010 Population",
-        "type": "number"
-      },
-      {
-        "label": "2000 Population",
-        "type": "number"
       }
     ],
     "rows": [
       {
         "c": [
-          { "v": "New York City, NY" },
-          { "v": 8175000 },
-          { "v": 8008000 }
+          { "v": "2016" }
         ]
       },
       {
         "c": [
-          { "v": "Los Angeles, CA" },
-          { "v": 3792000 },
-          { "v": 3694000 }
-        ]
-      },
-      {
-        "c": [
-          { "v": "Chicago, IL" },
-          { "v": 2695000 },
-          { "v": 2896000 }
-        ]
-      },
-      {
-        "c": [
-          { "v": "Houston, TX" },
-          { "v": 2099000 },
-          { "v": 1953000 }
-        ]
-      },
-      {
-        "c": [
-          { "v": "Philadelphia, PA" },
-          { "v": 1526000 },
-          { "v": 1517000 }
+          { "v": "2017" }
         ]
       }
     ]
@@ -458,45 +425,44 @@ describe('routes: /charts/:id', function () {
         .expect(200, done);
     });
 
-    //it('should not update fields other than description, datatable or options', function (done) {
+    it('should not update fields other than description, datatable or options',
+      function (done) {
 
-    //  let id = fixtures.collections.chart_collection[0]._id.toHexString();
-    //  let chart = {
-    //    custom: 'Some custom data'
-    //  };
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let chart = {
+        custom: 'Some custom data'
+      };
 
-    //  request(app)
-    //    .post('/api/v1/charts/' + id)
-    //    .set('Content-Type', 'application/json')
-    //    .send(chart)
-    //    .expect('Content-Type', /json/)
-    //    .expect(function (res) {
-    //      res.body._id.should.eql(id);
-    //      res.body.description.should.eql(chart.description);
-    //      res.body.options.should.eql(chart.options);
-    //      should.equal(chart.datatable, null);
+      request(app)
+        .post('/api/v1/charts/' + id)
+        .set('Content-Type', 'application/json')
+        .send(chart)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.eql(id);
+          should.equal(res.body.custom, undefined);
 
-    //      // should leave unchanged
-    //      res.body.chartType
-    //        .should
-    //        .eql(fixtures.collections.chart_collection[0].chartType);
+          // should leave unchanged
+          res.body.chartType
+            .should
+            .eql(fixtures.collections.chart_collection[0].chartType);
 
-    //      res.body.browserDownloadUrl
-    //        .should
-    //        .eql(fixtures.collections.chart_collection[0].browserDownloadUrl);
+          res.body.browserDownloadUrl
+            .should
+            .eql(fixtures.collections.chart_collection[0].browserDownloadUrl);
 
-    //      res.body.createdAt
-    //        .should
-    //        .eql(fixtures.collections.chart_collection[0].createdAt);
+          res.body.createdAt
+            .should
+            .eql(fixtures.collections.chart_collection[0].createdAt);
 
-    //      // should update `updatedAt` field
-    //      // use 1 second threshold
-    //      (Date.now() - new Date(res.body.updatedAt).getTime())
-    //        .should
-    //        .belowOrEqual(1000);
-    //    })
-    //    .expect(200, done);
-    //});
+          // should update `updatedAt` field
+          // use 1 second threshold
+          (Date.now() - new Date(res.body.updatedAt).getTime())
+            .should
+            .belowOrEqual(1000);
+        })
+        .expect(200, done);
+    });
 
     it('should response 422 if sent invalid id', function (done) {
       let invalidId = '0';
@@ -541,4 +507,111 @@ describe('routes: /charts/:id', function () {
   });
 
 
+  /**
+   * Delete a chart.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#delete-a-chart>
+   */
+  describe('DELETE /api/v1/charts/:_id', function () {
+
+    it('should delete a chart by _id', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+
+      request(app)
+        .delete('/api/v1/charts/' + id)
+        .send()
+        .expect(204, done);
+    });
+
+    it('should response 422 if sent invalid id', function (done) {
+      let invalidId = '0';
+
+      request(app)
+        .delete('/api/v1/charts/' + invalidId)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Validation Failed');
+          res.body.errors.should.eql([
+            {
+              "resource": "chart",
+              "field": "_id",
+              "code": "invalid"
+            }
+          ]);
+        })
+        .expect(422, done);
+    });
+
+    it('should response 404 cannot find the record', function (done) {
+      let nonexistentId = '000000000000000000000000';
+
+      request(app)
+        .delete('/api/v1/charts/' + nonexistentId)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Not Found');
+        })
+        .expect(404, done);
+    });
+  });
+
+
+  /**
+   * Edit chart data table.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#edit-data-table>
+   */
+  describe('PUT /api/v1/charts/:id/datatable', function () {
+
+    it('should replace chart data table', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let datatable = chart.datatable;
+      
+      request(app)
+        .put(`/api/v1/charts/${id}/datatable`)
+        .set('Content-Type', 'application/json')
+        .send(datatable)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.eql(id);
+          res.body.datatable.should.eql(datatable);
+        })
+        .expect(200, done);
+    });
+
+    it('should response 422 if sent invalid id', function (done) {
+      let invalidId = '0';
+      let datatable = chart.datatable;
+
+      request(app)
+        .put(`/api/v1/charts/${invalidId}/datatable`)
+        .send(datatable)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Validation Failed');
+          res.body.errors.should.eql([
+            {
+              "resource": "chart",
+              "field": "_id",
+              "code": "invalid"
+            }
+          ]);
+        })
+        .expect(422, done);
+    });
+
+    it('should response 404 cannot find the record', function (done) {
+      let nonexistentId = '000000000000000000000000';
+      let datatable = chart.datatable;
+
+      request(app)
+        .put(`/api/v1/charts/${nonexistentId}/datatable`)
+        .send(datatable)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Not Found');
+        })
+        .expect(404, done);
+    });
+  });
 });

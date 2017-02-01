@@ -422,10 +422,12 @@ describe('modules: charts', function () {
           should.equal(doc.description, data.description);
           should.equal(doc.datatable, data.datatable);
           should.equal(doc.options, data.options);
-          new Date(doc.updatedAt).getTime()
+
+          // should update `updatedAt` field
+          // use 1 second threshold
+          (Date.now() - new Date(doc.updatedAt).getTime())
             .should
-            .be
-            .aboveOrEqual(Date.now() - 1000);
+            .belowOrEqual(1000);
 
           done();
         })

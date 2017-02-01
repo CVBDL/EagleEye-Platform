@@ -353,7 +353,7 @@ describe('routes: /charts/:id', function () {
 
 
   /**
-   * Delete all charts.
+   * Get a single chart.
    * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#get-a-single-chart>
    */
   describe('GET /api/v1/charts/:_id', function () {
@@ -397,6 +397,141 @@ describe('routes: /charts/:id', function () {
       request(app)
         .get('/api/v1/charts/' + nonexistentId)
         .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Not Found');
+        })
+        .expect(404, done);
+    });
+  });
+
+
+  /**
+   * Edit a chart.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#edit-a-chart>
+   */
+  describe('POST /api/v1/charts/:_id', function () {
+
+    it('should update chart description', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let chart = {
+        description: 'Year 2016',
+        options: {
+          title: 'Population of Largest U.S. Cities in 2016',
+          legend: {
+            position: 'bottom'
+          }
+        },
+        datatable: null
+      };
+
+      request(app)
+        .post('/api/v1/charts/' + id)
+        .set('Content-Type', 'application/json')
+        .send(chart)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.eql(id);
+          res.body.description.should.eql(chart.description);
+          res.body.options.should.eql(chart.options);
+          should.equal(chart.datatable, null);
+
+          // should leave unchanged
+          res.body.chartType
+            .should
+            .eql(fixtures.collections.chart_collection[0].chartType);
+
+          res.body.browserDownloadUrl
+            .should
+            .eql(fixtures.collections.chart_collection[0].browserDownloadUrl);
+
+          res.body.createdAt
+            .should
+            .eql(fixtures.collections.chart_collection[0].createdAt);
+
+          // should update `updatedAt` field
+          // use 1 second threshold
+          (Date.now() - new Date(res.body.updatedAt).getTime())
+            .should
+            .belowOrEqual(1000);
+        })
+        .expect(200, done);
+    });
+
+    //it('should not update fields other than description, datatable or options', function (done) {
+
+    //  let id = fixtures.collections.chart_collection[0]._id.toHexString();
+    //  let chart = {
+    //    custom: 'Some custom data'
+    //  };
+
+    //  request(app)
+    //    .post('/api/v1/charts/' + id)
+    //    .set('Content-Type', 'application/json')
+    //    .send(chart)
+    //    .expect('Content-Type', /json/)
+    //    .expect(function (res) {
+    //      res.body._id.should.eql(id);
+    //      res.body.description.should.eql(chart.description);
+    //      res.body.options.should.eql(chart.options);
+    //      should.equal(chart.datatable, null);
+
+    //      // should leave unchanged
+    //      res.body.chartType
+    //        .should
+    //        .eql(fixtures.collections.chart_collection[0].chartType);
+
+    //      res.body.browserDownloadUrl
+    //        .should
+    //        .eql(fixtures.collections.chart_collection[0].browserDownloadUrl);
+
+    //      res.body.createdAt
+    //        .should
+    //        .eql(fixtures.collections.chart_collection[0].createdAt);
+
+    //      // should update `updatedAt` field
+    //      // use 1 second threshold
+    //      (Date.now() - new Date(res.body.updatedAt).getTime())
+    //        .should
+    //        .belowOrEqual(1000);
+    //    })
+    //    .expect(200, done);
+    //});
+
+    it('should response 422 if sent invalid id', function (done) {
+      let invalidId = '0';
+      let chart = {
+        datatable: null
+      };
+
+      request(app)
+        .post('/api/v1/charts/' + invalidId)
+        .set('Content-Type', 'application/json')
+        .send(chart)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Validation Failed');
+          res.body.errors.should.eql([
+            {
+              "resource": "chart",
+              "field": "_id",
+              "code": "invalid"
+            }
+          ]);
+        })
+        .expect(422, done);
+    });
+
+    it('should response 404 cannot find the record', function (done) {
+      let nonexistentId = '000000000000000000000000';
+      let chart = {
+        datatable: null
+      };
+
+      request(app)
+        .post('/api/v1/charts/' + nonexistentId)
+        .set('Content-Type', 'application/json')
+        .send(chart)
         .expect('Content-Type', /json/)
         .expect(function (res) {
           res.body.message.should.eql('Not Found');

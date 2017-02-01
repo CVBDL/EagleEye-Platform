@@ -329,7 +329,7 @@ describe('routes: /charts/:id', function () {
       let id = fixtures.collections.chart_collection[0]._id.toHexString();
 
       request(app)
-        .get('/api/v1/charts/' + id)
+        .get(`/api/v1/charts/${id}`)
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
@@ -342,7 +342,7 @@ describe('routes: /charts/:id', function () {
       let invalidId = '0';
 
       request(app)
-        .get('/api/v1/charts/' + invalidId)
+        .get(`/api/v1/charts/${invalidId}`)
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
@@ -362,7 +362,7 @@ describe('routes: /charts/:id', function () {
       let nonexistentId = '000000000000000000000000';
 
       request(app)
-        .get('/api/v1/charts/' + nonexistentId)
+        .get(`/api/v1/charts/${nonexistentId}`)
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
@@ -393,7 +393,7 @@ describe('routes: /charts/:id', function () {
       };
 
       request(app)
-        .post('/api/v1/charts/' + id)
+        .post(`/api/v1/charts/${id}`)
         .set('Content-Type', 'application/json')
         .send(chart)
         .expect('Content-Type', /json/)
@@ -434,7 +434,7 @@ describe('routes: /charts/:id', function () {
       };
 
       request(app)
-        .post('/api/v1/charts/' + id)
+        .post(`/api/v1/charts/${id}`)
         .set('Content-Type', 'application/json')
         .send(chart)
         .expect('Content-Type', /json/)
@@ -471,7 +471,7 @@ describe('routes: /charts/:id', function () {
       };
 
       request(app)
-        .post('/api/v1/charts/' + invalidId)
+        .post(`/api/v1/charts/${invalidId}`)
         .set('Content-Type', 'application/json')
         .send(chart)
         .expect('Content-Type', /json/)
@@ -495,7 +495,7 @@ describe('routes: /charts/:id', function () {
       };
 
       request(app)
-        .post('/api/v1/charts/' + nonexistentId)
+        .post(`/api/v1/charts/${nonexistentId}`)
         .set('Content-Type', 'application/json')
         .send(chart)
         .expect('Content-Type', /json/)
@@ -517,7 +517,7 @@ describe('routes: /charts/:id', function () {
       let id = fixtures.collections.chart_collection[0]._id.toHexString();
 
       request(app)
-        .delete('/api/v1/charts/' + id)
+        .delete(`/api/v1/charts/${id}`)
         .send()
         .expect(204, done);
     });
@@ -526,7 +526,7 @@ describe('routes: /charts/:id', function () {
       let invalidId = '0';
 
       request(app)
-        .delete('/api/v1/charts/' + invalidId)
+        .delete(`/api/v1/charts/${invalidId}`)
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
@@ -546,7 +546,7 @@ describe('routes: /charts/:id', function () {
       let nonexistentId = '000000000000000000000000';
 
       request(app)
-        .delete('/api/v1/charts/' + nonexistentId)
+        .delete(`/api/v1/charts/${nonexistentId}`)
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {

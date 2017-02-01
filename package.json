@@ -22,7 +22,7 @@
     "exceljs": "^0.2.37",
     "express": "~4.13.1",
     "immutable": "^3.8.1",
-    "mongodb": "~2.1.18",
+    "mongodb": "^2.2.22",
     "morgan": "~1.6.1",
     "ncp": "^2.0.0",
     "node-schedule": "^1.1.1",

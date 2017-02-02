@@ -5,6 +5,8 @@
   "scripts": {
     "start": "node ./bin/www",
     "test": "./node_modules/.bin/mocha tests/unit.conf.js",
+    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha ./tests/unit.conf.js",
+    "test-travis": "istanbul cover ./node_modules/mocha/bin/_mocha ./tests/unit.conf.js --report lcovonly",
     "start-mongodb": "mongod",
     "install-mongodb-service": "mongod --dbpath=C:\\data\\db --logpath=C:\\data\\db\\log.txt --install --port 27017",
     "uninstall-mongodb-service": "mongod --remove",
@@ -34,6 +36,7 @@
     "chai": "^3.5.0",
     "chai-immutable": "^1.6.0",
     "gulp": "^3.9.1",
+    "istanbul": "^0.4.5",
     "json-loader": "^0.5.4",
     "mocha": "^3.2.0",
     "shelljs": "^0.7.6",

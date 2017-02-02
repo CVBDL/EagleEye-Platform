@@ -5,3 +5,4 @@ node_modules/
 /public/uploadChartImages/*.jpg
 .vs/
 typings/
+coverage/

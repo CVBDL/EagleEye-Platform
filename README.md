@@ -54,7 +54,7 @@ brew install mongodb --with-openssl
 
 ```sh
 npm install
-npm install gulp-cli -g
+npm install gulp-cli istanbul -g
 ```
 
 

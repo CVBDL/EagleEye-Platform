@@ -3,7 +3,7 @@
  */
 "use strict";
 
-var Excel = require('exceljs');
+var Exceljs = require('exceljs');
 var fs = require('fs');
 var path = require('path');
 
@@ -19,8 +19,8 @@ var PRODUCTION_PATH = path.join(__dirname, '../excelPath/prod'),
 exports.MODE_TEST = 'mode_test'
 exports.MODE_PRODUCTION = 'mode_production'
 
-var createWorkbook = function(setting) {
-  var workbook = new Excel.Workbook();
+var createWorkbook = function (setting) {
+  var workbook = new Exceljs.Workbook();
 
   if (setting.creator)
     workbook.creator = setting.creator;
@@ -41,19 +41,11 @@ var createWorkbook = function(setting) {
   return workbook;
 }
 
-var deleteTempFile = function(fileName) {
-  var curPath = "." + excelHelper.getWorkPath(excelHelper.MODE_PRODUCTION) + fileName;
-  if (fs.existsSync(curPath)) {
-    console.log("Delete file: " + curPath);
-    fs.unlinkSync(curPath);
-  }
-}
-
-var workbookToJSObject = function(worksheet, done) {
+var workbookToJSObject = function (worksheet, done) {
   var result = [];
-  worksheet.eachRow(function(row, rowNumber) {
+  worksheet.eachRow(function (row, rowNumber) {
     var line = [];
-    row.eachCell(function(cell, colNumber) {
+    row.eachCell(function (cell, colNumber) {
       line.push(cell.value);
     });
     result.push(line);
@@ -61,7 +53,7 @@ var workbookToJSObject = function(worksheet, done) {
   done(result);
 }
 
-exports.writeXlsx = function(setting, data, done, mode) {
+exports.writeXlsx = function (setting, data, done, mode) {
   if (!setting || !setting.columns || (!setting.filename && !setting.outStream)) {
     return;
   }
@@ -69,7 +61,7 @@ exports.writeXlsx = function(setting, data, done, mode) {
 
   var workbook = createWorkbook(setting);
 
-  var worksheet = workbook.addWorksheet(setting.worksheet ? setting.worksheet : defaultSetting.worksheet, {properties: { tabColor: { argb: "FFC0000" }}});
+  var worksheet = workbook.addWorksheet(setting.worksheet ? setting.worksheet : defaultSetting.worksheet, { properties: { tabColor: { argb: "FFC0000" } } });
 
   worksheet.columns = setting.columns;
 
@@ -85,57 +77,27 @@ exports.writeXlsx = function(setting, data, done, mode) {
   }
 };
 
-exports.readFile = function(setting, done, mode) {
-  var workbook = new Excel.Workbook();
 
-  if (setting.filename) {
-    mode = typeof mode !== 'undefined' ? mode : exports.MODE_PRODUCTION;
-    var path = mode === exports.MODE_TEST ? TEST_PATH : PRODUCTION_PATH;
-    // console.log(path + "/" + setting.filename);
-    workbook.xlsx.readFile(path + "/" + setting.filename)
-      .then((workbook) => workbookToJSObject(workbook.getWorksheet(setting.worksheet), done));
-  } else if (setting.inputStream) {
-    //Not used
-    // let inputStream = workbook.xlsx.createInputStream();
-    // setting.inputStream.pipe(inputStream);
-    // setting.inputStream.on('end', () =>
-    //     workbookToJSObject(workbook.getWorksheet(setting.worksheet), done));
-    // setting.inputStream.on('error', (err) => console.log(err));
-  } else {
-    console.log('default.');
-    done();
-  }
-}
+/**
+ * Only read the first worksheet of a given {Exceljs.Workbook} workbook.
+ * Parse the worksheet content into a 2D array.
+ *
+ * @method
+ * @param {Excel.Workbook} workbook An instance of Exceljs Workbook class.
+ * @returns {Array<Array>} Worksheet content in 2D array format.
+ */
+exports.readWorkbook = function (workbook) {
+  // use the first work sheet
+  let worksheet = workbook.getWorksheet(1);
 
-// exports.importFromPost = function(req, done) {
-//     var workbook = new Excel.Workbook();
-//     let inputStream = workbook.xlsx.createInputStream();
-//     let busboy = new Busboy({ headers: req.headers });
-//     let id = null;
-//
-//     // Listen for event when Busboy finds a file to stream.
-//     busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
-//         console.log(file);
-//     });
-//
-//     // Listen for event when Busboy finds a non-file field.
-//     busboy.on('field', function (fieldname, val) {
-//         // Do something with non-file field.
-//         console.log(fieldname + ": " + val);
-//         if (fieldname == "id") id = val;
-//     });
-//
-//     // Listen for event when Busboy is finished parsing the form.
-//     busboy.on('finish', function () {
-//         // console.log("id: " + id);
-//         // console.log(fileStream.toBuffer());
-//         console.log("on finish");
-//         done();
-//     });
-//
-//     // Pipe the HTTP Request into Busboy.
-//     //req.pipe(busboy);
-//     inputStream.pipe(req);
-// }
+  var result = [];
+  worksheet.eachRow(function (row, rowNumber) {
+    var line = [];
+    row.eachCell(function (cell, colNumber) {
+      line.push(cell.value);
+    });
+    result.push(line);
+  });
 
-exports.getWorkPath = (mode) => mode === exports.MODE_TEST ? TEST_PATH : PRODUCTION_PATH;
+  return result;
+};

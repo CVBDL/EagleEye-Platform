@@ -3,12 +3,13 @@
 let Promise = require('es6-promise').Promise;
 let ObjectId = require('mongodb').ObjectId;
 
+let CHART_TYPES = require('./chart-types');
 let chartSets = require('./chart-sets');
 let dbClient = require('../helpers/dbHelper');
 let utils = require('../helpers/utils');
 let columnTypes = require('../helpers/column-types');
 let validator = require('../helpers/validator');
-let CHART_TYPES = require('../modules/chart-types');
+let excelHelper = require('../helpers/excelHelper');
 
 const ROOT_ENDPOINT = utils.getRootEndpoint();
 const API_ROOT_ENDPOINT = utils.getRestApiRootEndpoint();
@@ -233,7 +234,7 @@ exports.deleteOne = function(id) {
  * @param {?string} [data.description] The chart description field.
  * @param {?Object} [data.datatable] The chart datatable field.
  * @param {?Object} [data.options] The chart options field.
- * @returns {Promise} A promise will be resolved when delete successfully.
+ * @returns {Promise} A promise will be resolved with the updated chart.
  *                    Or rejected with defined errors.
  */
 exports.updateOne = function (id, data) {
@@ -332,4 +333,113 @@ exports.updateImageBrowserDownloadUrl = function (id, filename) {
         return result.value;
       }
     });
+};
+
+
+/**
+ * Update a chart's data table from a .xlsx file.
+ * It'll read the first worksheet of the uploaded .xlsx file.
+ *
+ * @method
+ * @param {ObjectId} id The chart's ObjectId.
+ * @param {Excel.Workbook} workbook An instance of Exceljs Workbook class.
+ * @returns {Promise} A promise will be resolved with the updated chart.
+ *                    Or rejected with defined errors.
+ */
+exports.updateDataTableFromXlsx = function (id, workbook) {
+  let updateData = {
+    datatable: {
+      cols: [],
+      rows: []
+    }
+  };
+
+  // Sample of `worksheetData`:
+  //[
+  //  [
+  //    "name(string)", "dept(string)", "lunchTime(timeofday)", "salary(number)",
+  //    "hireDate(date)", "age(number)", "isSenior(boolean)",
+  //    "seniorityStartTime(datetime)"
+  //  ],
+  //  [
+  //    "John", "Eng", "12:00:00", "1000", "2005-03-19", "35", "true",
+  //    "2007-12-02 15:56:00"
+  //  ],
+  //  [
+  //    "Dave", "Eng", "13:01:30.123", "500.5", "2006-04-19", "27", "false",
+  //    "2005-03-09 12:30:00.32"
+  //  ],
+  //  [
+  //    "Sally", "Eng", "09:30:05", "600", "2005-10-10", "30", "false", "null"
+  //  ]
+  //]
+  let worksheetData = excelHelper.readWorkbook(workbook);
+
+  if (!worksheetData || !worksheetData.length || !worksheetData[0].length) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "chart",
+        "field": "datatable",
+        "code": "invalid"
+      }]
+    });
+  }
+
+  // default data type for role: 'domain'
+  let defaultDomainType = 'string';
+
+  // default data type for role: 'data'
+  let defaultDataType = 'number';
+
+  let header = worksheetData[0];
+
+  // process headers row
+  header.forEach(function (field, index) {
+    updateData.datatable.cols.push({
+      label: field ? field : 'Column' + index,
+      type: (index === 0) ? defaultDomainType : defaultDataType
+    });
+  });
+  
+  let preferredColumnDataType = [];
+
+  // process data rows
+  worksheetData.forEach(function (fields, index) {
+    if (index === 0) return;
+
+    let row = { c: [] };
+
+    fields.forEach(function (field, index) {
+      row.c.push({
+        v: columnTypes.convertFileToDataTable(field)
+      });
+      
+      if (!preferredColumnDataType[index]) {
+        let inferredType = columnTypes.infer(field);
+
+        preferredColumnDataType[index] =
+          inferredType === 'null'
+            ? undefined
+            : inferredType;
+      }
+    });
+
+    updateData.datatable.rows.push(row);
+  });
+
+  // determine preferred data types
+  preferredColumnDataType.forEach(function (type, index) {
+    if (type) {
+      updateData.datatable.cols[index].type = type;
+
+    } else {
+      updateData.datatable.cols[index].type =
+        (index === 0)
+        ? defaultDomainType
+        : defaultDataType;
+    }
+  });
+
+  return exports.updateOne(id, updateData);
 };

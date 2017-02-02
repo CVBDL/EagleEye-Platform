@@ -32,7 +32,7 @@
 
 /** @const */
 let validators = [{
-  type: '',
+  type: 'null',
   validator: isNull,
   toDataTable: convertNullToDataTable,
   toFile: convertNullToFile

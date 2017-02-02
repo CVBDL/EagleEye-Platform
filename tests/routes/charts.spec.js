@@ -2,6 +2,7 @@
 
 let bodyParser = require('body-parser');
 let express = require('express');
+let path = require('path');
 let request = require('supertest');
 let should = require('should');
 
@@ -607,6 +608,152 @@ describe('routes: /charts/:id', function () {
       request(app)
         .put(`/api/v1/charts/${nonexistentId}/datatable`)
         .send(datatable)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Not Found');
+        })
+        .expect(404, done);
+    });
+  });
+
+
+  /**
+   * Upload .xlsx file to update a chart's data table.
+   */
+  describe('POST /api/v1/upload/excels', function () {
+
+    it('should update chart table with the uploaded file', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable0.xlsx');
+
+      let datatable = {
+        "cols": [{
+          "label": "name(string)",
+          "type": "string"
+        }, {
+          "label": "dept(string)",
+          "type": "string"
+        }, {
+          "label": "lunchTime(timeofday)",
+          "type": "timeofday"
+        }, {
+          "label": "salary(number)",
+          "type": "number"
+        }, {
+          "label": "hireDate(date)",
+          "type": "date"
+        }, {
+          "label": "age(number)",
+          "type": "number"
+        }, {
+          "label": "isSenior(boolean)",
+          "type": "boolean"
+        }, {
+          "label": "seniorityStartTime(datetime)",
+          "type": "datetime"
+        }],
+        "rows": [{
+          "c": [{
+            "v": "John"
+          }, {
+            "v": "Eng"
+          }, {
+            "v": [12, 0, 0]
+          }, {
+            "v": 1000
+          }, {
+            "v": "Date(2005,2,19)"
+          }, {
+            "v": 35
+          }, {
+            "v": true
+          }, {
+            "v": "Date(2007,11,2,15,56,0)"
+          }]
+        }, {
+          "c": [{
+            "v": "Dave"
+          }, {
+            "v": "Eng"
+          }, {
+            "v": [13, 1, 30, 123]
+          }, {
+            "v": 500.5
+          }, {
+            "v": "Date(2006,3,19)"
+          }, {
+            "v": 27
+          }, {
+            "v": false
+          }, {
+            "v": "Date(2005,2,9,12,30,0,32)"
+          }]
+        }, {
+          "c": [{
+            "v": "Sally"
+          }, {
+            "v": "Eng"
+          }, {
+            "v": [9, 30, 5]
+          }, {
+            "v": 600
+          }, {
+            "v": "Date(2005,9,10)"
+          }, {
+            "v": 30
+          }, {
+            "v": false
+          }, {
+            "v": null
+          }]
+        }]
+      };
+
+      request(app)
+        .post(`/api/v1/upload/excels`)
+        .field('id', id)
+        .attach('file', testXlsxFilePath)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.eql(id);
+          res.body.datatable.should.eql(datatable);
+        })
+        .expect(200, done);
+    });
+
+    it('should response 422 if sent invalid id', function (done) {
+      let invalidId = '0';
+      let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable0.xlsx');
+      
+      request(app)
+        .post(`/api/v1/upload/excels`)
+        .field('id', invalidId)
+        .attach('file', testXlsxFilePath)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Validation Failed');
+          res.body.errors.should.eql([
+            {
+              "resource": "chart",
+              "field": "_id",
+              "code": "invalid"
+            }
+          ]);
+        })
+        .expect(422, done);
+    });
+
+    it('should response 422 if sent invalid id', function (done) {
+      let nonexistentId = '000000000000000000000000';
+      let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable0.xlsx');
+
+      request(app)
+        .post(`/api/v1/upload/excels`)
+        .field('id', nonexistentId)
+        .attach('file', testXlsxFilePath)
+        .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
           res.body.message.should.eql('Not Found');

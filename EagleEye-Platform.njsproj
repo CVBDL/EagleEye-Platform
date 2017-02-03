@@ -58,8 +58,8 @@
     <Compile Include="tests\helpers\utils.spec.js" />
     <Compile Include="tests\routes\charts.spec.js" />
     <Compile Include="tests\unit.conf.js" />
-    <Compile Include="tools\start-express.js" />
-    <Compile Include="tools\terminate-express.js" />
+    <Compile Include="bin\start-express.js" />
+    <Compile Include="bin\terminate-express.js" />
     <Content Include="views\cron.ejs" />
     <Content Include="views\error.ejs" />
     <Content Include="views\index.ejs" />
@@ -102,7 +102,6 @@
     <Folder Include="tests\helpers" />
     <Folder Include="tests\modules" />
     <Folder Include="tests\routes\" />
-    <Folder Include="tools" />
     <Folder Include="typings\" />
     <Folder Include="typings\globals\" />
     <Folder Include="typings\globals\async\" />

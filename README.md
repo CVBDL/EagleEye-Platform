@@ -66,6 +66,16 @@ npm start
 ```
 
 
+## Development
+
+```sh
+npm run debug
+```
+
+It'll make use of `nodemon` package to monitor source files changes, and then
+restart the application.
+
+
 ## Testing
 
 Run once:

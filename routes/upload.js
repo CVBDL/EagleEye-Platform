@@ -36,14 +36,13 @@ router.route('/upload/excels')
         console.log(err);
       });
       
-      if (!part.filename) {
-        part.resume();
-      }
-
-      if (part.filename) {
+      if (part.name === 'file' && part.filename) {
         let workbook = new Exceljs.Workbook();
 
         readFilePromise = workbook.xlsx.read(part);
+
+      } else {
+        part.resume();
       }
     });
 
@@ -69,38 +68,53 @@ router.route('/upload/excels')
 router.route('/upload/images')
 
   // upload image
-  .post(function uploadImage(req, multipartyMiddleware) {
-    let file = req.files.file;
-    let fileName = "";
+  .post(function uploadImage(req, res) {
+    let form = new multiparty.Form();
+    let savedFilename = '';
+    let savedPath = '';
+    let fileStream;
+    let id;
 
-    if (file.path.indexOf("/") > -1) {
-      let pathArray = file.path.split("/");
-      fileName = pathArray[pathArray.length - 1];
-    } else {
-      let pathArray = file.path.split("\\");
-      fileName = pathArray[pathArray.length - 1];
-    }
+    form.on('field', function (name, value) {
+      if (name === 'id') {
+        id = value;
+      }
+    });
 
-    let targetFileName = 'IC_' + Math.ceil(Math.random() * 1000000) + fileName;
-    let targetPath = path.join(
-      __dirname, '../public/uploadChartImages/' + targetFileName);
-    
-    charts.updateImageBrowserDownloadUrl(req.body.id, targetFileName)
-      .then(function (doc) {
-        multipartyMiddleware.send('ok');
+    form.on('part', function (part) {
+      // You *must* act on the part by reading it
+      // NOTE: if you want to ignore it, just call "part.resume()"
 
-        let stream = fs.createReadStream(file.path)
-          .pipe(fs.createWriteStream(targetPath));
-
-        stream.on('finish', function () {
-          if (fs.existsSync(file.path)) {
-            fs.unlinkSync(file.path);
-          }
-        });
-      })
-      .catch(function (error) {
-        multipartyMiddleware.send('failed');
+      part.on('error', function (err) {
+        console.log(err);
       });
+
+      if (part.name === 'file' && part.filename) {
+        savedFilename = Math.ceil(Math.random() * 1000000) + '_' + part.filename;
+        savedPath = path.join(
+          __dirname, '../public/upload/' + savedFilename);
+
+        fileStream = part.pipe(fs.createWriteStream(savedPath));
+
+      } else {
+        part.resume();
+      }
+    });
+
+    // Close emitted after form parsed
+    form.on('close', function () {
+      fileStream.on('finish', function () {
+        charts.updateImageBrowserDownloadUrl(id, savedFilename)
+          .then(function (doc) {
+            res.send(doc);
+          })
+          .catch(function (err) {
+            errHandlers.handle(err, req, res);
+          });
+      });
+    });
+
+    form.parse(req);
   });
 
 

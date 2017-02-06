@@ -24,6 +24,7 @@
     <Content Include="bin\www" />
     <Content Include="package.json" />
     <Content Include="CHANGELOG.md" />
+    <Content Include="public\upload\README.md" />
     <Content Include="README.md" />
     <Compile Include="app.js" />
     <Compile Include="gulpfile.js" />
@@ -42,6 +43,7 @@
     <Compile Include="modules\scheduleJobLogModule.js" />
     <Compile Include="modules\scheduleJobModule.js" />
     <Compile Include="modules\statistics.js" />
+    <Compile Include="modules\upload.js" />
     <Compile Include="routes\chart-sets.js" />
     <Compile Include="routes\charts.js" />
     <Compile Include="routes\download.js" />
@@ -58,12 +60,6 @@
     <Compile Include="tests\unit.conf.js" />
     <Compile Include="bin\start-express.js" />
     <Compile Include="bin\terminate-express.js" />
-    <Compile Include="public\javascript\jquery.min.js" />
-    <Compile Include="public\javascript\materialize.js" />
-    <Compile Include="public\javascript\materialize.min.js" />
-    <Content Include="public\stylesheets\materialize.min.css" />
-    <Content Include="public\stylesheets\style.css" />
-    <Content Include="public\uploadChartImages\README.md" />
     <Content Include="tests\fixtures\charts.json" />
     <Content Include="tests\fixtures\chart-sets.json" />
     <Content Include="tests\fixtures\datatable.json" />
@@ -82,7 +78,7 @@
     <Folder Include="helpers" />
     <Folder Include="modules" />
     <Folder Include="public" />
-    <Folder Include="public\uploadChartImages" />
+    <Folder Include="public\upload\" />
     <Folder Include="routes" />
     <Folder Include="tests" />
     <Folder Include="tests\fixtures" />

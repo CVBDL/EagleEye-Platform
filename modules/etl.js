@@ -37,7 +37,7 @@ exports.start = function() {
 
     } else {
       if (!doc.browserDownloadUrl.image && doc.image_file_name) {
-        doc.browserDownloadUrl.image = rootEndpoint + '/uploadChartImages/' + doc.image_file_name;
+        doc.browserDownloadUrl.image = rootEndpoint + '/upload/' + doc.image_file_name;
 
       }
     }

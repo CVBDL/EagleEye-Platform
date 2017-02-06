@@ -6,10 +6,6 @@ let handleBadRequest = function (err, req, res, next) {
   res.status(400).send({
     message: message
   });
-
-  if (next) {
-    next();
-  }
 };
 
 let handleUnprocessableEntity = function (err, req, res, next) {
@@ -19,22 +15,17 @@ let handleUnprocessableEntity = function (err, req, res, next) {
     message: message,
     errors: err.errors
   });
-
-  if (next) {
-    next();
-  }
 };
 
 let handleNotFound = function (err, req, res, next) {
   let message = err.customMessage || 'Not Found';
+  let documentationUrl =
+    'https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md';
 
   res.status(404).send({
-    message: message
+    message: message,
+    documentationUrl: documentationUrl
   });
-
-  if (next) {
-    next();
-  }
 };
 
 exports.handleInternalError = function (err, req, res, next) {
@@ -43,10 +34,6 @@ exports.handleInternalError = function (err, req, res, next) {
   res.status(500).send({
     message: err.message 
   });
-
-  if (next) {
-    next();
-  }
 };
 
 exports.handle = function (err, req, res, next) {

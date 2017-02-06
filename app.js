@@ -20,7 +20,6 @@ let searchApi = require('./routes/search');
 let uploadApi = require('./routes/upload');
 let downloadApi = require('./routes/download');
 let etlApi = require('./routes/etl');
-let routes = require('./routes/index');
 let scheduleTask = require('./routes/schedule-management');
 
 let app = express();
@@ -36,8 +35,6 @@ app.use(function(req, res, next) {
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 if (app.get('env') === 'development') {
   app.use(logger('dev'));
@@ -56,7 +53,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 //}));
 
 // register routes
-app.use('/', routes);
 app.use('/api/v1', rootApi);
 app.use('/api/v1', etlApi);
 app.use('/api/v1', chartsApi);
@@ -67,15 +63,18 @@ app.use('/api/v1', downloadApi);
 app.use('/schedule', scheduleTask);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  let err = new Error('Not Found');
+app.use(function (req, res, next) {
+  let err = new Error();
+
   err.status = 404;
+
   next(err);
 });
 
 if (app.get('env') === 'development') {
   app.use(function (err, req, res, next) {
-    console.log(err);
+    console.error(err);
+    next(err);
   });
 }
 

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "debug": "node ./node_modules/nodemon/bin/nodemon.js app.js",
+    "debug": "node ./node_modules/nodemon/bin/nodemon.js ./bin/www",
     "test": "./node_modules/.bin/mocha tests/unit.conf.js",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha ./tests/unit.conf.js",
     "test-travis": "istanbul cover ./node_modules/mocha/bin/_mocha ./tests/unit.conf.js --report lcovonly",

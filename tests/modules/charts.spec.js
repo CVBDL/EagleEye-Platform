@@ -511,7 +511,7 @@ describe('modules: charts', function () {
           should.equal(doc.browserDownloadUrl.excel, null);
           doc.browserDownloadUrl.image
             .should
-            .eql('http://' + os.hostname() + ':3000/uploadChartImages/sample-image.png');
+            .eql('http://' + os.hostname() + ':3000/upload/sample-image.png');
 
           done();
         })

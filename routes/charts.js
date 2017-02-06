@@ -1,10 +1,12 @@
 'use strict';
 
 let express = require('express');
+let multiparty = require('multiparty');
 
-let utils      = require('../helpers/utils');
-let charts     = require('../modules/charts');
+let utils = require('../helpers/utils');
 let errHandlers = require('../helpers/error-handlers');
+let charts = require('../modules/charts');
+let upload = require('../modules/upload');
 
 let router = express.Router();
 
@@ -103,6 +105,88 @@ router.route('/charts/:id/datatable')
       .catch(function (err) {
         errHandlers.handle(err, req, res);
       });
+  });
+
+
+
+// define routes
+router.route('/charts/:id/assets')
+
+  // upload an asset
+  .post(function postAssets(req, res) {
+    let id = req.params.id;
+
+    // .png and .jpeg image files
+    const IMAGE_RE = /^image\/png|image\/jpeg$/;
+
+    // Microsoft .xlsx file
+    const XLSX_RE =
+      /^application\/vnd\.openxmlformats\-officedocument\.spreadsheetml\.sheet$/;
+
+    let form = new multiparty.Form();
+    let processPromise;
+    
+    form.on('part', function (part) {
+      // You *must* act on the part by reading it
+      // NOTE: if you want to ignore it, just call "part.resume()"
+
+      part.on('error', function (err) {
+        errHandlers.handle(err, req, res);
+      });
+      
+      if (part.name === 'file' && part.filename) {
+        let contentType = part.headers['content-type'];
+
+        if (XLSX_RE.test(contentType)) {
+          processPromise = upload.processXLSXStream(part, id)
+            .then(function (doc) {
+              res.send(doc);
+            })
+            .catch(function (err) {
+              errHandlers.handle(err, req, res);
+            });
+
+        } else if (IMAGE_RE.test(contentType)) {
+          processPromise = upload.processImageStream(part, id)
+            .then(function (doc) {
+              res.send(doc);
+            })
+            .catch(function (err) {
+              errHandlers.handle(err, req, res);
+            });
+
+        } else {
+          // ignore the chunk of data
+          part.resume();
+        }
+
+      } else {
+        // ignore the chunk of data
+        part.resume();
+      }
+    });
+
+    form.on('close', function () {
+      if (processPromise) {
+        processPromise
+          .then(function (doc) {
+            res.send(doc);
+          })
+          .catch(function (err) {
+            errHandlers.handle(err, req, res);
+          });
+
+      } else {
+        let err = new Error();
+        err.status = 400;
+        err.customMessage = 'Problems parsing data';
+
+        errHandlers.handle(err, req, res);
+      }
+    });
+
+    // begin parse form data
+    form.parse(req);
   });
 
 

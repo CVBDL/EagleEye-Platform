@@ -99,6 +99,6 @@ exports.handle = function (err, req, res, next) {
 
   } else {
     // default handler
-    exports.handleInternalError(err, req, res, next);
+    exports.handleInternalServerError(err, req, res, next);
   }
 };

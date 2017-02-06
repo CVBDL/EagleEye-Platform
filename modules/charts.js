@@ -314,7 +314,7 @@ exports.updateImageBrowserDownloadUrl = function (id, filename) {
       $set: {
         browserDownloadUrl: {
           excel: null,
-          image: ROOT_ENDPOINT + '/uploadChartImages/' + filename
+          image: ROOT_ENDPOINT + '/upload/' + filename
         },
         updatedAt: new Date().toISOString()
       }

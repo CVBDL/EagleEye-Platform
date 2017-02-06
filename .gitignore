@@ -1,8 +1,8 @@
 node_modules/
 .DS_Store
 .idea/
-/public/uploadChartImages/**
-!/public/uploadChartImages/README.md
+/public/upload/**
+!/public/upload/README.md
 .vs/
 typings/
 coverage/

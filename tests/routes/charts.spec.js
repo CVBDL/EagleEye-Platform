@@ -2,6 +2,7 @@
 
 let bodyParser = require('body-parser');
 let express = require('express');
+let fs = require('fs');
 let path = require('path');
 let request = require('supertest');
 let should = require('should');
@@ -359,7 +360,7 @@ describe('routes: /charts/:id', function () {
         .expect(422, done);
     });
 
-    it('should response 404 cannot find the record', function (done) {
+    it('should response 404 if cannot find the record', function (done) {
       let nonexistentId = '000000000000000000000000';
 
       request(app)
@@ -489,7 +490,7 @@ describe('routes: /charts/:id', function () {
         .expect(422, done);
     });
 
-    it('should response 404 cannot find the record', function (done) {
+    it('should response 404 if cannot find the record', function (done) {
       let nonexistentId = '000000000000000000000000';
       let chart = {
         datatable: null
@@ -601,13 +602,274 @@ describe('routes: /charts/:id', function () {
         .expect(422, done);
     });
 
-    it('should response 404 cannot find the record', function (done) {
+    it('should response 404 if cannot find the record', function (done) {
       let nonexistentId = '000000000000000000000000';
       let datatable = chart.datatable;
 
       request(app)
         .put(`/api/v1/charts/${nonexistentId}/datatable`)
         .send(datatable)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Not Found');
+        })
+        .expect(404, done);
+    });
+  });
+
+
+  /**
+   * Process uploaded chart assets.
+   */
+  describe('POST /api/v1/charts/:id/assets', function () {
+
+    it('should process uploaded .xlsx file', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let filename = 'datatable0.xlsx';
+      let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', filename);
+
+      let datatable = {
+        "cols": [{
+          "label": "name(string)",
+          "type": "string"
+        }, {
+          "label": "dept(string)",
+          "type": "string"
+        }, {
+          "label": "lunchTime(timeofday)",
+          "type": "timeofday"
+        }, {
+          "label": "salary(number)",
+          "type": "number"
+        }, {
+          "label": "hireDate(date)",
+          "type": "date"
+        }, {
+          "label": "age(number)",
+          "type": "number"
+        }, {
+          "label": "isSenior(boolean)",
+          "type": "boolean"
+        }, {
+          "label": "seniorityStartTime(datetime)",
+          "type": "datetime"
+        }],
+        "rows": [{
+          "c": [{
+            "v": "John"
+          }, {
+            "v": "Eng"
+          }, {
+            "v": [12, 0, 0]
+          }, {
+            "v": 1000
+          }, {
+            "v": "Date(2005,2,19)"
+          }, {
+            "v": 35
+          }, {
+            "v": true
+          }, {
+            "v": "Date(2007,11,2,15,56,0)"
+          }]
+        }, {
+          "c": [{
+            "v": "Dave"
+          }, {
+            "v": "Eng"
+          }, {
+            "v": [13, 1, 30, 123]
+          }, {
+            "v": 500.5
+          }, {
+            "v": "Date(2006,3,19)"
+          }, {
+            "v": 27
+          }, {
+            "v": false
+          }, {
+            "v": "Date(2005,2,9,12,30,0,32)"
+          }]
+        }, {
+          "c": [{
+            "v": "Sally"
+          }, {
+            "v": "Eng"
+          }, {
+            "v": [9, 30, 5]
+          }, {
+            "v": 600
+          }, {
+            "v": "Date(2005,9,10)"
+          }, {
+            "v": 30
+          }, {
+            "v": false
+          }, {
+            "v": null
+          }]
+        }]
+      };
+
+      request(app)
+        .post(`/api/v1/charts/${id}/assets`)
+        .attach('file', testXlsxFilePath)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.eql(id);
+          res.body.datatable.should.eql(datatable);
+        })
+        .expect(200, done);
+    });
+
+    it('should process uploaded .png file', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let filename = 'sample.png';
+      let testPNGFile = path.join(__dirname, '..', 'fixtures', filename);
+
+      request(app)
+        .post(`/api/v1/charts/${id}/assets`)
+        .attach('file', testPNGFile)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.eql(id);
+          res.body.browserDownloadUrl.image.should.endWith(filename);
+          should.equal(res.body.browserDownloadUrl.excel, null);
+
+          // check save file on server
+          let imageURL = res.body.browserDownloadUrl.image;
+          let savedFilename = imageURL.substring(imageURL.lastIndexOf('/') + 1);
+          let savedPath = path.join(
+            __dirname, '..', '..', 'public', 'upload', savedFilename);
+
+          // check saved uploaded file on server
+          should.equal(fs.existsSync(savedPath), true);
+
+          // delete test file
+          fs.unlinkSync(savedPath);
+
+          /** @todo */
+          //should.equal(res.body.datatable, null);
+        })
+        .expect(200, done);
+    });
+
+    it('should process uploaded .jpg file', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let filename = 'sample.jpg';
+      let testPNGFile = path.join(__dirname, '..', 'fixtures', filename);
+
+      request(app)
+        .post(`/api/v1/charts/${id}/assets`)
+        .attach('file', testPNGFile)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.eql(id);
+          res.body.browserDownloadUrl.image.should.endWith(filename);
+          should.equal(res.body.browserDownloadUrl.excel, null);
+
+          // check save file on server
+          let imageURL = res.body.browserDownloadUrl.image;
+          let savedFilename = imageURL.substring(imageURL.lastIndexOf('/') + 1);
+          let savedPath = path.join(
+            __dirname, '..', '..', 'public', 'upload', savedFilename);
+
+          // check saved uploaded file on server
+          should.equal(fs.existsSync(savedPath), true);
+
+          // delete test file
+          fs.unlinkSync(savedPath);
+
+          /** @todo */
+          //should.equal(res.body.datatable, null);
+        })
+        .expect(200, done);
+    });
+
+    it('should process uploaded .jpeg file', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let filename = 'sample.jpeg';
+      let testPNGFile = path.join(__dirname, '..', 'fixtures', filename);
+
+      request(app)
+        .post(`/api/v1/charts/${id}/assets`)
+        .attach('file', testPNGFile)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.eql(id);
+          res.body.browserDownloadUrl.image.should.endWith(filename);
+          should.equal(res.body.browserDownloadUrl.excel, null);
+
+          // check save file on server
+          let imageURL = res.body.browserDownloadUrl.image;
+          let savedFilename = imageURL.substring(imageURL.lastIndexOf('/') + 1);
+          let savedPath = path.join(
+            __dirname, '..', '..', 'public', 'upload', savedFilename);
+
+          // check saved uploaded file on server
+          should.equal(fs.existsSync(savedPath), true);
+
+          // delete test file
+          fs.unlinkSync(savedPath);
+
+          /** @todo */
+          //should.equal(res.body.datatable, null);
+        })
+        .expect(200, done);
+    });
+
+    it('should response 400 if uploaded an invalid file format', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let filename = 'charts.json';
+      let invalidFile = path.join(__dirname, '..', 'fixtures', filename);
+
+      request(app)
+        .post(`/api/v1/charts/${id}/assets`)
+        .attach('file', invalidFile)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Problems parsing data');
+        })
+        .expect(400, done);
+    });
+
+    it('should response 422 if sent invalid id', function (done) {
+      let invalidId = '0';
+      let filename = 'datatable0.xlsx';
+      let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', filename);
+
+      request(app)
+        .post(`/api/v1/charts/${invalidId}/assets`)
+        .attach('file', testXlsxFilePath)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Validation Failed');
+          res.body.errors.should.eql([
+            {
+              "resource": "chart",
+              "field": "_id",
+              "code": "invalid"
+            }
+          ]);
+        })
+        .expect(422, done);
+    });
+
+    it('should response 404 if cannot find the record', function (done) {
+      let nonexistentId = '000000000000000000000000';
+      let filename = 'datatable0.xlsx';
+      let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', filename);
+
+      request(app)
+        .post(`/api/v1/charts/${nonexistentId}/assets`)
+        .attach('file', testXlsxFilePath)
+        .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
           res.body.message.should.eql('Not Found');
@@ -745,7 +1007,7 @@ describe('routes: /charts/:id', function () {
         .expect(422, done);
     });
 
-    it('should response 422 if sent invalid id', function (done) {
+    it('should response 404 if cannot find the record', function (done) {
       let nonexistentId = '000000000000000000000000';
       let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable0.xlsx');
 

@@ -1,5 +1,15 @@
 ﻿'use strict';
 
+
+/**
+ * Handle '400 Bad Request' error.
+ * @function
+ *
+ * @param err
+ * @param req
+ * @param res
+ * @param next
+ */
 let handleBadRequest = function (err, req, res, next) {
   let message = err.customMessage || 'Problems parsing JSON';
 
@@ -8,6 +18,16 @@ let handleBadRequest = function (err, req, res, next) {
   });
 };
 
+
+/**
+ * Handle '422 Unprocessable Entity' error.
+ * @function
+ *
+ * @param err
+ * @param req
+ * @param res
+ * @param next
+ */
 let handleUnprocessableEntity = function (err, req, res, next) {
   let message = err.customMessage || 'Validation Failed';
 
@@ -17,6 +37,16 @@ let handleUnprocessableEntity = function (err, req, res, next) {
   });
 };
 
+
+/**
+ * Handle '404 Not Found' error.
+ * @function
+ *
+ * @param err
+ * @param req
+ * @param res
+ * @param next
+ */
 let handleNotFound = function (err, req, res, next) {
   let message = err.customMessage || 'Not Found';
   let documentationUrl =
@@ -28,7 +58,17 @@ let handleNotFound = function (err, req, res, next) {
   });
 };
 
-exports.handleInternalError = function (err, req, res, next) {
+
+/**
+ * Handle '500 Internal Server Error' error.
+ * @method
+ *
+ * @param err
+ * @param req
+ * @param res
+ * @param next
+ */
+exports.handleInternalServerError = function (err, req, res, next) {
   let message = err.customMessage || 'Internal Server Error';
 
   res.status(500).send({
@@ -36,6 +76,16 @@ exports.handleInternalError = function (err, req, res, next) {
   });
 };
 
+
+/**
+ * Handle errors.
+ * @method
+ *
+ * @param err
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.handle = function (err, req, res, next) {
 
   if (err.status === 422) {

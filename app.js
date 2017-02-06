@@ -36,6 +36,7 @@ app.use(function(req, res, next) {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+// log trace in development mode
 if (app.get('env') === 'development') {
   app.use(logger('dev'));
 }
@@ -71,6 +72,7 @@ app.use(function (req, res, next) {
   next(err);
 });
 
+// only log the error trace in development mode
 if (app.get('env') === 'development') {
   app.use(function (err, req, res, next) {
     console.error(err);
@@ -78,6 +80,7 @@ if (app.get('env') === 'development') {
   });
 }
 
+// error handler
 app.use(function (err, req, res, next) {
   errHandlers.handle(err, req, res, next);
 });

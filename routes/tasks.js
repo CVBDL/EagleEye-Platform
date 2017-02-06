@@ -17,7 +17,7 @@ router.route('/tasks/:id')
     let state = req.body.state;
 
     jobLog.updateOne(id, {'state': state}, function(err, doc) {
-      return err ? errHandler.handleInternalError(err, req, res) : res.send(doc);
+      return err ? errHandler.handleInternalServerError(err, req, res) : res.send(doc);
     });
   });
 

@@ -21,7 +21,7 @@ router.route('/chart-sets')
   // create a chart set
   .post(function postChartSets(req, res) {
     chartSets.create(req.body, function(err, result) {
-      err ? errHandlers.handleInternalError(err, req, res) : res.send(result);
+      err ? errHandlers.handleInternalServerError(err, req, res) : res.send(result);
     });
   })
 
@@ -50,7 +50,7 @@ router.route('/chart-sets/:id')
     let id = req.params.id;
 
     chartSets.updateOne(id, req.body, function(err, doc) {
-      err ? errHandlers.handleInternalError(err, req, res) : res.send(doc.value);
+      err ? errHandlers.handleInternalServerError(err, req, res) : res.send(doc.value);
     });
   })
 

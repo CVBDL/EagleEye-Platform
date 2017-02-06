@@ -42,12 +42,10 @@
     <Compile Include="modules\scheduleJobLogModule.js" />
     <Compile Include="modules\scheduleJobModule.js" />
     <Compile Include="modules\statistics.js" />
-    <Content Include="public\favicon.ico" />
     <Compile Include="routes\chart-sets.js" />
     <Compile Include="routes\charts.js" />
     <Compile Include="routes\download.js" />
     <Compile Include="routes\etl.js" />
-    <Compile Include="routes\index.js" />
     <Compile Include="routes\jobs.js" />
     <Compile Include="routes\root-endpoint.js" />
     <Compile Include="routes\schedule-management.js" />
@@ -60,18 +58,11 @@
     <Compile Include="tests\unit.conf.js" />
     <Compile Include="bin\start-express.js" />
     <Compile Include="bin\terminate-express.js" />
-    <Content Include="views\cron.ejs" />
-    <Content Include="views\error.ejs" />
-    <Content Include="views\index.ejs" />
-    <Compile Include="public\javascript\init.js" />
     <Compile Include="public\javascript\jquery.min.js" />
     <Compile Include="public\javascript\materialize.js" />
     <Compile Include="public\javascript\materialize.min.js" />
-    <Content Include="public\stylesheets\materialize.css" />
     <Content Include="public\stylesheets\materialize.min.css" />
     <Content Include="public\stylesheets\style.css" />
-    <Content Include="public\uploadChartImages\IC_692172pSpXvjOCgEw-Aj99bG7x2j5U.jpg" />
-    <Content Include="public\uploadChartImages\IC_9892576FFY3OKfsoNCgYjC7gTbnkt4.jpg" />
     <Content Include="public\uploadChartImages\README.md" />
     <Content Include="tests\fixtures\charts.json" />
     <Content Include="tests\fixtures\chart-sets.json" />
@@ -91,10 +82,6 @@
     <Folder Include="helpers" />
     <Folder Include="modules" />
     <Folder Include="public" />
-    <Folder Include="public\fonts" />
-    <Folder Include="public\fonts\roboto" />
-    <Folder Include="public\javascript" />
-    <Folder Include="public\stylesheets" />
     <Folder Include="public\uploadChartImages" />
     <Folder Include="routes" />
     <Folder Include="tests" />
@@ -113,7 +100,6 @@
     <Folder Include="typings\globals\node\" />
     <Folder Include="typings\globals\should\" />
     <Folder Include="typings\globals\webpack-dev-server\" />
-    <Folder Include="views" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="typings\globals\async\index.d.ts" />

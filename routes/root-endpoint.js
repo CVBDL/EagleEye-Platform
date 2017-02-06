@@ -1,11 +1,10 @@
 'use strict';
 
 let express = require('express');
+
 let utils   = require('../helpers/utils');
 
-let router = express.Router();
-
-const rootEndpoint = utils.getRestApiRootEndpoint();
+let router = module.exports = express.Router();
 
 
 // define routes
@@ -13,6 +12,8 @@ router.route('/')
 
   // list all the endpoint categories
   .get(function getRootEndpoint(req, res) {
+    const rootEndpoint = utils.getRestApiRootEndpoint();
+
     res.send({
       "charts_url": rootEndpoint + '/charts',
       "chart_sets_url": rootEndpoint + '/chart-sets',
@@ -26,6 +27,3 @@ router.route('/')
       "tasks_url": rootEndpoint + '/tasks'
     });
   });
-
-
-module.exports = router;

@@ -1,12 +1,12 @@
 'use strict';
 
-let express           = require('express');
+let express = require('express');
+
+let scheduleJobHelper = require('../helpers/scheduleJobHelper');
 let utils             = require('../helpers/utils');
 let jobLog            = require('../modules/scheduleJobLogModule');
-let scheduleJobHelper = require('../helpers/scheduleJobHelper');
 
-
-let router = express.Router();
+let router = module.exports = express.Router();
 
 
 // define routes
@@ -100,6 +100,3 @@ router.route('/jobs/:id/tasks')
       res.send(docs);
     });
   });
-
-
-module.exports = router;

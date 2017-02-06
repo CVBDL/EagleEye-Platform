@@ -5,7 +5,7 @@ let utils     = require('../helpers/utils');
 let chartSets = require('../modules/chart-sets');
 let errHandlers = require('../helpers/error-handlers');
 
-let router = express.Router();
+let router = module.exports = express.Router();
 
 
 // define routes
@@ -62,6 +62,3 @@ router.route('/chart-sets/:id')
       res.status(204).send('');
     });
   });
-
-
-module.exports = router;

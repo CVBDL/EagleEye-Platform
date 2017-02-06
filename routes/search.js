@@ -1,15 +1,12 @@
-/**
- * @todo Result limit to 100.
- */
-
 'use strict';
 
-let express    = require('express');
+let express = require('express');
+
 let utils      = require('../helpers/utils');
 let charts     = require('../modules/charts');
 let chartSets  = require('../modules/chart-sets');
 
-let router = express.Router();
+let router = module.exports = express.Router();
 
 
 // define routes
@@ -59,6 +56,3 @@ router.route('/search/chart-sets')
       });
     });
   });
-
-
-module.exports = router;

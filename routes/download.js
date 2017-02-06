@@ -6,7 +6,7 @@ let charts = require('../modules/charts');
 let excel = require('../modules/excel');
 let errHandlers = require('../helpers/error-handlers');
 
-let router = express.Router();
+let router = module.exports = express.Router();
 
 
 // define routes
@@ -31,6 +31,3 @@ router.route('/download/excels/:id')
         errHandlers.handle(err, req, res);
       });
   });
-
-
-module.exports = router;

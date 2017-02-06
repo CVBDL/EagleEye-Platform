@@ -1,11 +1,12 @@
 'use strict';
 
-let express    = require('express');
-let utils      = require('../helpers/utils');
-let jobLog = require('../modules/scheduleJobLogModule');
-let errHandler = require('../helpers/error-handlers');
+let express = require('express');
 
-let router = express.Router();
+let errHandler = require('../helpers/error-handlers');
+let utils = require('../helpers/utils');
+let jobLog = require('../modules/scheduleJobLogModule');
+
+let router = module.exports = express.Router();
 
 
 // define routes
@@ -20,6 +21,3 @@ router.route('/tasks/:id')
       return err ? errHandler.handleInternalServerError(err, req, res) : res.send(doc);
     });
   });
-
-
-module.exports = router;

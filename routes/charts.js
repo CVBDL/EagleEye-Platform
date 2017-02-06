@@ -8,7 +8,7 @@ let errHandlers = require('../helpers/error-handlers');
 let charts = require('../modules/charts');
 let upload = require('../modules/upload');
 
-let router = express.Router();
+let router = module.exports = express.Router();
 
 
 // define routes
@@ -108,7 +108,6 @@ router.route('/charts/:id/datatable')
   });
 
 
-
 // define routes
 router.route('/charts/:id/assets')
 
@@ -188,6 +187,3 @@ router.route('/charts/:id/assets')
     // begin parse form data
     form.parse(req);
   });
-
-
-module.exports = router;

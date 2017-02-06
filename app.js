@@ -17,9 +17,7 @@ let chartSetsApi = require('./routes/chart-sets');
 let jobsApi = require('./routes/jobs');
 let tasksApi = require('./routes/tasks');
 let searchApi = require('./routes/search');
-let uploadApi = require('./routes/upload');
 let downloadApi = require('./routes/download');
-let etlApi = require('./routes/etl');
 let scheduleTask = require('./routes/schedule-management');
 
 let app = express();
@@ -52,11 +50,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // register routes
 app.use('/api/v1', rootApi);
-app.use('/api/v1', etlApi);
 app.use('/api/v1', chartsApi);
 app.use('/api/v1', chartSetsApi);
 app.use('/api/v1', jobsApi);
-app.use('/api/v1', uploadApi);
 app.use('/api/v1', downloadApi);
 app.use('/schedule', scheduleTask);
 

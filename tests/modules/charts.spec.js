@@ -5,7 +5,6 @@ let MongoClient = require('mongodb').MongoClient
 let ObjectId = require('mongodb').ObjectId;
 let os = require('os');
 let path = require('path');
-let process = require('process');
 let should = require('should');
 
 let charts = require('../../modules/charts');
@@ -160,21 +159,22 @@ describe('modules: charts', function () {
         chartType: 'LineChart'
       };
 
-      charts.create(chart).then(function (newChart) {
-        should(newChart._id).not.be.undefined();
-        should(newChart.chartType).equal('LineChart');
-        should(newChart.description).be.null();
-        should(newChart.datatable).be.null();
-        should(newChart.options).be.null();
-        should(newChart.browserDownloadUrl.image).be.null();
-        should(newChart.createdAt).not.be.undefined();
-        should(newChart.updatedAt).not.be.undefined();
-        done();
+      charts.create(chart)
+        .then(function (newChart) {
+          should(newChart._id).not.be.undefined();
+          should(newChart.chartType).equal('LineChart');
+          should(newChart.description).be.null();
+          should(newChart.datatable).be.null();
+          should(newChart.options).be.null();
+          should(newChart.browserDownloadUrl.image).be.null();
+          should(newChart.createdAt).not.be.undefined();
+          should(newChart.updatedAt).not.be.undefined();
+          done();
 
-      }, function (error) {
-        should.fail(error);
-        done();
-      });
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
     });
 
     it('image chart has different fields values', function (done) {
@@ -182,21 +182,22 @@ describe('modules: charts', function () {
         chartType: 'ImageChart'
       };
 
-      charts.create(chart).then(function (newChart) {
-        should(newChart._id).not.be.undefined();
-        should(newChart.chartType).equal('ImageChart');
-        should(newChart.description).be.null();
-        should(newChart.datatable).be.null();
-        should(newChart.options).be.null();
-        should(newChart.browserDownloadUrl.image).be.null();
-        should(newChart.createdAt).not.be.undefined();
-        should(newChart.updatedAt).not.be.undefined();
-        done();
+      charts.create(chart)
+        .then(function (newChart) {
+          should(newChart._id).not.be.undefined();
+          should(newChart.chartType).equal('ImageChart');
+          should(newChart.description).be.null();
+          should(newChart.datatable).be.null();
+          should(newChart.options).be.null();
+          should(newChart.browserDownloadUrl.image).be.null();
+          should(newChart.createdAt).not.be.undefined();
+          should(newChart.updatedAt).not.be.undefined();
+          done();
 
-      }, function (error) {
-        should.fail(error);
-        done();
-      });
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
     });
   });
 
@@ -208,6 +209,7 @@ describe('modules: charts', function () {
         docs.length
           .should
           .eql(fixtures.collections.chart_collection.length);
+
         done();
       });
     });
@@ -228,10 +230,10 @@ describe('modules: charts', function () {
 
         done();
 
-      }, function (error) {
-        should.fail(error);
-        done();
-      });
+      }, function () {
+        should.fail(null, null, 'Promise should be resolved.');
+      })
+      .catch(done);
     });
 
     it('should sort on "updatedAt" field in "desc" order', function (done) {
@@ -250,10 +252,10 @@ describe('modules: charts', function () {
 
         done();
 
-      }, function (error) {
-        should.fail(error);
-        done();
-      });
+      }, function () {
+        should.fail(null, null, 'Promise should be resolved.');
+      })
+      .catch(done);
     });
 
     it('should apply limit option on result set', function (done) {
@@ -262,13 +264,12 @@ describe('modules: charts', function () {
 
       }).then(function (docs) {
         docs.length.should.eql(1);
-
         done();
 
-      }, function (error) {
-        should.fail(error);
-        done();
-      });
+      }, function () {
+        should.fail(null, null, 'Promise should be resolved.');
+      })
+      .catch(done);
     });
 
     it('should apply skip option on result set', function (done) {
@@ -286,13 +287,13 @@ describe('modules: charts', function () {
 
         done();
 
-      }, function (error) {
-        should.fail(error);
-        done();
-      });
+      }, function () {
+        should.fail(null, null, 'Promise should be resolved.');
+      })
+      .catch(done);
     });
 
-    it('should apply q query parameter', function (done) {
+    it('should apply q query parameter on options.title field', function (done) {
       charts.all({
         query: 'Population'
 
@@ -304,10 +305,38 @@ describe('modules: charts', function () {
 
         done();
 
-      }, function (error) {
-        should.fail(error);
+      }, function () {
+        should.fail(null, null, 'Promise should be resolved.');
+      })
+      .catch(done);
+    });
+
+    it('should apply q query parameter on description field', function (done) {
+      charts.all({
+        query: 'chart'
+
+      }).then(function (docs) {
+        docs.length.should.eql(3);
         done();
-      });
+
+      }, function () {
+        should.fail(null, null, 'Promise should be resolved.');
+      })
+      .catch(done);
+    });
+
+    it('should not query on stop words', function (done) {
+      charts.all({
+        query: 'is'
+
+      }).then(function (docs) {
+        docs.length.should.eql(0);
+        done();
+
+      }, function () {
+        should.fail(null, null, 'Promise should be resolved.');
+      })
+      .catch(done);
     });
   });
 
@@ -329,7 +358,11 @@ describe('modules: charts', function () {
             .eql(fixtures.collections.chart_collection[0].description);
 
           done();
-        });
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
     });
 
     it('should return error 404 if cannot find the record', function (done) {
@@ -343,10 +376,7 @@ describe('modules: charts', function () {
         .then(function () {
           done();
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        });
+        .catch(done);
     });
 
     it('should return error 422 when passing invalid id', function (done) {
@@ -354,10 +384,9 @@ describe('modules: charts', function () {
 
       charts.getOne(invalidId)
         .then(function (docs) {
-          should.fail();
-          done();
-        })
-        .catch(function (error) {
+          should.fail(null, null, 'Promise should be resolved.');
+
+        }, function (error) {
           error.should.eql({
             status: 422,
             errors: [{
@@ -368,7 +397,8 @@ describe('modules: charts', function () {
           });
 
           done();
-        });
+        })
+        .catch(done);
     });
   });
 
@@ -383,11 +413,11 @@ describe('modules: charts', function () {
             .eql(fixtures.collections.chart_collection.length);
 
           done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        });
+        .catch(done);
     });
   });
 
@@ -401,11 +431,11 @@ describe('modules: charts', function () {
         .then(function (result) {
           result.deletedCount.should.eql(1);
           done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        });
+        .catch(done);
     });
 
     it('should return error 404 if no record to delete', function (done) {
@@ -419,10 +449,7 @@ describe('modules: charts', function () {
         .then(function () {
           done();
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        });
+        .catch(done);
     });
   });
 
@@ -451,10 +478,11 @@ describe('modules: charts', function () {
             .belowOrEqual(1000);
 
           done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
         })
-        .catch(function (error) {
-          should.fail(error);
-        });
+        .catch(done);
     });
 
     it('should return error 404 if no record to update', function (done) {
@@ -500,10 +528,7 @@ describe('modules: charts', function () {
         .then(function () {
           done();
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        });
+        .catch(done);
     });
   });
 
@@ -521,11 +546,11 @@ describe('modules: charts', function () {
             .eql('http://' + os.hostname() + ':3000/upload/sample-image.png');
 
           done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        })
+        .catch(done);
     });
 
     it('should return error 404 if no record to update', function (done) {
@@ -544,10 +569,7 @@ describe('modules: charts', function () {
         .then(function () {
           done();
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        });
+        .catch(done);
     });
 
     it('should return error 422 when passing invalid id', function (done) {
@@ -571,10 +593,7 @@ describe('modules: charts', function () {
         .then(function () {
           done();
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        });
+        .catch(done);
     });
   });
 
@@ -677,11 +696,11 @@ describe('modules: charts', function () {
           doc._id.should.eql(id);
           doc.datatable.should.eql(datatable);
           done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        })
+        .catch(done);
     });
 
     it('should determine column data type', function (done) {
@@ -726,11 +745,11 @@ describe('modules: charts', function () {
           doc._id.should.eql(id);
           doc.datatable.should.eql(datatable);
           done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        });
+        .catch(done);
     });
 
     it('should update chart with data table only has headers', function (done) {
@@ -757,11 +776,11 @@ describe('modules: charts', function () {
           doc._id.should.eql(id);
           doc.datatable.should.eql(datatable);
           done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        });
+        .catch(done);
     });
 
     it('should return error 404 if no record to update', function (done) {
@@ -780,10 +799,7 @@ describe('modules: charts', function () {
         .then(function () {
           done();
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        });
+        .catch(done);
     });
 
     it('should return error 422 when passing invalid id', function (done) {
@@ -807,10 +823,7 @@ describe('modules: charts', function () {
         .then(function () {
           done();
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        });
+        .catch(done);
     });
 
     it('should return error 422 when passing invalid data table', function (done) {
@@ -834,10 +847,7 @@ describe('modules: charts', function () {
         .then(function () {
           done();
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        });
+        .catch(done);
     });
   });
 

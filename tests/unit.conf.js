@@ -19,3 +19,4 @@ require('./helpers/utils.spec');
 
 // routes
 require('./routes/charts.spec');
+require('./routes/chart-sets.spec');

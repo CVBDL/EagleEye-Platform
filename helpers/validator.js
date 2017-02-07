@@ -1,5 +1,7 @@
 ﻿'use strict';
 
+let ObjectId = require('mongodb').ObjectId;
+
 const CHART_TYPES = require('../modules/chart-types');
 
 exports.isUndefined = function (value) {
@@ -40,4 +42,15 @@ exports.isValidDataTable = function (dataTable) {
 
 exports.isValidOptions = function (options) {
   return exports.isObject(options);
+};
+
+exports.isValidChartIds = function (ids) {
+  if (Array.isArray(ids)) {
+    return ids.every(function (id) {
+      return ObjectId.isValid(id);
+    })
+
+  } else {
+    return ObjectId.isValid(ids);
+  }
 };

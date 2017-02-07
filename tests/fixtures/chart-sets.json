@@ -1,15 +1,20 @@
 {
   "collections": {
-    "chart_set_collection": [{
-      "type": "chartset",
-      "title": "Chart set sample",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-      "charts": []
-    }, {
-      "type": "chartset",
-      "title": "Chart set sample two",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-      "charts": []
-    }]
+    "chart_set_collection": [
+      {
+        "title": "AAA BBB CCC",
+        "description": "HHH III JJJ",
+        "charts": [ "588edf0a60514b38109e7f41", "588edf0a60514b38109e7f43" ],
+        "createdAt": "2016-06-08T08:00:00.000Z",
+        "updatedAt": "2016-06-08T08:00:00.000Z"
+      },
+      {
+        "title": "CCC DDD EEE",
+        "description": "JJJ KKK LLL",
+        "charts": [ "588edf0a60514b38109e7f42" ],
+        "createdAt": "2016-06-01T11:11:00.000Z",
+        "updatedAt": "2016-06-01T11:11:00.000Z"
+      }
+    ]
   }
 }

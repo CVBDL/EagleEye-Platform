@@ -1,0 +1,242 @@
+﻿'use strict';
+
+let bodyParser = require('body-parser');
+let express = require('express');
+let fs = require('fs');
+let path = require('path');
+let request = require('supertest');
+let should = require('should');
+
+let app = require('../../app');
+let dbClient = require('../../helpers/dbHelper');
+let fixtures = require('../fixtures/chart-sets');
+
+const chartSet = {
+  "title": "Chart set sample",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
+  "charts": ["588edf0a60514b38109e7f41", "588edf0a60514b38109e7f43"]
+};
+
+describe('routes: /chart-sets', function () {
+
+  before(function (done) {
+    dbClient.connect(dbClient.MODE_TEST, done);
+  });
+
+  beforeEach(function (done) {
+    dbClient.drop(function (err) {
+      if (err) {
+        return done(err);
+      }
+
+      dbClient.fixtures(fixtures, done);
+    });
+  });
+
+
+  /**
+   * List chart sets.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#list-chart-sets>
+   */
+  describe('GET /api/v1/chart-sets', function () {
+
+    const ENDPOINT = '/api/v1/chart-sets';
+
+    it('should fetch all chart sets', function (done) {
+      request(app)
+        .get(ENDPOINT)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.length
+            .should
+            .eql(fixtures.collections.chart_set_collection.length);
+        })
+        .expect(200, done);
+    });
+
+    it('should sort list by "createdAt" in "asc" desc by default', function (done) {
+      request(app)
+        .get(ENDPOINT)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.length
+            .should
+            .eql(fixtures.collections.chart_set_collection.length);
+
+          let chartSetA = res.body[0];
+          let chartSetB = res.body[1];
+          let timestampA = new Date(chartSetA.createdAt).getTime();
+          let timestampB = new Date(chartSetB.createdAt).getTime();
+
+          timestampA.should.be.aboveOrEqual(timestampB);
+        })
+        .expect(200, done);
+    });
+
+    it('should sort list by "updatedAt" in "asc" order', function (done) {
+      let _endpoint = ENDPOINT + '?sort=updatedAt&order=asc';
+
+      request(app)
+        .get(_endpoint)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.length
+            .should
+            .eql(fixtures.collections.chart_set_collection.length);
+
+          let chartSetA = res.body[0];
+          let chartSetB = res.body[1];
+          let timestampA = new Date(chartSetA.updatedAt).getTime();
+          let timestampB = new Date(chartSetB.updatedAt).getTime();
+
+          timestampA.should.be.belowOrEqual(timestampB);
+        })
+        .expect(200, done);
+    });
+
+    it('should set limit on result list', function (done) {
+      let _endpoint = ENDPOINT + '?limit=1';
+
+      request(app)
+        .get(_endpoint)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.length
+            .should
+            .eql(1);
+        })
+        .expect(200, done);
+    });
+
+    it('should set start and limit on result list', function (done) {
+      let _endpoint = ENDPOINT + '?start=2&limit=1';
+
+      request(app)
+        .get(_endpoint)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.length
+            .should
+            .eql(1);
+
+          res.body[0]._id
+            .should
+            .eql(fixtures.collections.chart_set_collection[1]._id.toHexString())
+        })
+        .expect(200, done);
+    });
+
+    it('should set a query on result list', function (done) {
+      let _endpoint = ENDPOINT + '?q=AAA LLL';
+
+      request(app)
+        .get(_endpoint)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.length
+            .should
+            .eql(2);
+        })
+        .expect(200, done);
+    });
+  });
+
+
+  /**
+   * Create a chart set.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#create-a-chart-set>
+   */
+  describe('POST /api/v1/chart-sets', function () {
+
+    const ENDPOINT = '/api/v1/chart-sets';
+
+    it('should create a chart set', function (done) {
+      request(app)
+        .post(ENDPOINT)
+        .set('Content-Type', 'application/json')
+        .send(chartSet)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.be.type('string');
+
+          res.body.createdAt.should.be.type('string');
+          res.body.updatedAt.should.be.type('string');
+          res.body.createdAt.should.eql(res.body.updatedAt);
+
+          res.body.title.should.eql(chartSet.title);
+          res.body.description.should.eql(chartSet.description);
+          res.body.charts.should.eql(chartSet.charts);
+        })
+        .expect(200, done);
+    });
+
+    it('should include blank fields as a null value', function (done) {
+      let chartSet = {
+        charts: []
+      };
+
+      request(app)
+        .post(ENDPOINT)
+        .set('Content-Type', 'application/json')
+        .send(chartSet)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.be.type('string');
+
+          res.body.createdAt.should.be.type('string');
+          res.body.updatedAt.should.be.type('string');
+          res.body.createdAt.should.eql(res.body.updatedAt);
+
+          should.equal(null, res.body.title);
+          should.equal(null, res.body.description);
+
+          res.body.charts.should.eql([]);
+        })
+        .expect(200, done);
+    });
+    
+    it('should response 400 if sent invalid JSON', function (done) {
+      let chartSet = 'invalid_json';
+
+      request(app)
+        .post(ENDPOINT)
+        .set('Content-Type', 'application/json')
+        .send(chartSet)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Problems parsing JSON');
+        })
+        .expect(400, done);
+    });
+
+    it('should response 422 if received unprocessable charts', function (done) {
+      let chartSet = {
+        charts: ''
+      };
+
+      request(app)
+        .post(ENDPOINT)
+        .set('Content-Type', 'application/json')
+        .send(chartSet)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Validation Failed');
+          res.body.errors.should.eql([
+            {
+              "resource": "chart-sets",
+              "field": "charts",
+              "code": "invalid"
+            }
+          ]);
+        })
+        .expect(422, done);
+    });
+  });
+
+});

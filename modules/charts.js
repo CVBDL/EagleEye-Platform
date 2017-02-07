@@ -1,7 +1,7 @@
 'use strict';
 
-let Promise = require('es6-promise').Promise;
 let ObjectId = require('mongodb').ObjectId;
+let Promise = require('es6-promise').Promise;
 
 let CHART_TYPES = require('./chart-types');
 let chartSets = require('./chart-sets');
@@ -19,7 +19,7 @@ dbClient.DATABASE_KEYS.push({
   COLLECTION: COLLECTION,
   keys: [{
     "options.title": "text",
-    description: "text"
+    "description": "text"
   }]
 });
 

@@ -1,69 +1,113 @@
-/**
- * Created by MMo2 on 6/14/2016.
- */
 'use strict';
 
 let ObjectId = require('mongodb').ObjectId;
-let q        = require('q');
+let Promise = require('es6-promise').Promise;
+let q = require('q');
 
-let DB = require('../helpers/dbHelper');
+let dbClient = require('../helpers/dbHelper');
+let validator = require('../helpers/validator');
 
-let COLLECTION = "chart_set_collection";
 let CHART_COLLECTION = "chart_collection";
+let CHART_SET_COLLECTION = "chart_set_collection";
 let CHART_SET_TYPE = "chartset";
 
-DB.DATABASE_KEYS.push({
-  COLLECTION: COLLECTION,
+dbClient.DATABASE_KEYS.push({
+  COLLECTION: CHART_SET_COLLECTION,
   keys: [{
-    "options.title": "text",
+    title: "text",
     description: "text"
   }]
 });
 
-exports.create = function(chartSetData, callback) {
-  let db = DB.get();
-  let now = new Date();
 
-  chartSetData.type = CHART_SET_TYPE;
-  chartSetData.createdAt = chartSetData.updatedAt = now.toISOString();
+/**
+ * Create a new chart set.
+ *
+ * @method
+ * @param {Object} data The new chart set object.
+ * @param {?string} [data.title=null] The chart set title.
+ * @param {?string} [data.description=null] The chart set description.
+ * @param {Array} [data.charts] The charts' ids belong to this chart set.
+ * @returns {Promise} A promise will be resolved with new created chart set.
+ *                    Or rejected with defined errors.
+ */
+exports.create = function(data) {
+  let db = dbClient.get();
 
-  db.collection(COLLECTION).insert(chartSetData, function(err, result) {
-    if (err) {
-      return callback(err, result);
-    }
+  // chart set schema
+  let schema = {
+    _id: null,
+    title: null,
+    description: null,
+    charts: [],
+    createdAt: null,
+    updatedAt: null
+  };
 
-    callback(null, result.ops[0]);
-  });
+  const id = ObjectId();
+
+  schema._id = id;
+
+  if (validator.isString(data.title)) {
+    schema.title = data.title;
+  }
+
+  if (validator.isValidDescription(data.description)) {
+    schema.description = data.description;
+  }
+  
+  if (validator.isValidChartIds(data.charts)) {
+    schema.charts = data.charts;
+
+  } else {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "chart-sets",
+        "field": "charts",
+        "code": "invalid"
+      }]
+    });
+  }
+
+  schema.createdAt = schema.updatedAt = new Date().toISOString();
+
+  return db.collection(CHART_SET_COLLECTION)
+    .insertOne(schema)
+    .then(function (result) {
+      return result.ops[0];
+    });
 };
 
-exports.all = function(option, callback) {
-  let db = DB.get();
+
+exports.all = function(params) {
+  let db = dbClient.get();
   let query = {};
-  if (arguments.length == 1) {
-    callback = option;
-    option = {};
-  }
-  if (option.skip) {
-    option.skip--;
-  }
-  if (option.query) {
+
+  params = params || {};
+
+  if (params.query) {
     query["$text"] = {
-      "$search": "" + option.query
+      "$search": params.query
     };
-    delete option.query;
+
+    delete params.query;
   }
-  db.collection(COLLECTION).find(query, false, option).toArray(callback);
+
+  return db.collection(CHART_SET_COLLECTION)
+    .find(query, false, params)
+    .toArray();
 };
 
 exports.getOne = function(_id) {
-  let db = DB.get();
+  let db = dbClient.get();
   let regExp = /^s-/g;
   let query = {};
   let promiseQueue = [];
 
   query = { '_id': ObjectId(_id) };
 
-  return db.collection(COLLECTION).findOne(query).then(function(doc) {
+  return db.collection(CHART_SET_COLLECTION).findOne(query).then(function(doc) {
     if (!doc) return null;
 
     doc.charts.forEach(function(chartId, index) {
@@ -79,17 +123,17 @@ exports.getOne = function(_id) {
 };
 
 exports.clearCollection = function(callback) {
-  let db = DB.get();
+  let db = dbClient.get();
 
-  db.collection(COLLECTION).remove({}, function(err, result) {
+  db.collection(CHART_SET_COLLECTION).remove({}, function(err, result) {
     callback(err);
   });
 };
 
 exports.remove = function(_id, callback) {
-  let db = DB.get();
+  let db = dbClient.get();
 
-  db.collection(COLLECTION).removeOne({
+  db.collection(CHART_SET_COLLECTION).removeOne({
     _id: ObjectId(_id)
   }, function(err, result) {
     callback(err);
@@ -97,13 +141,13 @@ exports.remove = function(_id, callback) {
 };
 
 exports.updateOne = function(_id, updateData, callback) {
-  let db = DB.get();
+  let db = dbClient.get();
   let now = new Date();
   let update = {
     "$set": updateData
   };
 
-  db.collection(COLLECTION).findAndModify({
+  db.collection(CHART_SET_COLLECTION).findAndModify({
     "_id": ObjectId(_id)
 
   }, [], update, { new: true }, function(err, result) {
@@ -113,8 +157,8 @@ exports.updateOne = function(_id, updateData, callback) {
 
 // TODO: update `updatedAt`
 exports.removeChartFromCharts = function(_id) {
-  let db = DB.get();
-  db.collection(COLLECTION).update({
+  let db = dbClient.get();
+  db.collection(CHART_SET_COLLECTION).update({
     "charts": _id
   }, {
     $pullAll: {

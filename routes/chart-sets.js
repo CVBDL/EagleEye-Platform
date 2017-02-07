@@ -13,16 +13,24 @@ router.route('/chart-sets')
 
   // read all chart sets
   .get(function getChartSets(req, res) {
-    chartSets.all(utils.getQueryParameters(req), function(err, docs) {
-      res.send(docs);
-    });
+    chartSets.all(utils.getQueryParameters(req))
+      .then(function (docs) {
+        res.send(docs);
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
+      });
   })
 
   // create a chart set
   .post(function postChartSets(req, res) {
-    chartSets.create(req.body, function(err, result) {
-      err ? errHandlers.handleInternalServerError(err, req, res) : res.send(result);
-    });
+    chartSets.create(req.body)
+      .then(function (result) {
+        res.send(result);
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
+      });
   })
 
   // delete all chart sets

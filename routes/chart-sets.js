@@ -62,12 +62,16 @@ router.route('/chart-sets/:id')
   })
 
   // update a single chart set
-  .post(function putSingleChartSet(req, res) {
+  .post(function postChartSet(req, res) {
     let id = req.params.id;
 
-    chartSets.updateOne(id, req.body, function(err, doc) {
-      err ? errHandlers.handleInternalServerError(err, req, res) : res.send(doc.value);
-    });
+    chartSets.updateOne(id, req.body)
+      .then(function (doc) {
+        res.send(doc);
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
+      });
   })
 
   // delete a single chart set

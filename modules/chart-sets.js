@@ -122,8 +122,6 @@ exports.all = function (params) {
  *                    Or rejected with defined errors.
  */
 exports.getOne = function (id) {
-  let db = dbClient.get();
-
   if (!ObjectId.isValid(id)) {
     return Promise.reject({
       status: 422,
@@ -134,6 +132,8 @@ exports.getOne = function (id) {
       }]
     });
   }
+
+  let db = dbClient.get();
   
   return db.collection(COLLECTION)
     .find({ "_id": ObjectId(id) })
@@ -189,8 +189,6 @@ exports.deleteAll = function () {
  *                    Or rejected with defined errors.
  */
 exports.deleteOne = function (id) {
-  let db = dbClient.get();
-
   if (!ObjectId.isValid(id)) {
     return Promise.reject({
       status: 422,
@@ -202,6 +200,8 @@ exports.deleteOne = function (id) {
     });
   }
 
+  let db = dbClient.get();
+  
   return db.collection(COLLECTION)
     .deleteOne({ _id: ObjectId(id) })
     .then(function (result) {
@@ -216,29 +216,73 @@ exports.deleteOne = function (id) {
     });
 };
 
-exports.updateOne = function (_id, updateData, callback) {
+
+/**
+ * Update a single chart set.
+ *
+ * @method
+ * @param {string} id The chart set '_id' property.
+ * @param {Object} data The updated chart set data object.
+ * @param {?string} [data.title] The chart set description field.
+ * @param {?string} [data.description] The chart set description field.
+ * @param {Array} [data.charts] The chart set charts field.
+ * @returns {Promise} A promise will be resolved with the updated chart set.
+ *                    Or rejected with defined errors.
+ */
+exports.updateOne = function (id, data) {
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "chart-sets",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
   let db = dbClient.get();
-  let now = new Date();
-  let update = {
-    "$set": updateData
+  let fields = ['title', 'description', 'charts'];
+  let updateData = {
+    updatedAt: new Date().toISOString()
   };
 
-  db.collection(COLLECTION).findAndModify({
-    "_id": ObjectId(_id)
-
-  }, [], update, { new: true }, function (err, result) {
-    callback(err, result);
+  fields.forEach(function (field) {
+    if (validator.isDefined(data[field])) {
+      updateData[field] = data[field];
+    }
   });
+
+  return db.collection(COLLECTION)
+    .findOneAndUpdate({
+      _id: ObjectId(id)
+    }, {
+      $set: updateData
+    }, {
+      // When false, returns the updated document rather than
+      // the original.
+      returnOriginal: false
+    })
+    .then(function (result) {
+      if (result.value === null) {
+        return Promise.reject({
+          status: 404
+        });
+
+      } else {
+        return result.value;
+      }
+    });
 };
 
 // TODO: update `updatedAt`
-exports.removeChartFromCharts = function (_id) {
+exports.removeChartFromCharts = function (id) {
   let db = dbClient.get();
   db.collection(COLLECTION).update({
-    "charts": _id
+    "charts": id
   }, {
       $pullAll: {
-        "charts": [_id]
+        "charts": [id]
       }
     });
 };

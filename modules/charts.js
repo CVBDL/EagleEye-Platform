@@ -137,8 +137,6 @@ exports.all = function(params) {
  *                    Or rejected with defined errors.
  */
 exports.getOne = function(id) {
-  let db = dbClient.get();
-
   if (!ObjectId.isValid(id)) {
     return Promise.reject({
       status: 422,
@@ -149,6 +147,8 @@ exports.getOne = function(id) {
       }]
     });
   }
+
+  let db = dbClient.get();
 
   return db.collection(COLLECTION)
     .find({ "_id": ObjectId(id) })
@@ -188,9 +188,7 @@ exports.deleteAll = function() {
  * @returns {Promise} A promise will be resolved when delete successfully.
  *                    Or rejected with defined errors.
  */
-exports.deleteOne = function(id) {
-  let db = dbClient.get();
-  
+exports.deleteOne = function (id) {
   if (!ObjectId.isValid(id)) {
     return Promise.reject({
       status: 422,
@@ -201,6 +199,8 @@ exports.deleteOne = function(id) {
       }]
     });
   }
+
+  let db = dbClient.get();
 
   return db.collection(COLLECTION)
     .deleteOne({ _id: ObjectId(id) })
@@ -223,7 +223,7 @@ exports.deleteOne = function(id) {
  * Update a single chart.
  *
  * @method
- * @param {ObjectId} id The chart's ObjectId.
+ * @param {string} id The chart '_id' property.
  * @param {Object} data The updated chart data object.
  * @param {?string} [data.description] The chart description field.
  * @param {?Object} [data.datatable] The chart datatable field.

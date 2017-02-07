@@ -619,6 +619,53 @@ describe('routes: /charts/:id', function () {
 
 
   /**
+   * Get chart data table.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#get-data-table>
+   */
+  describe('GET /api/v1/charts/:id/datatable', function () {
+
+    it('should get chart data table in JSON format', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+
+      request(app)
+        .get(`/api/v1/charts/${id}/datatable?format=json`)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body
+            .should
+            .eql(fixtures.collections.chart_collection[0].datatable);
+        })
+        .expect(200, done);
+    });
+
+    it('should download chart data table to a .xlsx file', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+
+      request(app)
+        .get(`/api/v1/charts/${id}/datatable?format=xlsx`)
+        .send()
+        .expect('Content-disposition', /attachment;/)
+        .expect('Content-Type',
+          /^application\/vnd\.openxmlformats\-officedocument\.spreadsheetml\.sheet$/)
+        .expect(200, done);
+    });
+
+    it('should response 404 if cannot process format query parameter', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+
+      request(app)
+        .get(`/api/v1/charts/${id}/datatable?format=unknown`)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Not Found');
+        })
+        .expect(404, done);
+    });
+  });
+
+  /**
    * Process uploaded chart assets.
    */
   describe('POST /api/v1/charts/:id/assets', function () {

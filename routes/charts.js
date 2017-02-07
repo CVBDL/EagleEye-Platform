@@ -5,6 +5,7 @@ let multiparty = require('multiparty');
 
 let utils = require('../helpers/utils');
 let errHandlers = require('../helpers/error-handlers');
+let excel = require('../modules/excel');
 let charts = require('../modules/charts');
 let upload = require('../modules/upload');
 
@@ -105,6 +106,42 @@ router.route('/charts/:id/datatable')
       .catch(function (err) {
         errHandlers.handle(err, req, res);
       });
+  })
+
+  // get an asset
+  .get(function getDataTable(req, res) {
+    let id = req.params.id;
+    let format = req.query.format || '';
+
+    if (format === 'json') {
+      charts.getOne(id)
+        .then(function (docs) {
+          res.send(docs[0].datatable);
+        })
+        .catch(function (err) {
+          errHandlers.handle(err, req, res);
+        });
+
+    } else if (format === 'xlsx') {
+      charts.getOne(id)
+        .then(function (docs) {
+          res.setHeader('Content-disposition', 'attachment; filename=' + (docs[0]._id) + '.xlsx');
+          res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          excel.writeOne(docs[0], {
+            "outStream": res,
+            "worksheet": "Data",
+          }, () => console.log());
+        })
+        .catch(function (err) {
+          errHandlers.handle(err, req, res);
+        });
+
+    } else {
+      let err = new Error();
+      err.status = 404;
+
+      errHandlers.handle(err, req, res);
+    }
   });
 
 
@@ -124,7 +161,7 @@ router.route('/charts/:id/assets')
 
     let form = new multiparty.Form();
     let processPromise;
-    
+
     form.on('part', function (part) {
       // You *must* act on the part by reading it
       // NOTE: if you want to ignore it, just call "part.resume()"
@@ -132,7 +169,7 @@ router.route('/charts/:id/assets')
       part.on('error', function (err) {
         errHandlers.handle(err, req, res);
       });
-      
+
       if (part.name === 'file' && part.filename) {
         let contentType = part.headers['content-type'];
 

@@ -17,7 +17,6 @@ let chartSetsApi = require('./routes/chart-sets');
 let jobsApi = require('./routes/jobs');
 let tasksApi = require('./routes/tasks');
 let searchApi = require('./routes/search');
-let downloadApi = require('./routes/download');
 let scheduleTask = require('./routes/schedule-management');
 
 let app = express();
@@ -44,16 +43,12 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, 'public')));
-//app.use(multipart({
-//  //uploadDir: path.join(__dirname, './excelPath/prod')
-//}));
 
 // register routes
 app.use('/api/v1', rootApi);
 app.use('/api/v1', chartsApi);
 app.use('/api/v1', chartSetsApi);
 app.use('/api/v1', jobsApi);
-app.use('/api/v1', downloadApi);
 app.use('/schedule', scheduleTask);
 
 // catch 404 and forward to error handler

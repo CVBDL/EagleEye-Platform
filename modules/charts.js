@@ -47,7 +47,6 @@ exports.create = function(data) {
     datatable: null,
     options: null,
     browserDownloadUrl: {
-      excel: null,
       image: null
     },
     createdAt: null,
@@ -71,12 +70,7 @@ exports.create = function(data) {
       }]
     });
   }
-
-  schema.browserDownloadUrl.excel =
-    (data.chartType === CHART_TYPES.ImageChart)
-      ? null
-      : (API_ROOT_ENDPOINT + '/download/excels/' + id);
-
+  
   if (validator.isValidDescription(data.description)) {
     schema.description = data.description;
   }
@@ -313,7 +307,6 @@ exports.updateImageBrowserDownloadUrl = function (id, filename) {
     }, {
       $set: {
         browserDownloadUrl: {
-          excel: null,
           image: ROOT_ENDPOINT + '/upload/' + filename
         },
         updatedAt: new Date().toISOString()

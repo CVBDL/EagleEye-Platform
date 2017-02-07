@@ -116,7 +116,9 @@ describe('modules: charts', function () {
           let collection = db.collection(CHART_COLLECTION_NAME);
 
           collection.find({}).toArray().then(function (docs) {
-            docs.length.should.eql(3);
+            docs.length
+              .should
+              .eql(fixtures.collections.chart_collection.length + 1);
 
             let found = false;
             
@@ -164,7 +166,6 @@ describe('modules: charts', function () {
         should(newChart.description).be.null();
         should(newChart.datatable).be.null();
         should(newChart.options).be.null();
-        should(newChart.browserDownloadUrl.excel).be.endWith(newChart._id);
         should(newChart.browserDownloadUrl.image).be.null();
         should(newChart.createdAt).not.be.undefined();
         should(newChart.updatedAt).not.be.undefined();
@@ -188,7 +189,6 @@ describe('modules: charts', function () {
         should(newChart.datatable).be.null();
         should(newChart.options).be.null();
         should(newChart.browserDownloadUrl.image).be.null();
-        should(newChart.browserDownloadUrl.image).be.null();
         should(newChart.createdAt).not.be.undefined();
         should(newChart.updatedAt).not.be.undefined();
         done();
@@ -205,7 +205,9 @@ describe('modules: charts', function () {
 
     it('should list all charts', function (done) {
       charts.all().then(function (docs) {
-        docs.length.should.eql(2);
+        docs.length
+          .should
+          .eql(fixtures.collections.chart_collection.length);
         done();
       });
     });
@@ -274,7 +276,10 @@ describe('modules: charts', function () {
         skip: 1
 
       }).then(function (docs) {
-        docs.length.should.eql(1);
+        docs.length
+          .should
+          .eql(fixtures.collections.chart_collection.length - 1);
+
         docs[0]._id
           .should
           .eql(fixtures.collections.chart_collection[1]._id);
@@ -373,7 +378,10 @@ describe('modules: charts', function () {
     it('should delete all charts', function (done) {
       charts.deleteAll()
         .then(function (result) {
-          result.deletedCount.should.eql(2);
+          result.deletedCount
+            .should
+            .eql(fixtures.collections.chart_collection.length);
+
           done();
         })
         .catch(function (error) {
@@ -508,7 +516,6 @@ describe('modules: charts', function () {
       charts.updateImageBrowserDownloadUrl(id, 'sample-image.png')
         .then(function (doc) {
           doc._id.should.eql(id);
-          should.equal(doc.browserDownloadUrl.excel, null);
           doc.browserDownloadUrl.image
             .should
             .eql('http://' + os.hostname() + ':3000/upload/sample-image.png');

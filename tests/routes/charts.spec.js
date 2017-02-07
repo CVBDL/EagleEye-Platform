@@ -188,8 +188,7 @@ describe('routes: /charts', function () {
           res.body.description.should.eql(chart.description);
           res.body.datatable.should.eql(chart.datatable);
           res.body.options.should.eql(chart.options);
-
-          res.body.browserDownloadUrl.excel.should.endWith(res.body._id);
+          
           should.equal(null, res.body.browserDownloadUrl.image);
         })
         .expect(200, done);
@@ -215,8 +214,7 @@ describe('routes: /charts', function () {
 
           res.body.chartType.should.eql(chart.chartType);
           res.body.description.should.eql(chart.description);
-
-          should.equal(null, res.body.browserDownloadUrl.excel);
+          
           should.equal(null, res.body.browserDownloadUrl.image);
         })
         .expect(200, done);
@@ -243,8 +241,7 @@ describe('routes: /charts', function () {
           should.equal(null, res.body.description);
           should.equal(null, res.body.datatable);
           should.equal(null, res.body.options);
-
-          res.body.browserDownloadUrl.excel.should.endWith(res.body._id);
+          
           should.equal(null, res.body.browserDownloadUrl.image);
         })
         .expect(200, done);
@@ -783,7 +780,6 @@ describe('routes: /charts/:id', function () {
         .expect(function (res) {
           res.body._id.should.eql(id);
           res.body.browserDownloadUrl.image.should.endWith(filename);
-          should.equal(res.body.browserDownloadUrl.excel, null);
 
           // check save file on server
           let imageURL = res.body.browserDownloadUrl.image;
@@ -816,7 +812,6 @@ describe('routes: /charts/:id', function () {
         .expect(function (res) {
           res.body._id.should.eql(id);
           res.body.browserDownloadUrl.image.should.endWith(filename);
-          should.equal(res.body.browserDownloadUrl.excel, null);
 
           // check save file on server
           let imageURL = res.body.browserDownloadUrl.image;
@@ -849,7 +844,6 @@ describe('routes: /charts/:id', function () {
         .expect(function (res) {
           res.body._id.should.eql(id);
           res.body.browserDownloadUrl.image.should.endWith(filename);
-          should.equal(res.body.browserDownloadUrl.excel, null);
 
           // check save file on server
           let imageURL = res.body.browserDownloadUrl.image;

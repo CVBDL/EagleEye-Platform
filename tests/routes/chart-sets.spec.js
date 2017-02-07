@@ -9,7 +9,8 @@ let should = require('should');
 
 let app = require('../../app');
 let dbClient = require('../../helpers/dbHelper');
-let fixtures = require('../fixtures/chart-sets');
+let chartSetsFixtures = require('../fixtures/chart-sets');
+let chartsFixtures = require('../fixtures/charts');
 
 const chartSet = {
   "title": "Chart set sample",
@@ -29,7 +30,9 @@ describe('routes: /chart-sets', function () {
         return done(err);
       }
 
-      dbClient.fixtures(fixtures, done);
+      dbClient.fixtures(chartSetsFixtures, function () {
+        dbClient.fixtures(chartsFixtures, done);
+      });
     });
   });
 
@@ -50,7 +53,7 @@ describe('routes: /chart-sets', function () {
         .expect(function (res) {
           res.body.length
             .should
-            .eql(fixtures.collections.chart_set_collection.length);
+            .eql(chartSetsFixtures.collections.chart_set_collection.length);
         })
         .expect(200, done);
     });
@@ -63,7 +66,7 @@ describe('routes: /chart-sets', function () {
         .expect(function (res) {
           res.body.length
             .should
-            .eql(fixtures.collections.chart_set_collection.length);
+            .eql(chartSetsFixtures.collections.chart_set_collection.length);
 
           let chartSetA = res.body[0];
           let chartSetB = res.body[1];
@@ -85,7 +88,7 @@ describe('routes: /chart-sets', function () {
         .expect(function (res) {
           res.body.length
             .should
-            .eql(fixtures.collections.chart_set_collection.length);
+            .eql(chartSetsFixtures.collections.chart_set_collection.length);
 
           let chartSetA = res.body[0];
           let chartSetB = res.body[1];
@@ -126,7 +129,7 @@ describe('routes: /chart-sets', function () {
 
           res.body[0]._id
             .should
-            .eql(fixtures.collections.chart_set_collection[1]._id.toHexString())
+            .eql(chartSetsFixtures.collections.chart_set_collection[1]._id.toHexString())
         })
         .expect(200, done);
     });
@@ -239,4 +242,152 @@ describe('routes: /chart-sets', function () {
     });
   });
 
+
+  /**
+   * Delete all chart sets.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#delete-all-chart-sets>
+   */
+  describe('DELETE /api/v1/chart-sets', function () {
+
+    const ENDPOINT = '/api/v1/chart-sets';
+
+    it('should delete all chart sets', function (done) {
+      request(app)
+        .delete(ENDPOINT)
+        .send()
+        .expect(204, done);
+    });
+  });
+});
+
+
+describe('routes: /chart-sets/:id', function () {
+
+  before(function (done) {
+    dbClient.connect(dbClient.MODE_TEST, done);
+  });
+
+  beforeEach(function (done) {
+    dbClient.drop(function (err) {
+      if (err) {
+        return done(err);
+      }
+
+      dbClient.fixtures(chartSetsFixtures, function () {
+        dbClient.fixtures(chartsFixtures, done);
+      });
+    });
+  });
+
+
+  /**
+   * Get a single chart set.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#get-a-single-chart-set>
+   */
+  describe('GET /api/v1/chart-sets/:_id', function () {
+
+    it('should fetch a single chart set with the given id', function (done) {
+      let id = chartSetsFixtures
+        .collections.chart_set_collection[1]._id.toHexString();
+
+      request(app)
+        .get(`/api/v1/chart-sets/${id}`)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.eql(id);
+          res.body.charts.length.should.eql(1);
+
+          let fixture = chartsFixtures.collections.chart_collection[1];
+
+          res.body.charts[0]._id
+            .should
+            .eql(fixture._id.toHexString());
+        })
+        .expect(200, done);
+    });
+
+    it('should response 422 if sent invalid id', function (done) {
+      let id = '0';
+
+      request(app)
+        .get(`/api/v1/chart-sets/${id}`)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Validation Failed');
+          res.body.errors.should.eql([
+            {
+              "resource": "chart-sets",
+              "field": "_id",
+              "code": "invalid"
+            }
+          ]);
+        })
+        .expect(422, done);
+    });
+
+    it('should response 404 if cannot find the record', function (done) {
+      let id = '000000000000000000000000';
+
+      request(app)
+        .get(`/api/v1/chart-sets/${id}`)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Not Found');
+        })
+        .expect(404, done);
+    });
+  });
+
+
+  /**
+   * Delete a chart set.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#delete-a-chart-set>
+   */
+  describe('DELETE /api/v1/charts/:_id', function () {
+
+    it('should delete a chart set with given id', function (done) {
+      let id = chartSetsFixtures.collections.chart_set_collection[0]._id.toHexString();
+
+      request(app)
+        .delete(`/api/v1/chart-sets/${id}`)
+        .send()
+        .expect(204, done);
+    });
+
+    it('should response 422 if sent invalid id', function (done) {
+      let id = '0';
+
+      request(app)
+        .delete(`/api/v1/chart-sets/${id}`)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Validation Failed');
+          res.body.errors.should.eql([
+            {
+              "resource": "chart-sets",
+              "field": "_id",
+              "code": "invalid"
+            }
+          ]);
+        })
+        .expect(422, done);
+    });
+
+    it('should response 404 cannot find the record', function (done) {
+      let id = '000000000000000000000000';
+
+      request(app)
+        .delete(`/api/v1/chart-sets/${id}`)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Not Found');
+        })
+        .expect(404, done);
+    });
+  });
 });

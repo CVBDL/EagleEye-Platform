@@ -324,7 +324,7 @@ describe('routes: /charts/:id', function () {
    */
   describe('GET /api/v1/charts/:_id', function () {
 
-    it('should fetch a single with the given id', function (done) {
+    it('should fetch a single chart with the given id', function (done) {
       let id = fixtures.collections.chart_collection[0]._id.toHexString();
 
       request(app)
@@ -338,10 +338,10 @@ describe('routes: /charts/:id', function () {
     });
 
     it('should response 422 if sent invalid id', function (done) {
-      let invalidId = '0';
+      let id = '0';
 
       request(app)
-        .get(`/api/v1/charts/${invalidId}`)
+        .get(`/api/v1/charts/${id}`)
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
@@ -358,10 +358,10 @@ describe('routes: /charts/:id', function () {
     });
 
     it('should response 404 if cannot find the record', function (done) {
-      let nonexistentId = '000000000000000000000000';
+      let id = '000000000000000000000000';
 
       request(app)
-        .get(`/api/v1/charts/${nonexistentId}`)
+        .get(`/api/v1/charts/${id}`)
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {

@@ -2,6 +2,7 @@
   "collections": {
     "chart_set_collection": [
       {
+        "_id": "188edf0a60514b38109e7f41",
         "title": "AAA BBB CCC",
         "description": "HHH III JJJ",
         "charts": [ "588edf0a60514b38109e7f41", "588edf0a60514b38109e7f43" ],
@@ -9,6 +10,7 @@
         "updatedAt": "2016-06-08T08:00:00.000Z"
       },
       {
+        "_id": "188edf0a60514b38109e7f42",
         "title": "CCC DDD EEE",
         "description": "JJJ KKK LLL",
         "charts": [ "588edf0a60514b38109e7f42" ],

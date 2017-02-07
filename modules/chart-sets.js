@@ -2,17 +2,15 @@
 
 let ObjectId = require('mongodb').ObjectId;
 let Promise = require('es6-promise').Promise;
-let q = require('q');
 
 let dbClient = require('../helpers/dbHelper');
 let validator = require('../helpers/validator');
+let charts = require('./charts');
 
-let CHART_COLLECTION = "chart_collection";
-let CHART_SET_COLLECTION = "chart_set_collection";
-let CHART_SET_TYPE = "chartset";
+let COLLECTION = "chart_set_collection";
 
 dbClient.DATABASE_KEYS.push({
-  COLLECTION: CHART_SET_COLLECTION,
+  COLLECTION: COLLECTION,
   keys: [{
     title: "text",
     description: "text"
@@ -31,7 +29,7 @@ dbClient.DATABASE_KEYS.push({
  * @returns {Promise} A promise will be resolved with new created chart set.
  *                    Or rejected with defined errors.
  */
-exports.create = function(data) {
+exports.create = function (data) {
   let db = dbClient.get();
 
   // chart set schema
@@ -72,7 +70,7 @@ exports.create = function(data) {
 
   schema.createdAt = schema.updatedAt = new Date().toISOString();
 
-  return db.collection(CHART_SET_COLLECTION)
+  return db.collection(COLLECTION)
     .insertOne(schema)
     .then(function (result) {
       return result.ops[0];
@@ -80,7 +78,22 @@ exports.create = function(data) {
 };
 
 
-exports.all = function(params) {
+/**
+ * Get all chart sets.
+ *
+ * @method
+ * @param {Object} params URL query parameters.
+ * @param {string} [params.query] Query for find operation.
+ * @param {Array<Array<string>>} [params.sort] Set to sort the documents
+ *                                             coming back from the query.
+ * @param {number} [params.skip] Set to skip N documents ahead in your
+ *                               query (useful for pagination).
+ * @param {number} [params.limit] Sets the limit of documents returned in
+ *                                the query.
+ * @returns {Promise} A promise will be resolved with new created chart set.
+ *                    Or rejected with defined errors.
+ */
+exports.all = function (params) {
   let db = dbClient.get();
   let query = {};
 
@@ -94,75 +107,138 @@ exports.all = function(params) {
     delete params.query;
   }
 
-  return db.collection(CHART_SET_COLLECTION)
+  return db.collection(COLLECTION)
     .find(query, false, params)
     .toArray();
 };
 
-exports.getOne = function(_id) {
+
+/**
+ * Get a single chart set.
+ *
+ * @method
+ * @param {string} id The chart set '_id' property.
+ * @returns {Promise} A promise will be resolved with the found chart set.
+ *                    Or rejected with defined errors.
+ */
+exports.getOne = function (id) {
   let db = dbClient.get();
-  let regExp = /^s-/g;
-  let query = {};
-  let promiseQueue = [];
 
-  query = { '_id': ObjectId(_id) };
-
-  return db.collection(CHART_SET_COLLECTION).findOne(query).then(function(doc) {
-    if (!doc) return null;
-
-    doc.charts.forEach(function(chartId, index) {
-      promiseQueue.push(db.collection(CHART_COLLECTION).findOne({ _id: ObjectId(chartId) }));
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "chart-sets",
+        "field": "_id",
+        "code": "invalid"
+      }]
     });
+  }
+  
+  return db.collection(COLLECTION)
+    .find({ "_id": ObjectId(id) })
+    .limit(1)
+    .toArray()
+    .then(function (docs) {
+      if (!docs.length) {
+        return Promise.reject({
+          status: 404
+        });
+      }
 
-    return q.all(promiseQueue).then(function(docs) {
-      doc.charts = docs;
+      let promiseQueue = [];
 
-      return doc;
+      docs[0].charts.forEach(function (chartId, index) {
+        promiseQueue.push(charts.getOne(chartId));
+      });
+
+      return Promise.all(promiseQueue)
+        .then(function (result) {
+          docs[0].charts = [];
+
+          result.forEach(function (chart) {
+            docs[0].charts.push(chart[0]);
+          });
+
+          return docs[0];
+        });
     });
-  });
 };
 
-exports.clearCollection = function(callback) {
+
+/**
+ * Delete all chart sets.
+ *
+ * @method
+ * @returns {Promise} A promise will be resolved when delete successfully.
+ *                    Or rejected when error occurred.
+ */
+exports.deleteAll = function () {
   let db = dbClient.get();
 
-  db.collection(CHART_SET_COLLECTION).remove({}, function(err, result) {
-    callback(err);
-  });
+  return db.collection(COLLECTION).deleteMany();
 };
 
-exports.remove = function(_id, callback) {
+
+/**
+ * Delete a single chart set.
+ *
+ * @method
+ * @param {string} id The chart set '_id' property.
+ * @returns {Promise} A promise will be resolved when delete successfully.
+ *                    Or rejected with defined errors.
+ */
+exports.deleteOne = function (id) {
   let db = dbClient.get();
 
-  db.collection(CHART_SET_COLLECTION).removeOne({
-    _id: ObjectId(_id)
-  }, function(err, result) {
-    callback(err);
-  });
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "chart-sets",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
+  return db.collection(COLLECTION)
+    .deleteOne({ _id: ObjectId(id) })
+    .then(function (result) {
+      if (result.deletedCount === 0) {
+        return Promise.reject({
+          status: 404
+        });
+
+      } else {
+        return result;
+      }
+    });
 };
 
-exports.updateOne = function(_id, updateData, callback) {
+exports.updateOne = function (_id, updateData, callback) {
   let db = dbClient.get();
   let now = new Date();
   let update = {
     "$set": updateData
   };
 
-  db.collection(CHART_SET_COLLECTION).findAndModify({
+  db.collection(COLLECTION).findAndModify({
     "_id": ObjectId(_id)
 
-  }, [], update, { new: true }, function(err, result) {
+  }, [], update, { new: true }, function (err, result) {
     callback(err, result);
   });
 };
 
 // TODO: update `updatedAt`
-exports.removeChartFromCharts = function(_id) {
+exports.removeChartFromCharts = function (_id) {
   let db = dbClient.get();
-  db.collection(CHART_SET_COLLECTION).update({
+  db.collection(COLLECTION).update({
     "charts": _id
   }, {
-    $pullAll: {
-      "charts": [_id]
-    }
-  });
+      $pullAll: {
+        "charts": [_id]
+      }
+    });
 };

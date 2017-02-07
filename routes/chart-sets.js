@@ -35,9 +35,13 @@ router.route('/chart-sets')
 
   // delete all chart sets
   .delete(function deleteChartSets(req, res) {
-    chartSets.clearCollection(function(err, result) {
-      res.status(204).send('');
-    });
+    chartSets.deleteAll()
+      .then(function () {
+        res.status(204).send();
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
+      });
   });
 
 
@@ -48,9 +52,13 @@ router.route('/chart-sets/:id')
   .get(function getSingleChartSet(req, res) {
     let id = req.params.id;
 
-    chartSets.getOne(id).then(function(doc) {
-      doc ? res.send(doc) : res.status(404).send('');
-    });
+    chartSets.getOne(id)
+      .then(function (doc) {
+        res.send(doc);
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
+      });
   })
 
   // update a single chart set
@@ -65,8 +73,12 @@ router.route('/chart-sets/:id')
   // delete a single chart set
   .delete(function deleteSingleChartSet(req, res) {
     let id = req.params.id;
-
-    chartSets.remove(id, function(err, result) {
-      res.status(204).send('');
-    });
+    
+    chartSets.deleteOne(id)
+      .then(function () {
+        res.status(204).send();
+      })
+      .catch(function (err) {
+        errHandlers.handle(err, req, res);
+      });
   });

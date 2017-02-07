@@ -132,7 +132,7 @@ exports.all = function(params) {
  * Get a single chart.
  *
  * @method
- * @param {ObjectId} id The chart's ObjectId.
+ * @param {string} id The chart's '_id' property.
  * @returns {Promise} A promise will be resolved with the found chart.
  *                    Or rejected with defined errors.
  */
@@ -184,7 +184,7 @@ exports.deleteAll = function() {
  * Delete a single chart.
  *
  * @method
- * @param {ObjectId} id The chart's ObjectId.
+ * @param {string} id The chart '_id' property.
  * @returns {Promise} A promise will be resolved when delete successfully.
  *                    Or rejected with defined errors.
  */

@@ -344,18 +344,23 @@ describe('modules: charts', function () {
   describe('getOne', function () {
 
     it('should select one chart by _id', function (done) {
-      charts.getOne(fixtures.collections.chart_collection[0]._id)
+      let id = fixtures.collections.chart_collection[0]._id;
+
+      charts.getOne(id)
         .then(function (docs) {
+          let fixture = fixtures.collections.chart_collection[0];
+
           docs.length.should.eql(1);
+
           docs[0]._id
             .should
-            .eql(fixtures.collections.chart_collection[0]._id);
+            .eql(fixture._id);
           docs[0].chartType
             .should
-            .eql(fixtures.collections.chart_collection[0].chartType);
+            .eql(fixture.chartType);
           docs[0].description
             .should
-            .eql(fixtures.collections.chart_collection[0].description);
+            .eql(fixture.description);
 
           done();
 
@@ -366,9 +371,9 @@ describe('modules: charts', function () {
     });
 
     it('should return error 404 if cannot find the record', function (done) {
-      let nonexistentId = '000000000000000000000000';
+      let id = '000000000000000000000000';
 
-      charts.getOne(nonexistentId)
+      charts.getOne(id)
         .should
         .rejectedWith({
           status: 404
@@ -380,9 +385,9 @@ describe('modules: charts', function () {
     });
 
     it('should return error 422 when passing invalid id', function (done) {
-      let invalidId = '0';
+      let id = '0';
 
-      charts.getOne(invalidId)
+      charts.getOne(id)
         .then(function (docs) {
           should.fail(null, null, 'Promise should be resolved.');
 
@@ -424,7 +429,7 @@ describe('modules: charts', function () {
 
   describe('deleteOne', function () {
 
-    it('should delete one chart according to id', function (done) {
+    it('should delete one chart with given id', function (done) {
       let id = fixtures.collections.chart_collection[0]._id;
 
       charts.deleteOne(id)

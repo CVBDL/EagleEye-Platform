@@ -6,7 +6,8 @@ let should = require('should');
 
 let chartSets = require('../../modules/chart-sets');
 let dbClient = require('../../helpers/dbHelper');
-let fixtures = require('../fixtures/chart-sets');
+let chartSetsFixtures = require('../fixtures/chart-sets');
+let chartsFixtures = require('../fixtures/charts');
 
 const DB_CONNECTION_URI = process.env.DB_CONNECTION_URI;
 const CHART_SET_COLLECTION_NAME = "chart_set_collection";
@@ -24,7 +25,9 @@ describe('modules: chart-sets', function() {
         return done(err);
       }
 
-      dbClient.fixtures(fixtures, done);
+      dbClient.fixtures(chartSetsFixtures, function () {
+        dbClient.fixtures(chartsFixtures, done);
+      });
     });
   });
 
@@ -58,7 +61,7 @@ describe('modules: chart-sets', function() {
           collection.find({}).toArray().then(function (docs) {
             docs.length
               .should
-              .eql(fixtures.collections.chart_set_collection.length + 1);
+              .eql(chartSetsFixtures.collections.chart_set_collection.length + 1);
             
             let found = false;
             
@@ -125,192 +128,280 @@ describe('modules: chart-sets', function() {
       chartSets.all().then(function (docs) {
         docs.length
           .should
-          .eql(fixtures.collections.chart_set_collection.length);
+          .eql(chartSetsFixtures.collections.chart_set_collection.length);
 
         done();
       });
     });
+    
+    it('should sort on "createdAt" field in "asc" order', function (done) {
+      chartSets.all({
+        sort: [
+          ['createdAt', 'asc']
+        ]
+
+      }).then(function (docs) {
+        let chartSetA = docs[0];
+        let chartSetB = docs[1];
+        let timestampA = new Date(chartSetA.createdAt).getTime();
+        let timestampB = new Date(chartSetB.createdAt).getTime();
+
+        timestampA.should.be.belowOrEqual(timestampB);
+
+        done();
+
+      }, function () {
+        should.fail(null, null, 'Promise should be resolved.');
+      })
+        .catch(done);
+    });
+
+    it('should sort on "updatedAt" field in "desc" order', function (done) {
+      chartSets.all({
+        sort: [
+          ['updatedAt', 'desc']
+        ]
+
+      }).then(function (docs) {
+        let chartSetA = docs[0];
+        let chartSetB = docs[1];
+        let timestampA = new Date(chartSetA.updatedAt).getTime();
+        let timestampB = new Date(chartSetB.updatedAt).getTime();
+
+        timestampA.should.be.aboveOrEqual(timestampB);
+
+        done();
+
+      }, function () {
+        should.fail(null, null, 'Promise should be resolved.');
+      })
+        .catch(done);
+    });
+
+    it('should apply limit option on result set', function (done) {
+      chartSets.all({
+        limit: 1
+
+      }).then(function (docs) {
+        docs.length.should.eql(1);
+        done();
+
+      }, function () {
+        should.fail(null, null, 'Promise should be resolved.');
+      })
+        .catch(done);
+    });
+
+    it('should apply skip option on result set', function (done) {
+      chartSets.all({
+        skip: 1
+
+      }).then(function (docs) {
+        docs.length
+          .should
+          .eql(chartSetsFixtures.collections.chart_set_collection.length - 1);
+
+        docs[0]._id
+          .should
+          .eql(chartSetsFixtures.collections.chart_set_collection[1]._id);
+
+        done();
+
+      }, function () {
+        should.fail(null, null, 'Promise should be resolved.');
+      })
+        .catch(done);
+    });
+
+    it('should apply q query parameter on title field', function (done) {
+      chartSets
+        .all({
+          query: 'CCC'
+        })
+        .then(function (docs) {
+          docs.length.should.eql(2);
+          done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
+    });
+
+    it('should apply q query parameter on description field', function (done) {
+      chartSets
+        .all({
+          query: 'JJJ'
+        })
+        .then(function (docs) {
+          docs.length.should.eql(2);
+          done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
+    });
+
+    // Ref: <https://docs.mongodb.com/manual/tutorial/specify-language-for-text-index/>
+    it('should not query on stop words', function (done) {
+      chartSets
+        .all({
+          query: 'J'
+        })
+        .then(function (docs) {
+          docs.length.should.eql(0);
+          done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
+    });
+
   });
+  
 
-  it('should sort on "createdAt" field in "asc" order', function (done) {
-    chartSets.all({
-      sort: [
-        ['createdAt', 'asc']
-      ]
+  describe('getOne', function () {
 
-    }).then(function (docs) {
-      let chartSetA = docs[0];
-      let chartSetB = docs[1];
-      let timestampA = new Date(chartSetA.createdAt).getTime();
-      let timestampB = new Date(chartSetB.createdAt).getTime();
+    it('should select one chart set by _id', function (done) {
+      let id = chartSetsFixtures.collections.chart_set_collection[0]._id;
 
-      timestampA.should.be.belowOrEqual(timestampB);
+      chartSets.getOne(id)
+        .then(function (doc) {
+          let fixture = chartSetsFixtures.collections.chart_set_collection[0];
 
-      done();
+          doc._id
+            .should
+            .eql(fixture._id);
+          doc.title
+            .should
+            .eql(fixture.title);
+          doc.description
+            .should
+            .eql(fixture.description);
 
-    }, function () {
-      should.fail(null, null, 'Promise should be resolved.');
-    })
-    .catch(done);
-  });
+          done();
 
-  it('should sort on "updatedAt" field in "desc" order', function (done) {
-    chartSets.all({
-      sort: [
-        ['updatedAt', 'desc']
-      ]
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
+    });
 
-    }).then(function (docs) {
-      let chartSetA = docs[0];
-      let chartSetB = docs[1];
-      let timestampA = new Date(chartSetA.updatedAt).getTime();
-      let timestampB = new Date(chartSetB.updatedAt).getTime();
+    it('should contain chart details in "charts" field', function (done) {
+      let id = chartSetsFixtures.collections.chart_set_collection[0]._id;
 
-      timestampA.should.be.aboveOrEqual(timestampB);
+      chartSets.getOne(id)
+        .then(function (doc) {
+          let fixture = chartSetsFixtures.collections.chart_set_collection[0];
 
-      done();
+          doc.charts[0]
+            .should
+            .eql(chartsFixtures.collections.chart_collection[0])
 
-    }, function () {
-      should.fail(null, null, 'Promise should be resolved.');
-    })
-    .catch(done);
-  });
+          doc.charts[1]
+            .should
+            .eql(chartsFixtures.collections.chart_collection[2])
 
-  it('should apply limit option on result set', function (done) {
-    chartSets.all({
-      limit: 1
+          done();
 
-    }).then(function (docs) {
-      docs.length.should.eql(1);
-      done();
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
+    });
 
-    }, function () {
-      should.fail(null, null, 'Promise should be resolved.');
-    })
-    .catch(done);
-  });
+    it('should return error 404 if cannot find the chart set', function (done) {
+      let id = '000000000000000000000000';
 
-  it('should apply skip option on result set', function (done) {
-    chartSets.all({
-      skip: 1
-
-    }).then(function (docs) {
-      docs.length
+      chartSets.getOne(id)
         .should
-        .eql(fixtures.collections.chart_set_collection.length - 1);
+        .rejectedWith({
+          status: 404
+        })
+        .then(function () {
+          done();
+        })
+        .catch(done);
+    });
 
-      docs[0]._id
+    it('should return error 422 when passing invalid id', function (done) {
+      let id = '0';
+
+      chartSets.getOne(id)
+        .then(function (docs) {
+          should.fail(null, null, 'Promise should be resolved.');
+
+        }, function (error) {
+          error.should.eql({
+            status: 422,
+            errors: [{
+              "resource": "chart-sets",
+              "field": "_id",
+              "code": "invalid"
+            }]
+          });
+
+          done();
+        })
+        .catch(done);
+    });
+
+
+
+
+
+  });
+
+
+  describe('deleteAll', function () {
+
+    it('should delete all chart sets', function (done) {
+      chartSets.deleteAll()
+        .then(function (result) {
+          result.deletedCount
+            .should
+            .eql(chartSetsFixtures.collections.chart_set_collection.length);
+
+          done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
+    });
+  });
+
+
+  describe('deleteOne', function () {
+
+    it('should delete one chart set with given id', function (done) {
+      let id = chartSetsFixtures.collections.chart_set_collection[0]._id;
+
+      chartSets.deleteOne(id)
+        .then(function (result) {
+          result.deletedCount.should.eql(1);
+          done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
+    });
+
+    it('should return error 404 if no record to delete', function (done) {
+      let id = '000000000000000000000000';
+
+      chartSets.deleteOne(id)
         .should
-        .eql(fixtures.collections.chart_set_collection[1]._id);
-
-      done();
-
-    }, function () {
-      should.fail(null, null, 'Promise should be resolved.');
-    })
-    .catch(done);
+        .rejectedWith({
+          status: 404
+        })
+        .then(function () {
+          done();
+        })
+        .catch(done);
+    });
   });
-
-  it('should apply q query parameter on title field', function (done) {
-    chartSets
-      .all({
-        query: 'CCC'
-      })
-      .then(function (docs) {
-        docs.length.should.eql(2);
-        done();
-
-      }, function () {
-        should.fail(null, null, 'Promise should be resolved.');
-      })
-      .catch(done);
-  });
-
-  it('should apply q query parameter on description field', function (done) {
-    chartSets
-      .all({
-        query: 'JJJ'
-      })
-      .then(function (docs) {
-        docs.length.should.eql(2);
-        done();
-
-      }, function () {
-        should.fail(null, null, 'Promise should be resolved.');
-      })
-      .catch(done);
-  });
-
-  // Ref: <https://docs.mongodb.com/manual/tutorial/specify-language-for-text-index/>
-  it('should not query on stop words', function (done) {
-    chartSets
-      .all({
-        query: 'J'
-      })
-      .then(function (docs) {
-        docs.length.should.eql(0);
-        done();
-
-      }, function () {
-        should.fail(null, null, 'Promise should be resolved.');
-      })
-      .catch(done);
-  });
-
-  //it('all', function(done) {
-  //  chartSets.all(function(err, docs) {
-  //    docs.length.should.eql(2);
-  //    done();
-  //  });
-  //});
-
-  //it('clear', function(done) {
-  //  chartSets.clearCollection(function(err) {
-  //    chartSets.all(function(err, result) {
-  //      result.length.should.eql(0);
-  //      done();
-  //    });
-  //  });
-  //});
-
-  //it('create', function(done) {
-  //  chartSets.create(chartSet, function(err, newChartSet) {
-  //    chartSets.all(function(err, docs) {
-  //      docs.length.should.eql(3);
-
-  //      for (let key in fixtures.collections.chart_set_collection[0]) {
-  //        docs[2][key].should.eql(chartSet[key]);
-  //      }
-
-  //      done();
-  //    });
-  //  });
-  //});
-
-  //it('getOne: id', function(done) {
-  //  chartSets.create(chartSet, function(err, newChartSet) {
-  //    let id = newChartSet._id;
-
-  //    chartSets.getOne(id).then(function(doc) {
-  //      for (let key in fixtures.collections.chart_set_collection[0]) {
-  //        doc[key].should.eql(chartSet[key]);
-  //      }
-
-  //      done();
-  //    })
-  //  });
-  //});
-
-  //it('remove', function(done) {
-  //  chartSets.all(function(err, docs) {
-  //    chartSets.remove(docs[0]._id, function(err) {
-  //      chartSets.all(function(err, result) {
-  //        result.length.should.eql(1);
-  //        result[0]._id.should.not.eql(docs[0]._id);
-  //        done();
-  //      });
-  //    });
-  //  });
-  //});
-
 });

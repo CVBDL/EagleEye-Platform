@@ -30,6 +30,7 @@ app.use(function(req, res, next) {
 });
 
 // log trace in development mode
+/* istanbul ignore if  */
 if (app.get('env') === 'development') {
   app.use(logger('dev'));
 }

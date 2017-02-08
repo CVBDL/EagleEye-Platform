@@ -61,18 +61,18 @@ let handleNotFound = function (err, req, res, next) {
 
 /**
  * Handle '500 Internal Server Error' error.
- * @method
+ * @function
  *
  * @param err
  * @param req
  * @param res
  * @param next
  */
-exports.handleInternalServerError = function (err, req, res, next) {
+let handleInternalServerError = function (err, req, res, next) {
   let message = err.customMessage || 'Internal Server Error';
 
   res.status(500).send({
-    message: err.message 
+    message: message 
   });
 };
 
@@ -86,19 +86,18 @@ exports.handleInternalServerError = function (err, req, res, next) {
  * @param res
  * @param next
  */
-exports.handle = function (err, req, res, next) {
-
+module.exports = function errorHandler(err, req, res, next) {
   if (err.status === 422) {
-    handleUnprocessableEntity(err, req, res, next);
+    handleUnprocessableEntity(err, req, res);
 
   } else if (err.status === 400) {
-    handleBadRequest(err, req, res, next);
+    handleBadRequest(err, req, res);
 
   } else if (err.status === 404) {
-    handleNotFound(err, req, res, next);
+    handleNotFound(err, req, res);
 
   } else {
     // default handler
-    exports.handleInternalServerError(err, req, res, next);
+    handleInternalServerError(err, req, res);
   }
 };

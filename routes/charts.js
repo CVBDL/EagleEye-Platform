@@ -4,7 +4,6 @@ let express = require('express');
 let multiparty = require('multiparty');
 
 let utils = require('../helpers/utils');
-let errHandlers = require('../helpers/error-handlers');
 let excel = require('../modules/excel');
 let charts = require('../modules/charts');
 let upload = require('../modules/upload');
@@ -16,36 +15,30 @@ let router = module.exports = express.Router();
 router.route('/charts')
 
   // read all charts
-  .get(function getCharts(req, res) {
+  .get(function getCharts(req, res, next) {
     charts.all(utils.getQueryParameters(req))
       .then(function (docs) {
         res.send(docs);
       })
-      .catch(function (err) {
-        errHandlers.handle(err, req, res);
-      });
+      .catch(next);
   })
 
   // create a chart
-  .post(function postCharts(req, res) {
+  .post(function postCharts(req, res, next) {
     charts.create(req.body)
       .then(function (result) {
         res.send(result);
       })
-      .catch(function (err) {
-        errHandlers.handle(err, req, res);
-      });
+      .catch(next);
   })
 
   // delete all charts
-  .delete(function deleteCharts(req, res) {
+  .delete(function deleteCharts(req, res, next) {
     charts.deleteAll()
       .then(function () {
         res.status(204).send();
       })
-      .catch(function (err) {
-        errHandlers.handle(err, req, res);
-      });
+      .catch(next);
   });
 
 
@@ -53,42 +46,36 @@ router.route('/charts')
 router.route('/charts/:id')
 
   // read a single chart
-  .get(function getChart(req, res) {
+  .get(function getChart(req, res, next) {
     let id = req.params.id;
     
     charts.getOne(id)
       .then(function (docs) {
         res.send(docs[0]);
       })
-      .catch(function (err) {
-        errHandlers.handle(err, req, res);
-      });
+      .catch(next);
   })
 
   // update a single chart
-  .post(function postChart(req, res) {
+  .post(function postChart(req, res, next) {
     let id = req.params.id;
 
     charts.updateOne(id, req.body)
       .then(function (doc) {
         res.send(doc);
       })
-      .catch(function (err) {
-        errHandlers.handle(err, req, res);
-      });
+      .catch(next);
   })
 
   // delete a single chart
-  .delete(function deleteChart(req, res) {
+  .delete(function deleteChart(req, res, next) {
     let id = req.params.id;
     
     charts.deleteOne(id)
       .then(function () {
         res.status(204).send();
       })
-      .catch(function (err) {
-        errHandlers.handle(err, req, res);
-      });
+      .catch(next);
   });
 
 
@@ -96,20 +83,18 @@ router.route('/charts/:id')
 router.route('/charts/:id/datatable')
 
   // update a single chart data table
-  .put(function putChartDataTable(req, res) {
+  .put(function putChartDataTable(req, res, next) {
     let id = req.params.id;
     
     charts.updateOne(id, { datatable: req.body })
       .then(function (doc) {
         res.send(doc);
       })
-      .catch(function (err) {
-        errHandlers.handle(err, req, res);
-      });
+      .catch(next);
   })
 
   // get an asset
-  .get(function getDataTable(req, res) {
+  .get(function getDataTable(req, res, next) {
     let id = req.params.id;
     let format = req.query.format || '';
 
@@ -118,9 +103,7 @@ router.route('/charts/:id/datatable')
         .then(function (docs) {
           res.send(docs[0].datatable);
         })
-        .catch(function (err) {
-          errHandlers.handle(err, req, res);
-        });
+        .catch(next);
 
     } else if (format === 'xlsx') {
       charts.getOne(id)
@@ -132,15 +115,12 @@ router.route('/charts/:id/datatable')
             "worksheet": "Data",
           }, () => console.log());
         })
-        .catch(function (err) {
-          errHandlers.handle(err, req, res);
-        });
+        .catch(next);
 
     } else {
       let err = new Error();
       err.status = 404;
-
-      errHandlers.handle(err, req, res);
+      next(err);
     }
   });
 
@@ -149,7 +129,7 @@ router.route('/charts/:id/datatable')
 router.route('/charts/:id/assets')
 
   // upload an asset
-  .post(function postAssets(req, res) {
+  .post(function postAssets(req, res, next) {
     let id = req.params.id;
 
     // .png and .jpeg image files
@@ -166,30 +146,16 @@ router.route('/charts/:id/assets')
       // You *must* act on the part by reading it
       // NOTE: if you want to ignore it, just call "part.resume()"
 
-      part.on('error', function (err) {
-        errHandlers.handle(err, req, res);
-      });
+      part.on('error', next);
 
       if (part.name === 'file' && part.filename) {
         let contentType = part.headers['content-type'];
 
         if (XLSX_RE.test(contentType)) {
-          processPromise = upload.processXLSXStream(part, id)
-            .then(function (doc) {
-              res.send(doc);
-            })
-            .catch(function (err) {
-              errHandlers.handle(err, req, res);
-            });
+          processPromise = upload.processXLSXStream(part, id);
 
         } else if (IMAGE_RE.test(contentType)) {
-          processPromise = upload.processImageStream(part, id)
-            .then(function (doc) {
-              res.send(doc);
-            })
-            .catch(function (err) {
-              errHandlers.handle(err, req, res);
-            });
+          processPromise = upload.processImageStream(part, id);
 
         } else {
           // ignore the chunk of data
@@ -208,16 +174,14 @@ router.route('/charts/:id/assets')
           .then(function (doc) {
             res.send(doc);
           })
-          .catch(function (err) {
-            errHandlers.handle(err, req, res);
-          });
+          .catch(next);
 
       } else {
         let err = new Error();
         err.status = 400;
         err.customMessage = 'Problems parsing data';
 
-        errHandlers.handle(err, req, res);
+        next(err);
       }
     });
 

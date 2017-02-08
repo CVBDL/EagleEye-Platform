@@ -10,7 +10,7 @@ let path = require('path');
 
 let db = require('./helpers/dbHelper');
 let utils = require('./helpers/utils');
-let errHandlers = require('./helpers/error-handlers');
+let errorHandler = require('./helpers/error-handlers');
 let rootApi = require('./routes/root-endpoint');
 let chartsApi = require('./routes/charts');
 let chartSetsApi = require('./routes/chart-sets');
@@ -69,9 +69,7 @@ if (app.get('env') === 'development') {
 }
 
 // error handler
-app.use(function (err, req, res, next) {
-  errHandlers.handle(err, req, res, next);
-});
+app.use(errorHandler);
 
 db.get();
 

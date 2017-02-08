@@ -16,6 +16,7 @@ require('./modules/excel.spec');
 // helpers
 require('./helpers/column-types.spec');
 require('./helpers/utils.spec');
+require('./helpers/error-handlers.spec');
 
 // routes
 require('./routes/charts.spec');

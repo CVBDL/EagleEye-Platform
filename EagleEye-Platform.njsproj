@@ -51,6 +51,7 @@
     <Compile Include="routes\search.js" />
     <Compile Include="routes\tasks.js" />
     <Compile Include="tests\helpers\db.spec.js" />
+    <Compile Include="tests\helpers\error-handlers.spec.js" />
     <Compile Include="tests\helpers\utils.spec.js" />
     <Compile Include="tests\routes\chart-sets.spec.js" />
     <Compile Include="tests\routes\charts.spec.js" />
@@ -92,6 +93,7 @@
     <Folder Include="typings\globals\node-schedule\" />
     <Folder Include="typings\globals\node\" />
     <Folder Include="typings\globals\should\" />
+    <Folder Include="typings\globals\sinon\" />
     <Folder Include="typings\globals\webpack-dev-server\" />
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +105,7 @@
     <TypeScriptCompile Include="typings\globals\node-schedule\index.d.ts" />
     <TypeScriptCompile Include="typings\globals\node\index.d.ts" />
     <TypeScriptCompile Include="typings\globals\should\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\sinon\index.d.ts" />
     <TypeScriptCompile Include="typings\globals\webpack-dev-server\index.d.ts" />
     <TypeScriptCompile Include="typings\index.d.ts" />
   </ItemGroup>

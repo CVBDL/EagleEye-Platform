@@ -13,11 +13,16 @@ let router = module.exports = express.Router();
 router.route('/tasks/:id')
 
   // update single task state
-  .put(function putTask(req, res) {
+  .put(function putTask(req, res, next) {
     let id = req.params.id;
     let state = req.body.state;
 
     jobLog.updateOne(id, {'state': state}, function(err, doc) {
-      return err ? errHandler.handleInternalServerError(err, req, res) : res.send(doc);
+      if (err) {
+        next(err);
+
+      } else {
+        res.send(doc)
+      }
     });
   });

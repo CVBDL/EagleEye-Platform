@@ -7,9 +7,9 @@ let os = require('os');
 let path = require('path');
 let should = require('should');
 
-let charts = require('../../modules/charts');
 let dbClient = require('../../helpers/dbHelper');
-let fixtures = require('../fixtures/charts');
+let charts = require('../../modules/charts');
+let chartsFixtures = require('../fixtures/charts');
 let chartSetsFixtures = require('../fixtures/chart-sets');
 
 const CHART_COLLECTION_NAME = "chart_collection";
@@ -29,7 +29,7 @@ describe('modules: charts', function () {
         return done(err);
       }
 
-      dbClient.fixtures(fixtures, done);
+      dbClient.fixtures(chartsFixtures, done);
     });
   });
 
@@ -126,7 +126,7 @@ describe('modules: charts', function () {
                   try {
                     docs.length
                       .should
-                      .eql(fixtures.collections.chart_collection.length + 1);
+                      .eql(chartsFixtures.collections.chart_collection.length + 1);
 
                     let found = false;
 
@@ -224,7 +224,7 @@ describe('modules: charts', function () {
       charts.all().then(function (docs) {
         docs.length
           .should
-          .eql(fixtures.collections.chart_collection.length);
+          .eql(chartsFixtures.collections.chart_collection.length);
 
         done();
       });
@@ -295,11 +295,11 @@ describe('modules: charts', function () {
       }).then(function (docs) {
         docs.length
           .should
-          .eql(fixtures.collections.chart_collection.length - 1);
+          .eql(chartsFixtures.collections.chart_collection.length - 1);
 
         docs[0]._id
           .should
-          .eql(fixtures.collections.chart_collection[1]._id);
+          .eql(chartsFixtures.collections.chart_collection[1]._id);
 
         done();
 
@@ -317,7 +317,7 @@ describe('modules: charts', function () {
         docs.length.should.eql(1);
         docs[0]._id
           .should
-          .eql(fixtures.collections.chart_collection[0]._id);
+          .eql(chartsFixtures.collections.chart_collection[0]._id);
 
         done();
 
@@ -360,11 +360,11 @@ describe('modules: charts', function () {
   describe('getOne', function () {
 
     it('should select one chart by _id', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id;
+      let id = chartsFixtures.collections.chart_collection[0]._id;
 
       charts.getOne(id)
         .then(function (docs) {
-          let fixture = fixtures.collections.chart_collection[0];
+          let fixture = chartsFixtures.collections.chart_collection[0];
 
           docs.length.should.eql(1);
 
@@ -431,7 +431,7 @@ describe('modules: charts', function () {
         .then(function (result) {
           result.deletedCount
             .should
-            .eql(fixtures.collections.chart_collection.length);
+            .eql(chartsFixtures.collections.chart_collection.length);
 
           done();
 
@@ -450,7 +450,7 @@ describe('modules: charts', function () {
     });
 
     it('should delete one chart with given id', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id;
+      let id = chartsFixtures.collections.chart_collection[0]._id;
 
       charts.deleteOne(id)
         .then(function (result) {
@@ -504,7 +504,7 @@ describe('modules: charts', function () {
   describe('updateOne', function () {
 
     it('should update an existing chart', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id;
+      let id = chartsFixtures.collections.chart_collection[0]._id;
       let data = {
         description: 'An updated description.',
         datatable: null,
@@ -580,7 +580,7 @@ describe('modules: charts', function () {
   describe('updateImageBrowserDownloadUrl', function () {
 
     it('should update image chart download URL', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id;
+      let id = chartsFixtures.collections.chart_collection[0]._id;
 
       charts.updateImageBrowserDownloadUrl(id, 'sample-image.png')
         .then(function (doc) {
@@ -645,7 +645,7 @@ describe('modules: charts', function () {
   describe('updateDataTableFromXlsx', function () {
 
     it('should update chart data table from xlsx file', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id;
+      let id = chartsFixtures.collections.chart_collection[0]._id;
       let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable0.xlsx');
       let workbook = new Exceljs.Workbook();
 
@@ -748,7 +748,7 @@ describe('modules: charts', function () {
     });
 
     it('should determine column data type', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id;
+      let id = chartsFixtures.collections.chart_collection[0]._id;
       let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable1.xlsx');
       let workbook = new Exceljs.Workbook();
 
@@ -797,7 +797,7 @@ describe('modules: charts', function () {
     });
 
     it('should update chart with data table only has headers', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id;
+      let id = chartsFixtures.collections.chart_collection[0]._id;
       let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable3.xlsx');
       let workbook = new Exceljs.Workbook();
 
@@ -871,7 +871,7 @@ describe('modules: charts', function () {
     });
 
     it('should return error 422 when passing invalid data table', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id;
+      let id = chartsFixtures.collections.chart_collection[0]._id;
       let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', 'datatable2.xlsx');
       let workbook = new Exceljs.Workbook();
 

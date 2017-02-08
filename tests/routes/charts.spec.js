@@ -1,7 +1,5 @@
 ﻿'use strict';
 
-let bodyParser = require('body-parser');
-let express = require('express');
 let fs = require('fs');
 let path = require('path');
 let request = require('supertest');
@@ -664,6 +662,7 @@ describe('routes: /charts/:id', function () {
 
   /**
    * Process uploaded chart assets.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#upload-a-chart-asset>
    */
   describe('POST /api/v1/charts/:id/assets', function () {
 

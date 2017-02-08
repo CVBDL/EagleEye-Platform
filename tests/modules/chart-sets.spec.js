@@ -4,8 +4,8 @@ let MongoClient = require('mongodb').MongoClient
 let ObjectId = require('mongodb').ObjectId;
 let should = require('should');
 
-let chartSets = require('../../modules/chart-sets');
 let dbClient = require('../../helpers/dbHelper');
+let chartSets = require('../../modules/chart-sets');
 let chartSetsFixtures = require('../fixtures/chart-sets');
 let chartsFixtures = require('../fixtures/charts');
 
@@ -492,6 +492,45 @@ describe('modules: chart-sets', function() {
           result.matchedCount.should.eql(2);
           result.modifiedCount.should.eql(2);
           done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
+    });
+
+    it('should update "updatedAt" field of chart set if got modified', function (done) {
+      let id = chartsFixtures.collections.chart_collection[2]._id.toHexString();
+
+      chartSets.deleteChartInChartSets(id)
+        .then(function (result) {
+
+          return MongoClient.connect(DB_CONNECTION_URI)
+            .then(function (db) {
+              let collection = db.collection(CHART_SET_COLLECTION_NAME);
+
+              return collection
+                .find({})
+                .toArray()
+                .then(function (docs) {
+                  db.close(true);
+
+                  try {
+                    docs.forEach(function (doc) {
+                      // should update `updatedAt` field
+                      // use 1 second threshold
+                      (Date.now() - new Date(doc.updatedAt).getTime())
+                        .should
+                        .belowOrEqual(1000);
+                    });
+                    done();
+
+                  } catch (err) {
+                    done(err);
+                  }
+                });
+            });
+
         }, function () {
           should.fail(null, null, 'Promise should be resolved.');
         })

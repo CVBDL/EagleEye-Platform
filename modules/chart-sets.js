@@ -296,6 +296,9 @@ exports.deleteChartInChartSets = function (id) {
     }, {
       $pullAll: {
         "charts": [id]
+      },
+      $set: {
+        updatedAt: new Date().toISOString()
       }
     });
 };

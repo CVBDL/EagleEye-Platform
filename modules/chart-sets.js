@@ -276,11 +276,24 @@ exports.updateOne = function (id, data) {
 };
 
 // TODO: update `updatedAt`
-exports.removeChartFromCharts = function (id) {
+exports.deleteChartInChartSets = function (id) {
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "charts",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
   let db = dbClient.get();
-  db.collection(COLLECTION).update({
-    "charts": id
-  }, {
+
+  return db.collection(COLLECTION)
+    .updateMany({
+      "charts": id
+    }, {
       $pullAll: {
         "charts": [id]
       }

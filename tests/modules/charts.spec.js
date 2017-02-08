@@ -10,8 +10,10 @@ let should = require('should');
 let charts = require('../../modules/charts');
 let dbClient = require('../../helpers/dbHelper');
 let fixtures = require('../fixtures/charts');
+let chartSetsFixtures = require('../fixtures/chart-sets');
 
 const CHART_COLLECTION_NAME = "chart_collection";
+const CHART_SET_COLLECTION_NAME = "chart_set_collection";
 const DB_CONNECTION_URI = process.env.DB_CONNECTION_URI;
 
 
@@ -100,41 +102,55 @@ describe('modules: charts', function () {
   describe('create', function () {
 
     it('should be able to create a chart', function (done) {
-      charts.create(chart).then(function (newChart) {
+      charts.create(chart)
+        .then(function (newChart) {
+          newChart.createdAt.should.be.type('string');
+          newChart.updatedAt.should.be.type('string');
+          newChart.createdAt.should.eql(newChart.updatedAt);
 
-        newChart.createdAt.should.be.type('string');
-        newChart.updatedAt.should.be.type('string');
-        newChart.createdAt.should.eql(newChart.updatedAt);
-
-        newChart.chartType.should.eql(chart.chartType);
-        newChart.description.should.eql(chart.description);
-        newChart.options.should.eql(chart.options);
-        newChart.datatable.should.eql(chart.datatable);
+          newChart.chartType.should.eql(chart.chartType);
+          newChart.description.should.eql(chart.description);
+          newChart.options.should.eql(chart.options);
+          newChart.datatable.should.eql(chart.datatable);
         
-        MongoClient.connect(DB_CONNECTION_URI).then(function (db) {
-          let collection = db.collection(CHART_COLLECTION_NAME);
+          return MongoClient.connect(DB_CONNECTION_URI)
+            .then(function (db) {
+              let collection = db.collection(CHART_COLLECTION_NAME);
 
-          collection.find({}).toArray().then(function (docs) {
-            docs.length
-              .should
-              .eql(fixtures.collections.chart_collection.length + 1);
+              return collection
+                .find({})
+                .toArray()
+                .then(function (docs) {
+                  db.close(true);
 
-            let found = false;
-            
-            docs.forEach(function (chart) {
-              if (ObjectId(chart._id).toHexString() ===
-                  ObjectId(newChart._id).toHexString()) {
+                  try {
+                    docs.length
+                      .should
+                      .eql(fixtures.collections.chart_collection.length + 1);
 
-                found = true;
-              }
+                    let found = false;
+
+                    docs.forEach(function (chart) {
+                      if (ObjectId(chart._id).toHexString() ===
+                        ObjectId(newChart._id).toHexString()) {
+
+                        found = true;
+                      }
+                    });
+
+                    should.equal(found, true);
+
+                    done();
+
+                  } catch (err) {
+                    done(err);
+                  }
+                });
             });
-            
-            should.equal(found, true);
-            
-            db.close(true, done);
-          });
-        });
-      });
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
     });
 
     it('should return error if sent wrong chart type', function (done) {
@@ -429,13 +445,39 @@ describe('modules: charts', function () {
 
   describe('deleteOne', function () {
 
+    beforeEach(function (done) {
+      dbClient.fixtures(chartSetsFixtures, done);
+    });
+
     it('should delete one chart with given id', function (done) {
       let id = fixtures.collections.chart_collection[0]._id;
 
       charts.deleteOne(id)
         .then(function (result) {
           result.deletedCount.should.eql(1);
-          done();
+
+          // delete it in chart sets
+          return MongoClient.connect(DB_CONNECTION_URI)
+            .then(function (db) {
+              let collection = db.collection(CHART_SET_COLLECTION_NAME);
+
+              return collection
+                .find({
+                  "charts": id
+                })
+                .toArray()
+                .then(function (docs) {
+                  db.close(true);
+
+                  try {
+                    docs.length.should.eql(0);
+                    done();
+
+                  } catch (err) {
+                    done(err);
+                  }
+                });
+            });
 
         }, function () {
           should.fail(null, null, 'Promise should be resolved.');
@@ -506,10 +548,7 @@ describe('modules: charts', function () {
         .then(function () {
           done();
         })
-        .catch(function (error) {
-          should.fail(error);
-          done();
-        });
+        .catch(done);
     });
 
     it('should return error 422 when passing invalid id', function (done) {

@@ -211,9 +211,10 @@ exports.deleteOne = function (id) {
         });
 
       } else {
-        chartSets.removeChartFromCharts(id);
-
-        return result;
+        return chartSets.deleteChartInChartSets(id)
+          .then(function () {
+            return result;
+          });
       }
     });
 };

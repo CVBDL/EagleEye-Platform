@@ -296,7 +296,9 @@ describe('routes: /chart-sets/:id', function () {
         .expect('Content-Type', /json/)
         .expect(function (res) {
           res.body._id.should.eql(id);
-          res.body.charts.length.should.eql(1);
+          res.body.charts.length
+            .should
+            .eql(chartSetsFixtures.collections.chart_set_collection[1].charts.length);
 
           let fixture = chartsFixtures.collections.chart_collection[1];
 
@@ -333,6 +335,118 @@ describe('routes: /chart-sets/:id', function () {
       request(app)
         .get(`/api/v1/chart-sets/${id}`)
         .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Not Found');
+        })
+        .expect(404, done);
+    });
+  });
+
+
+  /**
+   * Edit a chart set.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#edit-a-chart-set>
+   */
+  describe('POST /api/v1/chart-sets/:_id', function () {
+
+    it('should update chart description', function (done) {
+      let fixture = chartSetsFixtures.collections.chart_set_collection[1]
+      let id = fixture._id.toHexString();
+
+      request(app)
+        .post(`/api/v1/chart-sets/${id}`)
+        .set('Content-Type', 'application/json')
+        .send(chartSet)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.eql(id);
+          res.body.description.should.eql(chartSet.description);
+          res.body.title.should.eql(chartSet.title);
+          res.body.charts.should.eql(chartSet.charts);
+          
+          res.body.createdAt
+            .should
+            .eql(fixture.createdAt);
+
+          // should update `updatedAt` field
+          // use 1 second threshold
+          (Date.now() - new Date(res.body.updatedAt).getTime())
+            .should
+            .belowOrEqual(1000);
+        })
+        .expect(200, done);
+    });
+
+    it('should not update fields other than title, description or charts',
+      function (done) {
+        let fixture = chartSetsFixtures.collections.chart_set_collection[0];
+        let id = fixture._id.toHexString();
+        let data = {
+          custom: 'Some custom data'
+        };
+
+        request(app)
+          .post(`/api/v1/chart-sets/${id}`)
+          .set('Content-Type', 'application/json')
+          .send(data)
+          .expect('Content-Type', /json/)
+          .expect(function (res) {
+            res.body._id.should.eql(id);
+            should.equal(res.body.custom, undefined);
+
+            // should leave unchanged
+            res.body.title
+              .should
+              .eql(fixture.title);
+
+            res.body.description
+              .should
+              .eql(fixture.description);
+
+            res.body.createdAt
+              .should
+              .eql(fixture.createdAt);
+
+            // should update `updatedAt` field
+            // use 1 second threshold
+            (Date.now() - new Date(res.body.updatedAt).getTime())
+              .should
+              .belowOrEqual(1000);
+          })
+          .expect(200, done);
+      });
+
+    it('should response 422 if sent invalid id', function (done) {
+      let id = '0';
+      let data = {};
+
+      request(app)
+        .post(`/api/v1/chart-sets/${id}`)
+        .set('Content-Type', 'application/json')
+        .send(data)
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body.message.should.eql('Validation Failed');
+          res.body.errors.should.eql([
+            {
+              "resource": "chart-sets",
+              "field": "_id",
+              "code": "invalid"
+            }
+          ]);
+        })
+        .expect(422, done);
+    });
+
+    it('should response 404 if cannot find the record', function (done) {
+      let id = '000000000000000000000000';
+      let data = {};
+
+      request(app)
+        .post(`/api/v1/chart-sets/${id}`)
+        .set('Content-Type', 'application/json')
+        .send(data)
         .expect('Content-Type', /json/)
         .expect(function (res) {
           res.body.message.should.eql('Not Found');

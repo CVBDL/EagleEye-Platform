@@ -404,4 +404,117 @@ describe('modules: chart-sets', function() {
         .catch(done);
     });
   });
+
+
+  describe('updateOne', function () {
+
+    it('should update an existing chart set', function (done) {
+      let id = chartSetsFixtures.collections.chart_set_collection[0]._id;
+      let data = {
+        description: 'An updated description.',
+        title: 'Title',
+        charts: []
+      };
+
+      chartSets.updateOne(id, data)
+        .then(function (doc) {
+          doc._id.should.eql(id);
+          should.equal(doc.title, data.title);
+          should.equal(doc.description, data.description);
+          doc.charts.should.eql(data.charts);
+
+          // should update `updatedAt` field
+          // use 1 second threshold
+          (Date.now() - new Date(doc.updatedAt).getTime())
+            .should
+            .belowOrEqual(1000);
+
+          done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
+    });
+
+    it('should return error 404 if no record to update', function (done) {
+      let id = '000000000000000000000000';
+      let data = {
+        description: 'An updated description.',
+        title: 'Title',
+        charts: []
+      };
+
+      chartSets.updateOne(id, data)
+        .should
+        .rejectedWith({
+          status: 404
+        })
+        .then(function () {
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should return error 422 when passing invalid id', function (done) {
+      let id = '0';
+      let data = {
+        description: 'An updated description.',
+        title: 'Title',
+        charts: []
+      };
+
+      chartSets.updateOne(id, data)
+        .should
+        .rejectedWith({
+          status: 422,
+          errors: [{
+            "resource": "chart-sets",
+            "field": "_id",
+            "code": "invalid"
+          }]
+        })
+        .then(function () {
+          done();
+        })
+        .catch(done);
+    });
+  });
+
+
+  describe('deleteChartInChartSets', function () {
+
+    it('should delete the chart id from all chart sets', function (done) {
+      let id = chartsFixtures.collections.chart_collection[2]._id.toHexString();
+
+      chartSets.deleteChartInChartSets(id)
+        .then(function (result) {
+          result.matchedCount.should.eql(2);
+          result.modifiedCount.should.eql(2);
+          done();
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
+    });
+    
+    it('should return error 422 when passing invalid id', function (done) {
+      let id = '0';
+
+      chartSets.deleteChartInChartSets(id)
+        .should
+        .rejectedWith({
+          status: 422,
+          errors: [{
+            "resource": "charts",
+            "field": "_id",
+            "code": "invalid"
+          }]
+        })
+        .then(function () {
+          done();
+        })
+        .catch(done);
+    });
+  });
 });

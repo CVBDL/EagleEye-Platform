@@ -61,6 +61,7 @@ app.use(function (req, res, next) {
 });
 
 // only log the error trace in development mode
+/* istanbul ignore if  */
 if (app.get('env') === 'development') {
   app.use(function (err, req, res, next) {
     console.error(err);

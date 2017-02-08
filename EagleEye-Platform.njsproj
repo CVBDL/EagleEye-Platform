@@ -50,6 +50,7 @@
     <Compile Include="routes\schedule-management.js" />
     <Compile Include="routes\search.js" />
     <Compile Include="routes\tasks.js" />
+    <Compile Include="tests\app.spec.js" />
     <Compile Include="tests\helpers\db.spec.js" />
     <Compile Include="tests\helpers\error-handlers.spec.js" />
     <Compile Include="tests\helpers\utils.spec.js" />

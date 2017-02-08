@@ -1,7 +1,7 @@
 ﻿'use strict';
 
-let sinon = require('sinon');
 let should = require('should');
+let sinon = require('sinon');
 
 require('should-sinon');
 

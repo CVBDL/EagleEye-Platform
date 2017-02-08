@@ -55,6 +55,7 @@
     <Compile Include="tests\helpers\utils.spec.js" />
     <Compile Include="tests\routes\chart-sets.spec.js" />
     <Compile Include="tests\routes\charts.spec.js" />
+    <Compile Include="tests\routes\root-endpoint.spec.js" />
     <Compile Include="tests\unit.conf.js" />
     <Compile Include="bin\start-express.js" />
     <Compile Include="bin\terminate-express.js" />

@@ -147,6 +147,7 @@ describe('modules: charts', function () {
                   }
                 });
             });
+
         }, function () {
           should.fail(null, null, 'Promise should be resolved.');
         })

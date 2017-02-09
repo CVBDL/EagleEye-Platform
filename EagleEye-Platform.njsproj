@@ -31,7 +31,6 @@
     <Compile Include="helpers\column-types.js" />
     <Compile Include="helpers\dbHelper.js" />
     <Compile Include="helpers\error-handlers.js" />
-    <Compile Include="helpers\excelHelper.js" />
     <Compile Include="helpers\scheduleJobHelper.js" />
     <Compile Include="helpers\utils.js" />
     <Compile Include="helpers\validator.js" />

@@ -111,9 +111,8 @@ router.route('/charts/:id/datatable')
           res.setHeader('Content-disposition', 'attachment; filename=' + (docs[0]._id) + '.xlsx');
           res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
           excel.writeOne(docs[0], {
-            "outStream": res,
-            "worksheet": "Data",
-          }, () => console.log());
+            "outStream": res
+          });
         })
         .catch(next);
 

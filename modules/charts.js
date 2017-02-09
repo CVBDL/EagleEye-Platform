@@ -5,11 +5,11 @@ let Promise = require('es6-promise').Promise;
 
 let CHART_TYPES = require('./chart-types');
 let chartSets = require('./chart-sets');
+let excel = require('./excel');
 let dbClient = require('../helpers/dbHelper');
 let utils = require('../helpers/utils');
 let columnTypes = require('../helpers/column-types');
 let validator = require('../helpers/validator');
-let excelHelper = require('../helpers/excelHelper');
 
 const ROOT_ENDPOINT = utils.getRootEndpoint();
 const API_ROOT_ENDPOINT = utils.getRestApiRootEndpoint();
@@ -367,7 +367,7 @@ exports.updateDataTableFromXlsx = function (id, workbook) {
   //    "Sally", "Eng", "09:30:05", "600", "2005-10-10", "30", "false", "null"
   //  ]
   //]
-  let worksheetData = excelHelper.readWorkbook(workbook);
+  let worksheetData = excel.readWorkbook(workbook);
 
   if (!worksheetData || !worksheetData.length || !worksheetData[0].length) {
     return Promise.reject({

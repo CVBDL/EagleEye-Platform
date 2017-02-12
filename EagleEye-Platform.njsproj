@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{0aef616f-48f7-4074-9b72-9fca6292ee61}</ProjectGuid>
     <ProjectHome />
-    <ProjectView>ProjectFiles</ProjectView>
+    <ProjectView>ShowAllFiles</ProjectView>
     <StartupFile>app.js</StartupFile>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -37,11 +37,10 @@
     <Compile Include="modules\chart-sets.js" />
     <Compile Include="modules\chart-types.js" />
     <Compile Include="modules\charts.js" />
-    <Compile Include="modules\excel.js" />
+    <Compile Include="modules\file-parser.js" />
     <Compile Include="modules\scheduleJobLogModule.js" />
     <Compile Include="modules\scheduleJobModule.js" />
     <Compile Include="modules\statistics.js" />
-    <Compile Include="modules\upload.js" />
     <Compile Include="routes\chart-sets.js" />
     <Compile Include="routes\charts.js" />
     <Compile Include="routes\jobs.js" />
@@ -62,17 +61,22 @@
     <Content Include="tests\fixtures\charts.json" />
     <Content Include="tests\fixtures\chart-sets.json" />
     <Content Include="tests\fixtures\datatable.json" />
+    <Content Include="tests\fixtures\datatable0.xlsx" />
+    <Content Include="tests\fixtures\datatable1.xlsx" />
+    <Content Include="tests\fixtures\datatable2.xlsx" />
+    <Content Include="tests\fixtures\datatable3.xlsx" />
     <Content Include="tests\fixtures\excelHelper.json" />
     <Content Include="tests\fixtures\excelModule.json" />
     <Compile Include="tests\helpers\column-types.spec.js" />
     <Compile Include="tests\modules\excel.spec.js" />
     <Compile Include="tests\modules\charts.spec.js" />
     <Compile Include="tests\modules\chart-sets.spec.js" />
+    <Content Include="tests\fixtures\sample.jpeg" />
+    <Content Include="tests\fixtures\sample.jpg" />
+    <Content Include="tests\fixtures\sample.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin" />
-    <Folder Include="excelPath" />
-    <Folder Include="excelPath\prod" />
     <Folder Include="excelPath\test" />
     <Folder Include="helpers" />
     <Folder Include="modules" />

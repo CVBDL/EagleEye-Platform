@@ -5,7 +5,7 @@ let Promise = require('es6-promise').Promise;
 
 let CHART_TYPES = require('./chart-types');
 let chartSets = require('./chart-sets');
-let excel = require('./excel');
+let fileParser = require('./file-parser');
 let dbClient = require('../helpers/dbHelper');
 let utils = require('../helpers/utils');
 let columnTypes = require('../helpers/column-types');
@@ -367,7 +367,7 @@ exports.updateDataTableFromXlsx = function (id, workbook) {
   //    "Sally", "Eng", "09:30:05", "600", "2005-10-10", "30", "false", "null"
   //  ]
   //]
-  let worksheetData = excel.readWorkbook(workbook);
+  let worksheetData = fileParser.readWorkbook(workbook);
 
   if (!worksheetData || !worksheetData.length || !worksheetData[0].length) {
     return Promise.reject({

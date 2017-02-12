@@ -4,9 +4,8 @@ let express = require('express');
 let multiparty = require('multiparty');
 
 let utils = require('../helpers/utils');
-let excel = require('../modules/excel');
 let charts = require('../modules/charts');
-let upload = require('../modules/upload');
+let fileParser = require('../modules/file-parser');
 
 let router = module.exports = express.Router();
 
@@ -110,9 +109,7 @@ router.route('/charts/:id/datatable')
         .then(function (docs) {
           res.setHeader('Content-disposition', 'attachment; filename=' + (docs[0]._id) + '.xlsx');
           res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-          excel.writeOne(docs[0], {
-            "outStream": res
-          });
+          fileParser.writeXLSXStream(res, docs[0].datatable);
         })
         .catch(next);
 
@@ -139,7 +136,7 @@ router.route('/charts/:id/assets')
       /^application\/vnd\.openxmlformats\-officedocument\.spreadsheetml\.sheet$/;
 
     let form = new multiparty.Form();
-    let processPromise;
+    let fsPromise;
 
     form.on('part', function (part) {
       // You *must* act on the part by reading it
@@ -151,10 +148,10 @@ router.route('/charts/:id/assets')
         let contentType = part.headers['content-type'];
 
         if (XLSX_RE.test(contentType)) {
-          processPromise = upload.processXLSXStream(part, id);
+          fsPromise = fileParser.readXLSXStream(part, id);
 
         } else if (IMAGE_RE.test(contentType)) {
-          processPromise = upload.processImageStream(part, id);
+          fsPromise = fileParser.readImageStream(part, id);
 
         } else {
           // ignore the chunk of data
@@ -168,8 +165,8 @@ router.route('/charts/:id/assets')
     });
 
     form.on('close', function () {
-      if (processPromise) {
-        processPromise
+      if (fsPromise) {
+        fsPromise
           .then(function (doc) {
             res.send(doc);
           })

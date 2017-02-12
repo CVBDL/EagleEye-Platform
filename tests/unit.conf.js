@@ -11,7 +11,7 @@ process.env.DB_CONNECTION_URI =
 // modules
 require('./modules/charts.spec');
 require('./modules/chart-sets.spec');
-require('./modules/excel.spec');
+require('./modules/file-parser.spec');
 
 // helpers
 require('./helpers/column-types.spec');

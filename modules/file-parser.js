@@ -1,6 +1,7 @@
 ﻿'use strict';
 
 let Exceljs = require('exceljs');
+let ObjectId = require('mongodb').ObjectId;
 let Promise = require('es6-promise').Promise;
 let fs = require('fs');
 let path = require('path');
@@ -15,17 +16,13 @@ let columnTypes = require('../helpers/column-types');
  * @method
  *
  * @param {stream.Readable} stream A readable stream represents an .xlsx file.
- * @param {string} id The chart's '_id' property. Its 'datatable' will be updated.
  * @returns {Promise} It will be resolved with the updated chart document.
  *                    Or rejected with defined errors.
  */
-exports.readXLSXStream = function (stream, id) {
+exports.readXLSXStream = function (stream) {
   let workbook = new Exceljs.Workbook();
 
-  return workbook.xlsx.read(stream)
-    .then(function (workbook) {
-      return charts.updateDataTableFromXlsx(id, workbook);
-    });
+  return workbook.xlsx.read(stream);
 };
 
 
@@ -41,12 +38,12 @@ exports.readXLSXStream = function (stream, id) {
  * @method
  *
  * @param {stream.Readable} stream A readable stream represents an acceptable image.
- * @param {string} id The chart's '_id' property. Its 'datatable' will be updated.
  * @returns {Promise} It will be resolved with the updated chart document.
  *                    Or rejected with defined errors.
  */
-exports.readImageStream = function (stream, id) {
-  let savedFilename = id + '_' + Date.now() + '_' + stream.filename;
+exports.readImageStream = function (stream) {
+  let uid = ObjectId().toHexString();
+  let savedFilename = uid + '_' + stream.filename;
   let savedPath = path.join(
     __dirname, '../public/upload/' + savedFilename);
 
@@ -54,13 +51,11 @@ exports.readImageStream = function (stream, id) {
     let fileStream = stream.pipe(fs.createWriteStream(savedPath));
 
     fileStream.on('finish', function () {
-      charts.updateImageBrowserDownloadUrl(id, savedFilename)
-        .then(function (doc) {
-          resolve(doc);
-        })
-        .catch(function (err) {
-          reject(err);
-        });
+      resolve(savedFilename);
+    });
+
+    fileStream.on('error', function (err) {
+      reject(err);
     });
   });
 };
@@ -68,6 +63,7 @@ exports.readImageStream = function (stream, id) {
 
 /**
  * Write data table object to an .xlsx file.
+ * <https://github.com/guyonroche/exceljs#streaming-xlsx>
  *
  * @method
  * @param {Stream} stream An output writable stream.
@@ -78,56 +74,38 @@ exports.readImageStream = function (stream, id) {
 exports.writeXLSXStream = function (stream, datatable) {
   datatable = datatable || {};
 
-  let columns = datatable.cols || [];
+  let cols = datatable.cols || [];
   let rows = datatable.rows || [];
-  let data = [];
 
-  for (let i = 0; i < columns.length; i++) {
-    columns[i].header = columns[i].label;
-    columns[i].key = "col" + (i + 1);
-  }
-  
-  for (let i = 0; i < rows.length; i++) {
-    let row = {};
-    for (let j = 0; j < columns.length; j++) {
-      row[columns[j].key] =
-        columnTypes.convertDataTableToFile(rows[i].c[j].v,
-                                           datatable.cols[j].type);
-    }
-    data.push(row);
-  }
-  
-  let workbook = new Exceljs.Workbook();
-  let worksheet = workbook.addWorksheet();
+  let workbook = new Exceljs.stream.xlsx.WorkbookWriter({
+    stream: stream
+  });
+  let worksheet = workbook.addWorksheet('datatable');
 
-  worksheet.columns = columns;
-  worksheet.addRows(data);
-
-  return workbook.xlsx.write(stream);
-  //return workbook.xlsx.writeFile(settings.path + "/" + settings.filename);
-};
-
-
-/**
- * Only read the first worksheet of a given {Exceljs.Workbook} workbook.
- * Parse the worksheet content into a 2D array.
- *
- * @method
- * @param {Excel.Workbook} workbook An instance of Exceljs Workbook class.
- * @returns {Array<Array>} Worksheet content in 2D array format.
- */
-exports.readWorkbook = function (workbook) {
-  // use the first work sheet
-  let worksheet = workbook.getWorksheet(1);
-
-  var result = [];
-  worksheet.eachRow(function (row, rowNumber) {
-    var line = [];
-    row.eachCell(function (cell, colNumber) {
-      line.push(cell.value);
+  let columns = [];
+  cols.forEach(function (col, index) {
+    columns.push({
+      header: col.label || '',
+      key: 'col' + (index + 1)
     });
-    result.push(line);
   });
 
-  return result;
+  worksheet.columns = columns;
+
+  rows.forEach(function (row) {
+    let worksheetRow = [];
+
+    cols.forEach(function (col, colIndex) {
+      let cellValue = columnTypes.convertDataTableToFile(
+        row.c[colIndex].v, cols[colIndex].type);
+
+      worksheetRow.push(cellValue);
+    });
+
+    worksheet.addRow(worksheetRow).commit();
+  });
+
+  worksheet.commit();
+
+  return workbook.commit();
 };

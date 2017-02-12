@@ -10,18 +10,9 @@
         },
         "datatable": {
           "cols": [
-            {
-              "label": "City",
-              "type": "string"
-            },
-            {
-              "label": "2010 Population",
-              "type": "number"
-            },
-            {
-              "label": "2000 Population",
-              "type": "number"
-            }
+            { "label": "City", "type": "string" },
+            { "label": "2010 Population", "type": "number" },
+            { "label": "2000 Population", "type": "number" }
           ],
           "rows": [
             {
@@ -76,14 +67,8 @@
         },
         "datatable": {
           "cols": [
-            {
-              "label": "Task",
-              "type": "string"
-            },
-            {
-              "label": "Hours per Day",
-              "type": "number"
-            }
+            { "label": "Task", "type": "string" },
+            { "label": "Hours per Day", "type": "number" }
           ],
           "rows": [
             {

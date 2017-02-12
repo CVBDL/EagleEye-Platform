@@ -255,7 +255,17 @@ exports.updateOne = function (id, data) {
       updateData[field] = data[field];
     }
   });
-  
+
+  if (validators.isDefined(data.browserDownloadUrl) &&
+      validators.isDefined(data.browserDownloadUrl.image)) {
+
+    let filename = data.browserDownloadUrl.image;
+
+    updateData.browserDownloadUrl = {
+      image: ROOT_ENDPOINT + '/upload/' + filename
+    };
+  }
+
   return db.collection(COLLECTION)
     .findOneAndUpdate({
       _id: ObjectId(id)
@@ -276,164 +286,4 @@ exports.updateOne = function (id, data) {
         return result.value;
       }
     });
-};
-
-
-/**
- * Update an image chart's browserDownloadUrl.
- *
- * @method
- * @param {ObjectId} id The chart's ObjectId.
- * @param {string} filename The image filename.
- * @returns {Promise} A promise will be resolved when delete successfully.
- *                    Or rejected with defined errors.
- */
-exports.updateImageBrowserDownloadUrl = function (id, filename) {
-  if (!ObjectId.isValid(id)) {
-    return Promise.reject({
-      status: 422,
-      errors: [{
-        "resource": "chart",
-        "field": "_id",
-        "code": "invalid"
-      }]
-    });
-  }
-
-  let db = dbClient.get();
-  
-  return db.collection(COLLECTION)
-    .findOneAndUpdate({
-      _id: ObjectId(id)
-    }, {
-      $set: {
-        browserDownloadUrl: {
-          image: ROOT_ENDPOINT + '/upload/' + filename
-        },
-        updatedAt: new Date().toISOString()
-      }
-    }, {
-      // When false, returns the updated document rather than
-      // the original.
-      returnOriginal: false
-    })
-    .then(function (result) {
-      if (result.value === null) {
-        return Promise.reject({
-          status: 404
-        });
-
-      } else {
-        return result.value;
-      }
-    });
-};
-
-
-/**
- * Update a chart's data table from a .xlsx file.
- * It'll read the first worksheet of the uploaded .xlsx file.
- *
- * @method
- * @param {ObjectId} id The chart's ObjectId.
- * @param {Excel.Workbook} workbook An instance of Exceljs Workbook class.
- * @returns {Promise} A promise will be resolved with the updated chart.
- *                    Or rejected with defined errors.
- */
-exports.updateDataTableFromXlsx = function (id, workbook) {
-  let updateData = {
-    datatable: {
-      cols: [],
-      rows: []
-    }
-  };
-
-  // Sample of `worksheetData`:
-  //[
-  //  [
-  //    "name(string)", "dept(string)", "lunchTime(timeofday)", "salary(number)",
-  //    "hireDate(date)", "age(number)", "isSenior(boolean)",
-  //    "seniorityStartTime(datetime)"
-  //  ],
-  //  [
-  //    "John", "Eng", "12:00:00", "1000", "2005-03-19", "35", "true",
-  //    "2007-12-02 15:56:00"
-  //  ],
-  //  [
-  //    "Dave", "Eng", "13:01:30.123", "500.5", "2006-04-19", "27", "false",
-  //    "2005-03-09 12:30:00.32"
-  //  ],
-  //  [
-  //    "Sally", "Eng", "09:30:05", "600", "2005-10-10", "30", "false", "null"
-  //  ]
-  //]
-  let worksheetData = fileParser.readWorkbook(workbook);
-
-  if (!worksheetData || !worksheetData.length || !worksheetData[0].length) {
-    return Promise.reject({
-      status: 422,
-      errors: [{
-        "resource": "chart",
-        "field": "datatable",
-        "code": "invalid"
-      }]
-    });
-  }
-
-  // default data type for role: 'domain'
-  let defaultDomainType = 'string';
-
-  // default data type for role: 'data'
-  let defaultDataType = 'number';
-
-  let header = worksheetData[0];
-
-  // process headers row
-  header.forEach(function (field, index) {
-    updateData.datatable.cols.push({
-      label: field ? field : 'Column' + index,
-      type: (index === 0) ? defaultDomainType : defaultDataType
-    });
-  });
-  
-  let preferredColumnDataType = [];
-
-  // process data rows
-  worksheetData.forEach(function (fields, index) {
-    if (index === 0) return;
-
-    let row = { c: [] };
-
-    fields.forEach(function (field, index) {
-      row.c.push({
-        v: columnTypes.convertFileToDataTable(field)
-      });
-      
-      if (!preferredColumnDataType[index]) {
-        let inferredType = columnTypes.infer(field);
-
-        preferredColumnDataType[index] =
-          inferredType === 'null'
-            ? undefined
-            : inferredType;
-      }
-    });
-
-    updateData.datatable.rows.push(row);
-  });
-
-  // determine preferred data types
-  preferredColumnDataType.forEach(function (type, index) {
-    if (type) {
-      updateData.datatable.cols[index].type = type;
-
-    } else {
-      updateData.datatable.cols[index].type =
-        (index === 0)
-        ? defaultDomainType
-        : defaultDataType;
-    }
-  });
-
-  return exports.updateOne(id, updateData);
 };

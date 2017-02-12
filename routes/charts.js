@@ -5,6 +5,7 @@ let multiparty = require('multiparty');
 
 let utils = require('../helpers/utils');
 let charts = require('../modules/charts');
+let dataTable = require('../modules/data-table');
 let fileParser = require('../modules/file-parser');
 
 let router = module.exports = express.Router();
@@ -136,7 +137,7 @@ router.route('/charts/:id/assets')
       /^application\/vnd\.openxmlformats\-officedocument\.spreadsheetml\.sheet$/;
 
     let form = new multiparty.Form();
-    let fsPromise;
+    let actionPromise;
 
     form.on('part', function (part) {
       // You *must* act on the part by reading it
@@ -148,10 +149,24 @@ router.route('/charts/:id/assets')
         let contentType = part.headers['content-type'];
 
         if (XLSX_RE.test(contentType)) {
-          fsPromise = fileParser.readXLSXStream(part, id);
+          actionPromise = dataTable
+            .fromXLSXStream(part)
+            .then(function (datatable) {
+              return charts.updateOne(id, {
+                datatable: datatable
+              });
+            });
 
         } else if (IMAGE_RE.test(contentType)) {
-          fsPromise = fileParser.readImageStream(part, id);
+          actionPromise = fileParser
+            .readImageStream(part)
+            .then(function (filename) {
+              return charts.updateOne(id, {
+                browserDownloadUrl: {
+                  image: filename
+                }
+              });
+            });
 
         } else {
           // ignore the chunk of data
@@ -165,8 +180,8 @@ router.route('/charts/:id/assets')
     });
 
     form.on('close', function () {
-      if (fsPromise) {
-        fsPromise
+      if (actionPromise) {
+        actionPromise
           .then(function (doc) {
             res.send(doc);
           })

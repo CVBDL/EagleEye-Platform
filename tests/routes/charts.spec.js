@@ -862,6 +862,107 @@ describe('routes: /charts/:id', function () {
         .expect(200, done);
     });
 
+    it('should ignore unexpected form fields', function (done) {
+      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let filename = 'datatable0.xlsx';
+      let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', filename);
+
+      let datatable = {
+        "cols": [{
+          "label": "name(string)",
+          "type": "string"
+        }, {
+          "label": "dept(string)",
+          "type": "string"
+        }, {
+          "label": "lunchTime(timeofday)",
+          "type": "timeofday"
+        }, {
+          "label": "salary(number)",
+          "type": "number"
+        }, {
+          "label": "hireDate(date)",
+          "type": "date"
+        }, {
+          "label": "age(number)",
+          "type": "number"
+        }, {
+          "label": "isSenior(boolean)",
+          "type": "boolean"
+        }, {
+          "label": "seniorityStartTime(datetime)",
+          "type": "datetime"
+        }],
+        "rows": [{
+          "c": [{
+            "v": "John"
+          }, {
+            "v": "Eng"
+          }, {
+            "v": [12, 0, 0]
+          }, {
+            "v": 1000
+          }, {
+            "v": "Date(2005,2,19)"
+          }, {
+            "v": 35
+          }, {
+            "v": true
+          }, {
+            "v": "Date(2007,11,2,15,56,0)"
+          }]
+        }, {
+          "c": [{
+            "v": "Dave"
+          }, {
+            "v": "Eng"
+          }, {
+            "v": [13, 1, 30, 123]
+          }, {
+            "v": 500.5
+          }, {
+            "v": "Date(2006,3,19)"
+          }, {
+            "v": 27
+          }, {
+            "v": false
+          }, {
+            "v": "Date(2005,2,9,12,30,0,32)"
+          }]
+        }, {
+          "c": [{
+            "v": "Sally"
+          }, {
+            "v": "Eng"
+          }, {
+            "v": [9, 30, 5]
+          }, {
+            "v": 600
+          }, {
+            "v": "Date(2005,9,10)"
+          }, {
+            "v": 30
+          }, {
+            "v": false
+          }, {
+            "v": null
+          }]
+        }]
+      };
+
+      request(app)
+        .post(`/api/v1/charts/${id}/assets`)
+        .field('name', 'unexpected')
+        .attach('file', testXlsxFilePath)
+        .send()
+        .expect('Content-Type', /json/)
+        .expect(function (res) {
+          res.body._id.should.eql(id);
+          res.body.datatable.should.eql(datatable);
+        })
+        .expect(200, done);
+    });
+
     it('should response 400 if uploaded an invalid file format', function (done) {
       let id = fixtures.collections.chart_collection[0]._id.toHexString();
       let filename = 'charts.json';

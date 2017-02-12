@@ -4,7 +4,7 @@ let ObjectId = require('mongodb').ObjectId;
 let Promise = require('es6-promise').Promise;
 
 let dbClient = require('../helpers/dbHelper');
-let validator = require('../helpers/validator');
+let validators = require('../helpers/validators');
 let charts = require('./charts');
 
 let COLLECTION = "chart_set_collection";
@@ -46,15 +46,15 @@ exports.create = function (data) {
 
   schema._id = id;
 
-  if (validator.isString(data.title)) {
+  if (validators.isString(data.title)) {
     schema.title = data.title;
   }
 
-  if (validator.isValidDescription(data.description)) {
+  if (validators.isValidDescription(data.description)) {
     schema.description = data.description;
   }
   
-  if (validator.isValidChartIds(data.charts)) {
+  if (validators.isValidChartIds(data.charts)) {
     schema.charts = data.charts;
 
   } else {
@@ -248,7 +248,7 @@ exports.updateOne = function (id, data) {
   };
 
   fields.forEach(function (field) {
-    if (validator.isDefined(data[field])) {
+    if (validators.isDefined(data[field])) {
       updateData[field] = data[field];
     }
   });

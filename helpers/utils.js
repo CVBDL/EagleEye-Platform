@@ -3,7 +3,7 @@
 let os      = require('os');
 let process = require('process');
 
-let validator = require('./validator');
+let validators = require('./validators');
 
 const protocol = 'http';
 const port = process.env.EAGLEEYE_PLATFORM_PORT || '3000';
@@ -23,7 +23,7 @@ exports.getQueryParameters = function (req) {
   let queryOption = {};
   
   queryParameters.forEach(function (queryParameter) {
-    if (validator.isDefined(req.query[queryParameter])) {
+    if (validators.isDefined(req.query[queryParameter])) {
       params[queryParameter] = req.query[queryParameter];
     }
   });

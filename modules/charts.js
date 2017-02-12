@@ -9,7 +9,7 @@ let excel = require('./excel');
 let dbClient = require('../helpers/dbHelper');
 let utils = require('../helpers/utils');
 let columnTypes = require('../helpers/column-types');
-let validator = require('../helpers/validator');
+let validators = require('../helpers/validators');
 
 const ROOT_ENDPOINT = utils.getRootEndpoint();
 const API_ROOT_ENDPOINT = utils.getRestApiRootEndpoint();
@@ -57,7 +57,7 @@ exports.create = function(data) {
 
   schema._id = id;
 
-  if (validator.isValidChartType(data.chartType)) {
+  if (validators.isValidChartType(data.chartType)) {
     schema.chartType = data.chartType;
 
   } else {
@@ -71,15 +71,15 @@ exports.create = function(data) {
     });
   }
   
-  if (validator.isValidDescription(data.description)) {
+  if (validators.isValidDescription(data.description)) {
     schema.description = data.description;
   }
 
-  if (validator.isValidDataTable(data.datatable)) {
+  if (validators.isValidDataTable(data.datatable)) {
     schema.datatable = data.datatable;
   }
 
-  if (validator.isValidOptions(data.options)) {
+  if (validators.isValidOptions(data.options)) {
     schema.options = data.options;
   }
 
@@ -251,7 +251,7 @@ exports.updateOne = function (id, data) {
   };
 
   fields.forEach(function (field) {
-    if (validator.isDefined(data[field])) {
+    if (validators.isDefined(data[field])) {
       updateData[field] = data[field];
     }
   });

@@ -3,9 +3,7 @@
 let bodyParser = require('body-parser');
 let cookieParser = require('cookie-parser');
 let express = require('express');
-let favicon = require('serve-favicon');
 let logger = require('morgan');
-let multipart = require('connect-multiparty');
 let path = require('path');
 
 let db = require('./helpers/dbHelper');

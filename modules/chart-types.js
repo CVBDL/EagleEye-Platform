@@ -2,12 +2,11 @@
 
 /**
  * Supported chart types.
- * Reference docs:
- * <https://developers.google.com/chart/interactive/docs/>
+ * Reference docs: <https://developers.google.com/chart/interactive/docs/>.
  * @constant
  * @type {Object}
  */
-const CHART_TYPES = {
+module.exports = {
 
   // standard google chart types
   AreaChart: 'AreaChart',
@@ -20,5 +19,3 @@ const CHART_TYPES = {
   // custom chart types
   ImageChart: 'ImageChart'
 };
-
-module.exports = CHART_TYPES;

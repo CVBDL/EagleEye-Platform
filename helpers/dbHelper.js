@@ -69,8 +69,9 @@ exports.close = function(done) {
 };
 
 exports.drop = function(done) {
-  if (!state.db) return done()
-    // This is faster then dropping the database
+  if (!state.db) return done();
+
+  // This is faster then dropping the database
   state.db.collections(function(err, collections) {
     async.each(collections, function(collection, cb) {
       if (collection.collectionName.indexOf('system') === 0) {

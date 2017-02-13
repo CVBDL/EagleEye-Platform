@@ -1,37 +1,15 @@
 ﻿'use strict';
 
 let Exceljs = require('exceljs');
-let MongoClient = require('mongodb').MongoClient
-let ObjectId = require('mongodb').ObjectId;
 let fs = require('fs');
 let path = require('path');
 let should = require('should');
 
-let dbClient = require('../../helpers/dbHelper');
 let fileParser = require('../../modules/file-parser');
-let chartsFixtures = require('../fixtures/charts');
-let chartSetsFixtures = require('../fixtures/chart-sets');
 let dataTableFixtures = require('../fixtures/datatable');
 
-const CHART_COLLECTION_NAME = "chart_collection";
-const CHART_SET_COLLECTION_NAME = "chart_set_collection";
-const DB_CONNECTION_URI = process.env.DB_CONNECTION_URI;
 
-describe('modules: charts', function () {
-
-  before(function (done) {
-    dbClient.connect(dbClient.MODE_TEST, done);
-  });
-
-  beforeEach(function (done) {
-    dbClient.drop(function (err) {
-      if (err) {
-        return done(err);
-      }
-
-      dbClient.fixtures(chartsFixtures, done);
-    });
-  });
+describe('modules: file-parser', function () {
 
 
   describe('readXLSXStream', function () {
@@ -74,7 +52,8 @@ describe('modules: charts', function () {
           // check saved uploaded file on server
           should.equal(fs.existsSync(savedPath), true);
 
-          done();
+          // delete test file
+          fs.unlink(savedPath, done);
         })
         .catch(done);
     });
@@ -83,23 +62,29 @@ describe('modules: charts', function () {
 
   describe('writeXLSXStream', function () {
 
-    //it('should write data table to xlsx file', function (done) {
-    //  let filename = 'temp.xlsx';
-    //  let testFilePath = path.join(__dirname, '..', 'fixtures', filename);
-    //  let stream = fs.createWriteStream(testFilePath);
+    it('should write data table to xlsx file', function (done) {
+      let filename = 'temp.xlsx';
+      let testFilePath = path.join(__dirname, '..', 'fixtures', filename);
+      let stream = fs.createWriteStream(testFilePath);
 
-    //  fileParser
-    //    .readImageStream(writeXLSXStream, dataTableFixtures)
-    //    .then(function () {
-    //      let savedPath = path.join(
-    //        __dirname, '..', '..', 'public', 'upload', filename);
+      fileParser
+        .writeXLSXStream(stream, dataTableFixtures)
+        .then(function () {
+          // check saved uploaded file on server
+          should.equal(fs.existsSync(testFilePath), true);
 
-    //      // check saved uploaded file on server
-    //      should.equal(fs.existsSync(savedPath), true);
+          let workbook = new Exceljs.Workbook();
 
-    //      done();
-    //    })
-    //    .catch(done);
-    //});
+          return workbook.xlsx.readFile(testFilePath)
+            .then(function () {
+              workbook.should.be.instanceof(Exceljs.Workbook);
+              workbook.getWorksheet(1).actualRowCount.should.eql(4);
+
+              // delete test file
+              fs.unlink(testFilePath, done);
+            });
+        })
+        .catch(done);
+    });
   });
 });

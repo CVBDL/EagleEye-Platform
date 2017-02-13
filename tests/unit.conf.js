@@ -12,6 +12,7 @@ process.env.DB_CONNECTION_URI =
 require('./modules/charts.spec');
 require('./modules/chart-sets.spec');
 require('./modules/file-parser.spec');
+require('./modules/data-table.spec');
 
 // helpers
 require('./helpers/column-types.spec');

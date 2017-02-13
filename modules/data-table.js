@@ -7,6 +7,14 @@ let fileParser = require('./file-parser');
 let validators = require('../helpers/validators');
 
 
+/**
+ * Read data table from Exceljs worksheet object.
+ *
+ * @function
+ * @param {Exceljs.Worksheet} worksheet
+ * @returns {Promise} A promise will be resolved with data table.
+ *                    Or rejected if an error occurred.
+ */
 let fromWorksheet = function fromWorksheet(worksheet) {
   if (worksheet.actualRowCount < 1) {
     return Promise.reject('empty file.');
@@ -76,6 +84,15 @@ let fromWorksheet = function fromWorksheet(worksheet) {
 };
 
 
+/**
+ * Read data table from Exceljs workbook object.
+ *
+ * @function
+ * @param {Exceljs.Workbook} workbook
+ * @param {number} id Worksheet id.
+ * @returns {Promise} A promise will be resolved with data table.
+ *                    Or rejected if an error occurred.
+ */
 let fromWorkbook = function fromWorkbook(workbook, id) {
   id = validators.isDefined(id) ? id : 1;
 
@@ -85,9 +102,31 @@ let fromWorkbook = function fromWorkbook(workbook, id) {
 };
 
 
+/**
+ * Read data table from an .xlsx stream.
+ *
+ * @method
+ * @param {Stream} stream An input readable xlsx stream.
+ * @returns {Promise} A promise will be resolved when finish reading stream.
+ *                    Or rejected if an error occurred.
+ */
 exports.fromXLSXStream = function (stream) {
   return fileParser.readXLSXStream(stream)
     .then(function (workbook) {
       return fromWorkbook(workbook);
     });
+};
+
+
+/**
+ * Write data table to an .xlsx stream.
+ *
+ * @method
+ * @param {Object} datatable Chart data table object.
+ * @param {Stream} stream An output writable stream.
+ * @returns {Promise} A promise will be resolved when finish writing stream.
+ *                    Or rejected if an error occurred.
+ */
+exports.toXLSXStream = function (datatable, stream) {
+  return fileParser.writeXLSXStream(stream, datatable);
 };

@@ -53,6 +53,7 @@
     <Compile Include="tests\helpers\db.spec.js" />
     <Compile Include="tests\helpers\error-handlers.spec.js" />
     <Compile Include="tests\helpers\utils.spec.js" />
+    <Compile Include="tests\modules\data-table.spec.js" />
     <Compile Include="tests\modules\file-parser.spec.js" />
     <Compile Include="tests\routes\chart-sets.spec.js" />
     <Compile Include="tests\routes\charts.spec.js" />

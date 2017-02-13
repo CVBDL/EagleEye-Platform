@@ -45,7 +45,7 @@ exports.readImageStream = function (stream) {
   let uid = ObjectId().toHexString();
   let savedFilename = uid + '_' + stream.filename;
   let savedPath = path.join(
-    __dirname, '../public/upload/' + savedFilename);
+    __dirname, '..', 'public', 'upload', savedFilename);
 
   return new Promise(function (resolve, reject) {
     let fileStream = stream.pipe(fs.createWriteStream(savedPath));

@@ -110,7 +110,8 @@ router.route('/charts/:id/datatable')
         .then(function (docs) {
           res.setHeader('Content-disposition', 'attachment; filename=' + (docs[0]._id) + '.xlsx');
           res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-          fileParser.writeXLSXStream(res, docs[0].datatable);
+
+          dataTable.toXLSXStream(docs[0].datatable, res);
         })
         .catch(next);
 

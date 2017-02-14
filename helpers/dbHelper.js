@@ -99,6 +99,10 @@ exports.fixtures = function(data, done) {
         if (item._id) {
           item._id = ObjectId(item._id);
         }
+
+        if (item.job && item.job._id) {
+          item.job._id = ObjectId(item.job._id);
+        }
       });
 
       collection.insertMany(data.collections[name], cb);

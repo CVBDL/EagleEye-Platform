@@ -1,31 +1,44 @@
 'use strict';
 
 let ObjectId = require('mongodb').ObjectId;
+
 let dbClient = require('../helpers/dbHelper');
 
-const COLLECTION = "schedule_job_log_collection";
+const COLLECTION = "task_collection";
 
 
 /**
- * Create a log.
+ * Create a task.
  *
  * @method
  * @param {Object} job An job config object.
- * @returns {Promise} A promise will be resolved with the created log.
+ * @returns {Promise} A promise will be resolved with the created task.
  *                    Or rejected with defined errors.
  */
-exports.create = function(job) {
+exports.create = function (job) {
+  if (!job) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        resource: "task",
+        field: "job",
+        code: "missing_field"
+      }]
+    });
+  }
+
   let db = dbClient.get();
 
-  let log = {
+  let task = {
     job: job,
     state: 'running',
-    startedAt: new Date().toISOString()
+    startedAt: new Date().toISOString(),
+    finishedAt: null
   };
 
   return db
     .collection(COLLECTION)
-    .insertOne(log)
+    .insertOne(task)
     .then(function (result) {
       return result.ops[0];
     });
@@ -33,12 +46,12 @@ exports.create = function(job) {
 
 
 /**
- * Update a single log.
+ * Update a single task.
  *
  * @method
- * @param {string} id The `_id` of a log.
- * @param {Object} data The updated log data.
- * @returns {Promise} A promise will be resolved with the updated log.
+ * @param {string} id The `_id` of a task.
+ * @param {Object} data The updated task data.
+ * @returns {Promise} A promise will be resolved with the updated task.
  *                    Or rejected with defined errors.
  */
 exports.updateOne = function (id, data) {
@@ -46,7 +59,7 @@ exports.updateOne = function (id, data) {
     return Promise.reject({
       status: 422,
       errors: [{
-        "resource": "chart",
+        "resource": "task",
         "field": "_id",
         "code": "invalid"
       }]
@@ -58,6 +71,16 @@ exports.updateOne = function (id, data) {
   if (data.state == 'success' || data.state == 'failure') {
     updateData.state = data.state;
     updateData.finishedAt = new Date().toISOString();
+
+  } else {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "task",
+        "field": "state",
+        "code": "invalid"
+      }]
+    });
   }
 
   let db = dbClient.get();
@@ -87,19 +110,19 @@ exports.updateOne = function (id, data) {
 
 
 /**
- * List all logs with the specific job id.
+ * List all tasks with the specific job id.
  *
  * @method
- * @param {string} id The `_id` of a job.
- * @returns {Promise} A promise will be resolved with logs.
+ * @param {string} jobId The `_id` of a job.
+ * @returns {Promise} A promise will be resolved with tasks.
  *                    Or rejected with defined errors.
  */
-exports.getAllByJobId = function (id) {
-  if (!ObjectId.isValid(id)) {
+exports.getAllByJobId = function (jobId) {
+  if (!ObjectId.isValid(jobId)) {
     return Promise.reject({
       status: 422,
       errors: [{
-        "resource": "log",
+        "resource": "task",
         "field": "_id",
         "code": "invalid"
       }]
@@ -110,7 +133,7 @@ exports.getAllByJobId = function (id) {
 
   return db
     .collection(COLLECTION)
-    .find({ 'job._id': ObjectId(id) })
+    .find({ 'job._id': ObjectId(jobId) })
     .toArray()
     .then(function (docs) {
       if (!docs.length) {

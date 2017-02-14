@@ -11,6 +11,7 @@ require('./modules/charts.spec');
 require('./modules/chart-sets.spec');
 require('./modules/file-parser.spec');
 require('./modules/data-table.spec');
+require('./modules/tasks.spec');
 
 // helpers
 require('./helpers/column-types.spec');

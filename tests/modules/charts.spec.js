@@ -1,10 +1,7 @@
 'use strict';
 
-let Exceljs = require('exceljs');
 let MongoClient = require('mongodb').MongoClient
 let ObjectId = require('mongodb').ObjectId;
-let os = require('os');
-let path = require('path');
 let should = require('should');
 
 let dbClient = require('../../helpers/dbHelper');
@@ -159,16 +156,20 @@ describe('modules: charts', function () {
         chartType: 'unknown'
       };
       
-      charts.create(chart).should.be.rejectedWith({
-        status: 422,
-        errors: [{
-          "resource": "chart",
-          "field": "chartType",
-          "code": "missing_field"
-        }]
-      });
-
-      done();
+      charts.create(chart)
+        .should
+        .rejectedWith({
+          status: 422,
+          errors: [{
+            "resource": "chart",
+            "field": "chartType",
+            "code": "missing_field"
+          }]
+        })
+        .then(function () {
+          done();
+        })
+        .catch(done);
     });
 
     it('should contain all chart fields', function (done) {

@@ -1,6 +1,3 @@
-/**
- * Created by MMo2 on 8/18/2016.
- */
 'use strict';
 
 let ObjectId = require('mongodb').ObjectId;

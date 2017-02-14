@@ -2,7 +2,7 @@
 
 let express = require('express');
 
-let logs = require('../modules/logs');
+let tasks = require('../modules/tasks');
 
 let router = module.exports = express.Router();
 
@@ -15,7 +15,7 @@ router.route('/tasks/:id')
     let id = req.params.id;
     let state = req.body.state;
 
-    logs.updateOne(id, { state: state })
+    tasks.updateOne(id, { state: state })
       .then(function (doc) {
         res.send(doc);
       })

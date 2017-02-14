@@ -5,7 +5,7 @@ let express = require('express');
 let scheduler = require('../helpers/scheduler');
 let utils = require('../helpers/utils');
 let jobs = require('../modules/jobs');
-let logs = require('../modules/logs');
+let tasks = require('../modules/tasks');
 
 let router = module.exports = express.Router();
 
@@ -83,7 +83,7 @@ router.route('/jobs/:id/tasks')
   .get(function getJobTasks(req, res) {
     let id = req.params.id;
 
-    logs.getAllByJobId(id)
+    tasks.getAllByJobId(id)
       .then(function (docs) {
         docs.sort((a, b) => b.finishedAt - a.finishedAt);
         res.send(docs);

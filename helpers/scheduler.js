@@ -23,7 +23,7 @@ let child_process = require('child_process');
 let schedule = require("node-schedule");
 
 let jobs = require('../modules/jobs');
-let logs = require('../modules/logs');
+let tasks = require('../modules/tasks');
 
 // save running job configuration and handlers
 let stat = {};
@@ -38,20 +38,14 @@ let stat = {};
 exports.runJob = function runJob(job) {
   let command = job.command;
 
-  logs
-    .create({
-      "_id": job._id,
-      "name": job.name,
-      "expression": job.expression,
-      "command": job.command,
-    })
+  tasks.create(job)
     .then(function (log) {
       let fullCommand = command + " --task-id=\"" + log._id + "\"";
       console.log(fullCommand);
 
       child_process.exec(fullCommand, function (err, stdout, stderr) {
         if (err) {
-          logs.updateOne(log._id, {
+          tasks.updateOne(log._id, {
             state: 'failure',
             message: err.message
           });

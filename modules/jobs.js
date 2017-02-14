@@ -187,6 +187,10 @@ exports.deleteOne = function (id) {
     });
 };
 
+
+/**
+ * Not in use currently.
+ */
 exports.enableOneJob = function(_id, enable, callback) {
   let db = dbClient.get();
   db.collection(COLLECTION).findOneAndUpdate({
@@ -199,6 +203,10 @@ exports.enableOneJob = function(_id, enable, callback) {
   }, callback);
 };
 
+
+/**
+ * Not in use currently.
+ */
 exports.updateOneJob = function(_id, jobName, time, enable, para, callback) {
   let db = dbClient.get();
   db.collection(COLLECTION).findOneAndUpdate({

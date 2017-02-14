@@ -7,8 +7,10 @@ let logger = require('morgan');
 let path = require('path');
 
 let db = require('./helpers/dbHelper');
-let utils = require('./helpers/utils');
 let errorHandler = require('./helpers/error-handlers');
+let scheduler = require('./helpers/scheduler');
+let utils = require('./helpers/utils');
+
 let rootApi = require('./routes/root-endpoint');
 let chartsApi = require('./routes/charts');
 let chartSetsApi = require('./routes/chart-sets');
@@ -70,5 +72,9 @@ if (app.get('env') === 'development') {
 app.use(errorHandler);
 
 db.get();
+
+setTimeout(function () {
+  scheduler.start();
+}, 3000);
 
 module.exports = app;

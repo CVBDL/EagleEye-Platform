@@ -1,6 +1,3 @@
-/**
- * Created by MMo2 on 11/22/2016.
- */
 'use strict';
 
 let ObjectId = require('mongodb').ObjectId;
@@ -8,28 +5,94 @@ let dbClient = require('../helpers/dbHelper');
 
 const COLLECTION = "schedule_job_log_collection";
 
-let getTimeStamp = () => new Date().valueOf();
-
-exports.create = function(jobData, callback) {
-  let db = dbClient.get();
-  let logData = { 'job': jobData, 'state': 'running'};
-  logData.startedAt = getTimeStamp();
-
-  db.collection(COLLECTION).insert(logData, function(err, result) {
-    if (err) {
-      return callback(err);
-    }
-    callback(null, result.ops[0]);
-  });
-};
-
-exports.all = function(callback) {
-  let db = dbClient.get();
-  db.collection(COLLECTION).find().toArray(callback);
-};
 
 /**
+ * Create a log.
+ *
  * @method
+ * @param {Object} job An job config object.
+ * @returns {Promise} A promise will be resolved with the created log.
+ *                    Or rejected with defined errors.
+ */
+exports.create = function(job) {
+  let db = dbClient.get();
+
+  let log = {
+    job: job,
+    state: 'running',
+    startedAt: new Date().toISOString()
+  };
+
+  return db
+    .collection(COLLECTION)
+    .insertOne(log)
+    .then(function (result) {
+      return result.ops[0];
+    });
+};
+
+
+/**
+ * Update a single log.
+ *
+ * @method
+ * @param {string} id The `_id` of a log.
+ * @param {Object} data The updated log data.
+ * @returns {Promise} A promise will be resolved with the updated log.
+ *                    Or rejected with defined errors.
+ */
+exports.updateOne = function (id, data) {
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "chart",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
+  let updateData = {};
+
+  if (data.state == 'success' || data.state == 'failure') {
+    updateData.state = data.state;
+    updateData.finishedAt = new Date().toISOString();
+  }
+
+  let db = dbClient.get();
+
+  return db
+    .collection(COLLECTION)
+    .findOneAndUpdate({
+      _id: ObjectId(id)
+    }, {
+      $set: updateData
+    }, {
+      // When false, returns the updated document rather than
+      // the original.
+      returnOriginal: false
+    })
+    .then(function (result) {
+      if (result.value === null) {
+        return Promise.reject({
+          status: 404
+        });
+
+      } else {
+        return result.value;
+      }
+    });
+};
+
+
+/**
+ * List all logs with the specific job id.
+ *
+ * @method
+ * @param {string} id The `_id` of a job.
+ * @returns {Promise} A promise will be resolved with logs.
+ *                    Or rejected with defined errors.
  */
 exports.getAllByJobId = function (id) {
   if (!ObjectId.isValid(id)) {
@@ -60,6 +123,19 @@ exports.getAllByJobId = function (id) {
     });
 };
 
+
+/**
+ * Not in use currently.
+ */
+exports.all = function(callback) {
+  let db = dbClient.get();
+  db.collection(COLLECTION).find().toArray(callback);
+};
+
+
+/**
+ * Not in use currently.
+ */
 exports.getOne = function(_id, callback) {
   let db = dbClient.get();
   db.collection(COLLECTION).find({
@@ -67,6 +143,10 @@ exports.getOne = function(_id, callback) {
   }).toArray(callback);
 };
 
+
+/**
+ * Not in use currently.
+ */
 exports.remove = function(_id, callback) {
   let db = dbClient.get();
   db.collection(COLLECTION).removeOne({
@@ -74,15 +154,4 @@ exports.remove = function(_id, callback) {
   }, function(err, result) {
     callback(err);
   });
-};
-
-exports.updateOne = function(_id, updateData, callback) {
-  let db = dbClient.get();
-  if (updateData.state == 'success' || updateData.state == 'failure') {
-    updateData.finishedAt = getTimeStamp();
-  }
-
-  db.collection(COLLECTION).updateOne({
-    _id: ObjectId(_id)
-  }, {$set: updateData}, callback);
 };

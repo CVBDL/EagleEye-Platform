@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @overview
  *
@@ -18,75 +16,60 @@
  * ["node-schedule" document]{@link https://github.com/node-schedule/node-schedule}
  */
 
-let ObjectId = require('mongodb').ObjectId;
-const child_process = require('child_process');
-const schedule = require("node-schedule");
+'use strict';
 
-const jobs = require('../modules/jobs');
-const logs = require('../modules/logs');
+let ObjectId = require('mongodb').ObjectId;
+let child_process = require('child_process');
+let schedule = require("node-schedule");
+
+let jobs = require('../modules/jobs');
+let logs = require('../modules/logs');
 
 // save running job configuration and handlers
 let stat = {};
 
-function enableJob(id, jobName, cronString, para) {
-  stat[id] = {
-    jobId: id,
-    jobName: jobName,
-    time: cronString,
-    enable: true,
-    para: para,
-    job: schedule.scheduleJob(cronString, function() {
-      logs.create({
-        "_id": id,
-        "name": jobName,
-        "expression": cronString,
-        "command": para,
-      }, function(err, result) {
-        console.log(para + " --task-id=\"" + result._id + "\"");
-        child_process.exec(para + " --task-id=\"" + result._id + "\"", function(err, stdout, stderr) {
-          if (err) {
-            logs.updateOne(result._id, {
-              'state': 'failure',
-              'errorMessage': err.message
-            }, (err, result) => (err || result));
-          } else {
-            console.log(stdout);
-          }
-        });
-      })
-    })
-  };
-}
 
 /**
+ * Run a job immediately.
+ *
  * @method
+ * @param {Object} job An job config object.
  */
 exports.runJob = function runJob(job) {
   let command = job.command;
 
-  logs.create({
-    "_id": job._id,
-    "name": job.name,
-    "expression": job.expression,
-    "command": job.command,
-  }, function (err, result) {
-    console.log(para + " --task-id=\"" + result._id + "\"");
+  logs
+    .create({
+      "_id": job._id,
+      "name": job.name,
+      "expression": job.expression,
+      "command": job.command,
+    })
+    .then(function (log) {
+      let fullCommand = command + " --task-id=\"" + log._id + "\"";
+      console.log(fullCommand);
 
-    child_process.exec(command + " --task-id=\"" + result._id + "\"", function (err, stdout, stderr) {
-      if (err) {
-        logs.updateOne(result._id, {
-          'state': 'failure',
-          'errorMessage': err.message
-        }, (err, result) => (err || result));
-      } else {
-        console.log(stdout);
-      }
+      child_process.exec(fullCommand, function (err, stdout, stderr) {
+        if (err) {
+          logs.updateOne(log._id, {
+            state: 'failure',
+            message: err.message
+          });
+
+        } else {
+          console.log(stdout);
+        }
+      });
     });
-  });
-}
+};
+
 
 /**
+ * Schedule a new job.
+ *
  * @method
+ * @param {Object} job An job config object.
+ * @returns {Object} Job scheduling status.
  */
 exports.schedule = function schedule(job) {
   let id = job._id;
@@ -105,8 +88,12 @@ exports.schedule = function schedule(job) {
   return stat[id];
 };
 
+
 /**
+ * Cancel and delete an scheduled job.
+ *
  * @method
+ * @param {string} id Job id.
  */
 exports.deleteJob = function deleteJob(id) {
   if (stat[id] && stat[id].jobHandler) {
@@ -116,49 +103,17 @@ exports.deleteJob = function deleteJob(id) {
   delete stat[id];
 };
 
-
-exports.enableJob = function(id) {
-  if (stat[id]) {
-    enableJob(id, stat[id].jobName, stat[id].time, stat[id].para);
-  }
-};
-
-exports.disableJob = function(id) {
-  if (stat[id]) {
-    stat[id].job.cancel();
-    stat[id].enable = false;
-    jobs.enableOneJob(id, false);
-  }
-};
-
-exports.updateJob = function(id, jobName, cronString, enable, para, callback) {
-  if (stat[id].job) {
-    stat[id].job.cancel();
-  }
-  stat[id].jobName = jobName;
-  stat[id].time = cronString;
-  stat[id].para = para;
-  if (enable) {
-    exports.enableJob(id);
-  } else {
-    exports.disableJob(id);
-  }
-
-  jobs.updateOneJob(id, jobName, cronString, enable, para, callback);
-};
-
 /**
+ * Start all scheduled jobs.
+ *
  * @method
  */
-exports.initSchedueJobs = function initSchedueJobs() {
-  jobs
-    .all()
+exports.start = function initSchedueJobs() {
+  jobs.all()
     .then(function (jobs) {
-      jobs.forEach(function (item, index, array) {
-        enableJob(item._id, item.jobName, item.scheduleTimeString, item.para);
-
-        if (!item.enable) {
-          exports.disableJob(item._id);
+      jobs.forEach(function (job) {
+        if (job.enabled === true) {
+          exports.schedule(job);
         }
       });
 

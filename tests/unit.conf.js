@@ -1,7 +1,5 @@
 'use strict';
 
-let process = require('process');
-
 // environment settings
 process.env.NODE_ENV = 'testing';
 process.env.EAGLEEYE_PLATFORM_PORT = 3000;

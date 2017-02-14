@@ -1,7 +1,6 @@
 'use strict';
 
 let os      = require('os');
-let process = require('process');
 
 let validators = require('./validators');
 

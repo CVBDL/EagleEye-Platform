@@ -41,7 +41,6 @@ exports.create = function(data) {
   
   // chart schema
   let schema = {
-    _id: null,
     chartType: null,
     description: null,
     datatable: null,
@@ -53,10 +52,6 @@ exports.create = function(data) {
     updatedAt: null
   };
 
-  const id = ObjectId();
-
-  schema._id = id;
-
   if (validators.isValidChartType(data.chartType)) {
     schema.chartType = data.chartType;
 
@@ -64,9 +59,9 @@ exports.create = function(data) {
     return Promise.reject({
       status: 422,
       errors: [{
-        "resource": "chart",
-        "field": "chartType",
-        "code": "missing_field"
+        resource: "chart",
+        field: "chartType",
+        code: "missing_field"
       }]
     });
   }
@@ -105,7 +100,7 @@ exports.create = function(data) {
  *                               query (useful for pagination).
  * @param {number} [params.limit] Sets the limit of documents returned in
  *                                the query.
- * @returns {Promise} A promise will be resolved with new created chart.
+ * @returns {Promise} A promise will be resolved with charts list.
  *                    Or rejected with defined errors.
  */
 exports.all = function(params) {

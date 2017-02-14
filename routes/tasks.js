@@ -4,7 +4,7 @@ let express = require('express');
 
 let errHandler = require('../helpers/error-handlers');
 let utils = require('../helpers/utils');
-let jobLog = require('../modules/scheduleJobLogModule');
+let jobLog = require('../modules/logs');
 
 let router = module.exports = express.Router();
 

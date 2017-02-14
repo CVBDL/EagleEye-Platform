@@ -31,7 +31,7 @@
     <Compile Include="helpers\column-types.js" />
     <Compile Include="helpers\dbHelper.js" />
     <Compile Include="helpers\error-handlers.js" />
-    <Compile Include="helpers\scheduleJobHelper.js" />
+    <Compile Include="helpers\scheduler.js" />
     <Compile Include="helpers\utils.js" />
     <Compile Include="helpers\validators.js" />
     <Compile Include="modules\chart-sets.js" />
@@ -39,14 +39,13 @@
     <Compile Include="modules\charts.js" />
     <Compile Include="modules\data-table.js" />
     <Compile Include="modules\file-parser.js" />
-    <Compile Include="modules\scheduleJobLogModule.js" />
-    <Compile Include="modules\scheduleJobModule.js" />
+    <Compile Include="modules\logs.js" />
+    <Compile Include="modules\jobs.js" />
     <Compile Include="modules\statistics.js" />
     <Compile Include="routes\chart-sets.js" />
     <Compile Include="routes\charts.js" />
     <Compile Include="routes\jobs.js" />
     <Compile Include="routes\root-endpoint.js" />
-    <Compile Include="routes\schedule-management.js" />
     <Compile Include="routes\search.js" />
     <Compile Include="routes\tasks.js" />
     <Compile Include="tests\app.spec.js" />

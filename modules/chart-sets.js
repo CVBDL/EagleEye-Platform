@@ -34,18 +34,13 @@ exports.create = function (data) {
 
   // chart set schema
   let schema = {
-    _id: null,
     title: null,
     description: null,
     charts: [],
     createdAt: null,
     updatedAt: null
   };
-
-  const id = ObjectId();
-
-  schema._id = id;
-
+  
   if (validators.isString(data.title)) {
     schema.title = data.title;
   }

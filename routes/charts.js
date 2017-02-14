@@ -26,8 +26,8 @@ router.route('/charts')
   // create a chart
   .post(function postCharts(req, res, next) {
     charts.create(req.body)
-      .then(function (result) {
-        res.send(result);
+      .then(function (doc) {
+        res.send(doc);
       })
       .catch(next);
   })

@@ -15,7 +15,6 @@ let chartSetsApi = require('./routes/chart-sets');
 let jobsApi = require('./routes/jobs');
 let tasksApi = require('./routes/tasks');
 let searchApi = require('./routes/search');
-let scheduleTask = require('./routes/schedule-management');
 
 let app = express();
 
@@ -48,7 +47,6 @@ app.use('/api/v1', rootApi);
 app.use('/api/v1', chartsApi);
 app.use('/api/v1', chartSetsApi);
 app.use('/api/v1', jobsApi);
-app.use('/schedule', scheduleTask);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

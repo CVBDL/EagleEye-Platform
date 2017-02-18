@@ -32,8 +32,15 @@ let createIndex = function(keyObject, collection) {
 
 exports.connect = function(mode, done) {
   if (state.db != null) return done();
-
-  let uri = mode === exports.MODE_TEST ? TEST_URI : PROD_URI;
+  
+  let uri = '';
+  if (mode === exports.MODE_DEV) {
+    uri = DEV_URI;
+  } else if (mode === exports.MODE_TEST) {
+    uri = TEST_URI;
+  } else {
+    uri = PROD_URI;
+  }
 
   MongoClient.connect(uri, function(err, db) {
     if (err) return done(err);

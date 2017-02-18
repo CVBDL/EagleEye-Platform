@@ -48,16 +48,16 @@ exports.connect = function(mode, done) {
     state.db = db;
     state.mode = mode;
 
-    exports.DATABASE_KEYS.forEach(function(keyObject) {
-      let collection = db.collection[keyObject.COLLECTION];
-      if (!collection) {
-        db.createCollection(keyObject.COLLECTION, function(err, collection) {
-          createIndex(keyObject, collection);
-        });
-      } else {
-        createIndex(keyObject, collection);
-      }
-    });
+    //exports.DATABASE_KEYS.forEach(function(keyObject) {
+    //  let collection = db.collection[keyObject.COLLECTION];
+    //  if (!collection) {
+    //    db.createCollection(keyObject.COLLECTION, function(err, collection) {
+    //      createIndex(keyObject, collection);
+    //    });
+    //  } else {
+    //    createIndex(keyObject, collection);
+    //  }
+    //});
     done();
   })
 };

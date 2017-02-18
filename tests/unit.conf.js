@@ -1,10 +1,10 @@
 'use strict';
 
 // environment settings
-process.env.NODE_ENV = 'testing';
+process.env.NODE_ENV = 'test';
 process.env.EAGLEEYE_PLATFORM_PORT = 3000;
 process.env.DB_CONNECTION_URI =
-  'mongodb://localhost:27017/testEagleEyeDatabase';
+  'mongodb://localhost:27017/eagleeye_test';
 
 // modules
 require('./modules/charts.spec');

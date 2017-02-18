@@ -1,14 +1,16 @@
 'use strict';
 
 let MongoClient = require('mongodb').MongoClient;
-let async = require('async');
 let ObjectId = require('mongodb').ObjectId;
+let async = require('async');
 
-const PRODUCTION_URI = 'mongodb://localhost:27017/eagleEyeDatabase';
-const TEST_URI = 'mongodb://localhost:27017/testEagleEyeDatabase';
+const PROD_URI = 'mongodb://localhost:27017/eagleeye_prod';
+const TEST_URI = 'mongodb://localhost:27017/eagleeye_test';
+const DEV_URI  = 'mongodb://localhost:27017/eagleeye_dev';
 
 exports.MODE_PRODUCTION = 'mode_production';
 exports.MODE_TEST = 'mode_test';
+exports.MODE_DEV = 'mode_dev';
 
 exports.DATABASE_KEYS = [];
 
@@ -31,7 +33,7 @@ let createIndex = function(keyObject, collection) {
 exports.connect = function(mode, done) {
   if (state.db != null) return done();
 
-  let uri = mode === exports.MODE_TEST ? TEST_URI : PRODUCTION_URI;
+  let uri = mode === exports.MODE_TEST ? TEST_URI : PROD_URI;
 
   MongoClient.connect(uri, function(err, db) {
     if (err) return done(err);
@@ -53,8 +55,20 @@ exports.connect = function(mode, done) {
   })
 };
 
-exports.get = function() {
-  exports.connect(exports.MODE_PRODUCTION, (err => err && console.log("Missing database connection.")));
+exports.get = function () {
+  let mode = '';
+  switch (process.env.NODE_ENV) {
+    case 'test':
+      mode = exports.MODE_TEST;
+      break;
+    case 'development':
+      mode = exports.MODE_DEV;
+      break;
+    default:
+      mode = exports.MODE_PRODUCTION;
+  }
+
+  exports.connect(mode, (err => err && console.log("Missing database connection.")));
   return state.db;
 };
 

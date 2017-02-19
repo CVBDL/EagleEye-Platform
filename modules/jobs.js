@@ -7,7 +7,7 @@ let dbClient = require('../helpers/dbHelper');
 let validators = require('../helpers/validators');
 let scheduler = require('../helpers/scheduler');
 
-const COLLECTION = "schedule_job_collection";
+const COLLECTION = dbClient.COLLECTION.JOB;
 
 let getTimeStamp = () => new Date().valueOf();
 
@@ -23,8 +23,6 @@ let getTimeStamp = () => new Date().valueOf();
  *                    Or rejected with defined errors.
  */
 exports.create = function (data) {
-  let db = dbClient.get();
-
   let schema = {
     _id: ObjectId(),
     name: null,
@@ -77,12 +75,15 @@ exports.create = function (data) {
     });
 
   } else {
-    return db
-      .collection(COLLECTION)
-      .insertOne(schema)
-      .then(function (result) {
-        return result.ops[0];
-      });
+    return dbClient.connect().then(function (db) {
+
+      return db
+        .collection(COLLECTION)
+        .insertOne(schema)
+        .then(function (result) {
+          return result.ops[0];
+        });
+    });
   }
 };
 
@@ -95,12 +96,13 @@ exports.create = function (data) {
  *                    Or rejected with defined errors.
  */
 exports.all = function() {
-  let db = dbClient.get();
-  
-  return db
-    .collection(COLLECTION)
-    .find({})
-    .toArray();
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .find({})
+      .toArray();
+  });
 };
 
 
@@ -124,22 +126,23 @@ exports.getOne = function (id) {
     });
   }
 
-  let db = dbClient.get();
+  return dbClient.connect().then(function (db) {
 
-  return db
-    .collection(COLLECTION)
-    .find({ "_id": ObjectId(id) })
-    .limit(1)
-    .toArray()
-    .then(function (docs) {
-      if (!docs.length) {
-        return Promise.reject({
-          status: 404
-        });
-      } else {
-        return docs;
-      }
-    });
+    return db
+      .collection(COLLECTION)
+      .find({ "_id": ObjectId(id) })
+      .limit(1)
+      .toArray()
+      .then(function (docs) {
+        if (!docs.length) {
+          return Promise.reject({
+            status: 404
+          });
+        } else {
+          return docs;
+        }
+      });
+  });
 };
 
 
@@ -166,38 +169,43 @@ exports.deleteOne = function (id) {
   // cancel and delete the scheduled job
   scheduler.deleteJob(id);
 
-  let db = dbClient.get();
+  return dbClient.connect().then(function (db) {
 
-  return db
-    .collection(COLLECTION)
-    .find({ "_id": ObjectId(id) })
-    .limit(1)
-    .toArray()
-    .then(function (docs) {
-      if (!docs.length) {
-        return Promise.reject({
-          status: 404
-        });
-      } else {
-        return docs;
-      }
-    });
+    return db
+      .collection(COLLECTION)
+      .find({ "_id": ObjectId(id) })
+      .limit(1)
+      .toArray()
+      .then(function (docs) {
+        if (!docs.length) {
+          return Promise.reject({
+            status: 404
+          });
+        } else {
+          return docs;
+        }
+      });
+  });
 };
 
 
 /**
  * Not in use currently.
  */
-exports.enableOneJob = function(_id, enable, callback) {
-  let db = dbClient.get();
-  db.collection(COLLECTION).findOneAndUpdate({
-    _id: ObjectId(_id)
-  }, {
-    $set: {
-      enable: enable,
-      lastUpdateTimestamp: getTimeStamp()
-    }
-  }, callback);
+exports.enableOneJob = function(_id, enable) {
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .findOneAndUpdate({
+        _id: ObjectId(_id)
+      }, {
+        $set: {
+          enable: enable,
+          lastUpdateTimestamp: getTimeStamp()
+        }
+      });
+  });
 };
 
 
@@ -205,16 +213,20 @@ exports.enableOneJob = function(_id, enable, callback) {
  * Not in use currently.
  */
 exports.updateOneJob = function(_id, jobName, time, enable, para, callback) {
-  let db = dbClient.get();
-  db.collection(COLLECTION).findOneAndUpdate({
-    _id: ObjectId(_id)
-  }, {
-    $set: {
-      jobName: jobName,
-      scheduleTimeString: time,
-      enable: enable,
-      para: para,
-      lastUpdateTimestamp: getTimeStamp()
-    }
-  }, callback);
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .findOneAndUpdate({
+        _id: ObjectId(_id)
+      }, {
+        $set: {
+          jobName: jobName,
+          scheduleTimeString: time,
+          enable: enable,
+          para: para,
+          lastUpdateTimestamp: getTimeStamp()
+        }
+      });
+  });
 };

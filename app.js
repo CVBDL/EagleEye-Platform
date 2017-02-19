@@ -18,7 +18,7 @@ let jobsApi = require('./routes/jobs');
 let tasksApi = require('./routes/tasks');
 let searchApi = require('./routes/search');
 
-let app = express();
+let app = module.exports = express();
 
 // CORS support
 app.use(function(req, res, next) {
@@ -72,10 +72,7 @@ if (app.get('env') === 'development') {
 // error handler
 app.use(errorHandler);
 
-db.get();
-
-setTimeout(function () {
-  scheduler.start();
-}, 3000);
-
-module.exports = app;
+db.connect()
+  .then(function () {
+    scheduler.start();
+  });

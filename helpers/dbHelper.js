@@ -2,131 +2,199 @@
 
 let MongoClient = require('mongodb').MongoClient;
 let ObjectId = require('mongodb').ObjectId;
-let async = require('async');
-
-const PROD_URI = 'mongodb://localhost:27017/eagleeye_prod';
-const TEST_URI = 'mongodb://localhost:27017/eagleeye_test';
-const DEV_URI  = 'mongodb://localhost:27017/eagleeye_dev';
-
-exports.MODE_PRODUCTION = 'mode_production';
-exports.MODE_TEST = 'mode_test';
-exports.MODE_DEV = 'mode_dev';
-
-exports.DATABASE_KEYS = [];
+let Promise = require('es6-promise').Promise;
 
 let state = {
   db: null,
   mode: null
 };
 
-let createIndex = function(keyObject, collection) {
-  keyObject.keys.forEach(function(keyConfig) {
-    if (keyConfig.option) {
-      collection.createIndex(keyConfig.key, keyConfig.option);
+/**
+ * MongoDB connection string URIs.
+ *
+ * @constant {Object}
+ */
+const ENV_2_CONNECTION_URI = {
+  production: 'mongodb://localhost:27017/eagleeye_prod',
+  development: 'mongodb://localhost:27017/eagleeye_dev',
+  test: 'mongodb://localhost:27017/eagleeye_test'
+};
 
-    } else {
-      collection.createIndex(keyConfig);
-    }
+/**
+ * Define all database collections.
+ *
+ * @constant {Object}
+ */
+const COLLECTION = exports.COLLECTION = {
+  CHART: 'chart',
+  CHART_SET: 'chart_set',
+  JOB: 'job',
+  TASK: 'task'
+};
+
+
+/**
+ * MongoDB indexes settings.
+ * Make use of 'text' indexes to support query functionality.
+ * {@link https://docs.mongodb.com/manual/indexes/}
+ * {@link https://docs.mongodb.com/manual/core/index-text/#index-feature-text}
+ *
+ * @constant {Object}
+ */
+const INDEX = {
+  CHART: {
+    "options.title": "text",
+    "description": "text"
+  },
+  CHART_SET: {
+    title: "text",
+    description: "text"
+  }
+};
+
+/**
+ * Create all required collections.
+ *
+ * @method
+ * @param {Db} The connected database.
+ * @returns {Promise} A promise resolve with Db.
+ */
+let createCollections = function createCollections(db) {
+  let promiseList = [];
+
+  Object.keys(COLLECTION).forEach(function (key) {
+    let collectionName = COLLECTION[key];
+    let resultPromise = db.createCollection(collectionName);
+
+    promiseList.push(resultPromise);
   });
+
+  return Promise
+    .all(promiseList)
+    .then(function () {
+      return db;
+    });
 };
 
-exports.connect = function(mode, done) {
-  if (state.db != null) return done();
-  
-  let uri = '';
-  if (mode === exports.MODE_DEV) {
-    uri = DEV_URI;
-  } else if (mode === exports.MODE_TEST) {
-    uri = TEST_URI;
-  } else {
-    uri = PROD_URI;
+/**
+ * Create database indexes.
+ *
+ * @method
+ * @param {Db} The connected database.
+ * @returns {Promise} A promise resolve with Db.
+ */
+let createIndexes = function createIndexes(db) {
+  let promiseList = [];
+
+  Object.keys(INDEX).forEach(function (key) {
+    let collectionName = COLLECTION[key];
+    let indexSpec = INDEX[key];
+    let resultPromise = db.createIndex(collectionName, indexSpec);
+
+    promiseList.push(resultPromise);
+  });
+
+  return Promise
+    .all(promiseList)
+    .then(function () {
+      return db;
+    });
+};
+
+/**
+ * Connect to database.
+ *
+ * @method
+ * @returns {Promise}
+ */
+exports.connect = function connect() {
+  let mode = process.env.NODE_ENV;
+  let uri = ENV_2_CONNECTION_URI[mode]
+            ? ENV_2_CONNECTION_URI[mode]
+            : ENV_2_CONNECTION_URI['development'];
+
+  if (state.db && state.mode === mode) {
+    return Promise.resolve(state.db);
   }
 
-  MongoClient.connect(uri, function(err, db) {
-    if (err) return done(err);
-
-    state.db = db;
-    state.mode = mode;
-
-    //exports.DATABASE_KEYS.forEach(function(keyObject) {
-    //  let collection = db.collection[keyObject.COLLECTION];
-    //  if (!collection) {
-    //    db.createCollection(keyObject.COLLECTION, function(err, collection) {
-    //      createIndex(keyObject, collection);
-    //    });
-    //  } else {
-    //    createIndex(keyObject, collection);
-    //  }
-    //});
-    done();
-  })
-};
-
-exports.get = function () {
-  let mode = '';
-  switch (process.env.NODE_ENV) {
-    case 'test':
-      mode = exports.MODE_TEST;
-      break;
-    case 'development':
-      mode = exports.MODE_DEV;
-      break;
-    default:
-      mode = exports.MODE_PRODUCTION;
-  }
-
-  exports.connect(mode, (err => err && console.log("Missing database connection.")));
-  return state.db;
-};
-
-exports.close = function(done) {
-  if (state.db) {
-    state.db.close(function(err, result) {
-      state.db = null;
-      state.mode = null;
-      done(err);
+  return MongoClient.connect(uri)
+    .then(createCollections)
+    .then(createIndexes)
+    .then(function (db) {
+      state.db = db;
+      state.mode = mode;
     })
-  }
+    .catch(function (err) {
+      console.log(err);
+    });
 };
 
-exports.drop = function(done) {
-  if (!state.db) return done();
-
-  // This is faster then dropping the database
-  state.db.collections(function(err, collections) {
-    async.each(collections, function(collection, cb) {
-      if (collection.collectionName.indexOf('system') === 0) {
-        return cb();
-      }
-      collection.remove(cb);
-    }, done);
-  });
-};
-
-exports.fixtures = function(data, done) {
+/**
+ * Drop collections.  For test use.
+ *
+ * @method
+ * @returns {Promise}
+ */
+exports.drop = function drop() {
   let db = state.db;
 
   if (!db) {
-    return done(new Error('Missing database connection.'));
+    return Promise.reject('No database connection.');
   }
 
-  let names = Object.keys(data.collections);
+  let promiseList = [];
 
-  async.each(names, function(name, cb) {
-    db.createCollection(name, function(err, collection) {
-      if (err) return cb(err);
+  Object.keys(COLLECTION).forEach(function (key) {
+    let collectionName = COLLECTION[key];
+    let resultPromise = db.collection(collectionName).deleteMany({});
 
-      data.collections[name].forEach(function (item) {
-        if (item._id) {
-          item._id = ObjectId(item._id);
-        }
+    promiseList.push(resultPromise);
+  });
 
-        if (item.job && item.job._id) {
-          item.job._id = ObjectId(item.job._id);
-        }
-      });
+  return Promise
+    .all(promiseList)
+    .then(function () {
+      return db;
+    });
+};
 
-      collection.insertMany(data.collections[name], cb);
-    })
-  }, done);
+/**
+ * Drop collections.  For test use.
+ *
+ * @method
+ * @param {Object} data Fixtures data.
+ * @returns {Promise} A promise resolve with Db.
+ */
+exports.fixtures = function(data) {
+  let db = state.db;
+
+  if (!db) {
+    return Promise.reject('No database connection.');
+  }
+
+  let promiseList = [];
+  let collectionNames = Object.keys(data.collections);
+
+  collectionNames.forEach(function (collectionName) {
+    let records = data.collections[collectionName];
+
+    records.forEach(function (record) {
+      if (record._id) {
+        record._id = ObjectId(record._id);
+      }
+
+      if (record.job && record.job._id) {
+        record.job._id = ObjectId(record.job._id);
+      }
+    });
+
+    let resultPromise = db.collection(collectionName).insertMany(records);
+    promiseList.push(resultPromise);
+  });
+
+  return Promise
+    .all(promiseList)
+    .then(function () {
+      return db;
+    });
 };

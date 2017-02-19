@@ -1,6 +1,6 @@
 {
   "collections": {
-    "chart_collection": [
+    "chart": [
       {
         "_id": "588edf0a60514b38109e7f41",
         "chartType": "LineChart",

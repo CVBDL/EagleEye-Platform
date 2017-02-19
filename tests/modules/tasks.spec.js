@@ -8,26 +8,24 @@ let dbClient = require('../../helpers/dbHelper');
 let tasks = require('../../modules/tasks');
 let tasksFixtures = require('../fixtures/tasks');
 
-const TASK_COLLECTION_NAME = "task_collection";
+const TASK_COLLECTION = dbClient.COLLECTION.TASK;
+
 const DB_CONNECTION_URI = process.env.DB_CONNECTION_URI;
 
 
 describe('modules: tasks', function () {
 
-  before(function (done) {
-    dbClient.connect(dbClient.MODE_TEST, done);
+  before(function () {
+    return dbClient.connect();
   });
 
-  beforeEach(function (done) {
-    dbClient.drop(function (err) {
-      if (err) {
-        return done(err);
-      }
-
-      dbClient.fixtures(tasksFixtures, done);
-    });
+  beforeEach(function () {
+    return dbClient.drop()
+      .then(function () {
+        return dbClient.fixtures(tasksFixtures);
+      });
   });
-
+  
 
   describe('create', function () {
 
@@ -84,7 +82,7 @@ describe('modules: tasks', function () {
   describe('updateOne', function () {
 
     it('should update a task', function (done) {
-      let fixture = tasksFixtures.collections.task_collection[0];
+      let fixture = tasksFixtures.collections.task[0];
       let id = fixture._id;
       let data = {
         state: 'success'
@@ -151,7 +149,7 @@ describe('modules: tasks', function () {
     });
 
     it('should return error 422 when passing invalid state', function (done) {
-      let fixture = tasksFixtures.collections.task_collection[0];
+      let fixture = tasksFixtures.collections.task[0];
       let id = fixture._id;
       let data = {
         state: 'unknown'
@@ -178,7 +176,7 @@ describe('modules: tasks', function () {
   describe('getAllByJobId', function () {
 
     it('should get all tasks by job id', function (done) {
-      let fixtures = tasksFixtures.collections.task_collection;
+      let fixtures = tasksFixtures.collections.task;
       let fixture = fixtures[0];
       let jobId = fixture.job._id;
       let count = fixtures.filter(function (item) {

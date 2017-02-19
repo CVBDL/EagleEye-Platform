@@ -4,7 +4,7 @@ let ObjectId = require('mongodb').ObjectId;
 
 let dbClient = require('../helpers/dbHelper');
 
-const COLLECTION = "task_collection";
+const COLLECTION = dbClient.COLLECTION.TASK;
 
 
 /**
@@ -26,9 +26,7 @@ exports.create = function (job) {
       }]
     });
   }
-
-  let db = dbClient.get();
-
+  
   let task = {
     job: job,
     state: 'running',
@@ -36,12 +34,15 @@ exports.create = function (job) {
     finishedAt: null
   };
 
-  return db
-    .collection(COLLECTION)
-    .insertOne(task)
-    .then(function (result) {
-      return result.ops[0];
-    });
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .insertOne(task)
+      .then(function (result) {
+        return result.ops[0];
+      });
+  });
 };
 
 
@@ -83,29 +84,30 @@ exports.updateOne = function (id, data) {
     });
   }
 
-  let db = dbClient.get();
+  return dbClient.connect().then(function (db) {
 
-  return db
-    .collection(COLLECTION)
-    .findOneAndUpdate({
-      _id: ObjectId(id)
-    }, {
-      $set: updateData
-    }, {
-      // When false, returns the updated document rather than
-      // the original.
-      returnOriginal: false
-    })
-    .then(function (result) {
-      if (result.value === null) {
-        return Promise.reject({
-          status: 404
-        });
+    return db
+      .collection(COLLECTION)
+      .findOneAndUpdate({
+        _id: ObjectId(id)
+      }, {
+        $set: updateData
+      }, {
+        // When false, returns the updated document rather than
+        // the original.
+        returnOriginal: false
+      })
+      .then(function (result) {
+        if (result.value === null) {
+          return Promise.reject({
+            status: 404
+          });
 
-      } else {
-        return result.value;
-      }
-    });
+        } else {
+          return result.value;
+        }
+      });
+  });
 };
 
 
@@ -129,41 +131,51 @@ exports.getAllByJobId = function (jobId) {
     });
   }
 
-  let db = dbClient.get();
+  return dbClient.connect().then(function (db) {
 
-  return db
-    .collection(COLLECTION)
-    .find({ 'job._id': ObjectId(jobId) })
-    .toArray()
-    .then(function (docs) {
-      if (!docs.length) {
-        return Promise.reject({
-          status: 404
-        });
-      } else {
-        return docs;
-      }
-    });
+    return db
+      .collection(COLLECTION)
+      .find({ 'job._id': ObjectId(jobId) })
+      .toArray()
+      .then(function (docs) {
+        if (!docs.length) {
+          return Promise.reject({
+            status: 404
+          });
+        } else {
+          return docs;
+        }
+      });
+  });
 };
 
 
 /**
  * Not in use currently.
  */
-exports.all = function(callback) {
-  let db = dbClient.get();
-  db.collection(COLLECTION).find().toArray(callback);
+exports.all = function() {
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .find({})
+      .toArray();
+  });
 };
 
 
 /**
  * Not in use currently.
  */
-exports.getOne = function(_id, callback) {
-  let db = dbClient.get();
-  db.collection(COLLECTION).find({
-    "_id": ObjectId(_id)
-  }).toArray(callback);
+exports.getOne = function(_id) {
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .find({
+        "_id": ObjectId(_id)
+      }).toArray();
+  });
 };
 
 
@@ -171,10 +183,12 @@ exports.getOne = function(_id, callback) {
  * Not in use currently.
  */
 exports.remove = function(_id, callback) {
-  let db = dbClient.get();
-  db.collection(COLLECTION).removeOne({
-    _id: ObjectId(_id)
-  }, function(err, result) {
-    callback(err);
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .removeOne({
+        _id: ObjectId(_id)
+      });
   });
 };

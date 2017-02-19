@@ -7,7 +7,7 @@ let should = require('should');
 
 let app = require('../../app');
 let dbClient = require('../../helpers/dbHelper');
-let fixtures = require('../fixtures/charts');
+let chartsFixtures = require('../fixtures/charts');
 
 let chart = {
   "chartType": "LineChart",
@@ -40,18 +40,15 @@ let chart = {
 
 describe('routes: /charts', function () {
 
-  before(function (done) {
-    dbClient.connect(dbClient.MODE_TEST, done);
+  before(function () {
+    return dbClient.connect();
   });
 
-  beforeEach(function (done) {
-    dbClient.drop(function (err) {
-      if (err) {
-        return done(err);
-      }
-
-      dbClient.fixtures(fixtures, done);
-    });
+  beforeEach(function () {
+    return dbClient.drop()
+      .then(function () {
+        return dbClient.fixtures(chartsFixtures);
+      });
   });
 
 
@@ -62,6 +59,8 @@ describe('routes: /charts', function () {
   describe('GET /api/v1/charts', function () {
 
     it('should fetch all charts', function (done) {
+      let fixtures = chartsFixtures.collections.chart;
+
       request(app)
         .get('/api/v1/charts')
         .send()
@@ -69,12 +68,14 @@ describe('routes: /charts', function () {
         .expect(function (res) {
           res.body.length
             .should
-            .eql(fixtures.collections.chart_collection.length);
+            .eql(fixtures.length);
         })
         .expect(200, done);
     });
 
     it('should sort list by "createdAt" in "asc" desc by default', function (done) {
+      let fixtures = chartsFixtures.collections.chart;
+
       request(app)
         .get('/api/v1/charts')
         .send()
@@ -82,7 +83,7 @@ describe('routes: /charts', function () {
         .expect(function (res) {
           res.body.length
             .should
-            .eql(fixtures.collections.chart_collection.length);
+            .eql(fixtures.length);
 
           let chartA = res.body[0];
           let chartB = res.body[1];
@@ -95,6 +96,8 @@ describe('routes: /charts', function () {
     });
 
     it('should sort list by "updatedAt" in "asc" order', function (done) {
+      let fixtures = chartsFixtures.collections.chart;
+
       request(app)
         .get('/api/v1/charts?sort=updatedAt&order=asc')
         .send()
@@ -102,7 +105,7 @@ describe('routes: /charts', function () {
         .expect(function (res) {
           res.body.length
             .should
-            .eql(fixtures.collections.chart_collection.length);
+            .eql(fixtures.length);
 
           let chartA = res.body[0];
           let chartB = res.body[1];
@@ -128,6 +131,9 @@ describe('routes: /charts', function () {
     });
 
     it('should set start and limit on result list', function (done) {
+      let fixtures = chartsFixtures.collections.chart;
+      let fixture = fixtures[1];
+
       request(app)
         .get('/api/v1/charts?start=2&limit=1')
         .send()
@@ -139,12 +145,15 @@ describe('routes: /charts', function () {
 
           res.body[0]._id
             .should
-            .eql(fixtures.collections.chart_collection[1]._id.toHexString())
+            .eql(fixture._id.toHexString())
         })
         .expect(200, done);
     });
 
     it('should set a query on result list', function (done) {
+      let fixtures = chartsFixtures.collections.chart;
+      let fixture = fixtures[1];
+
       request(app)
         .get('/api/v1/charts?q=Work')
         .send()
@@ -156,7 +165,7 @@ describe('routes: /charts', function () {
 
           res.body[0]._id
             .should
-            .eql(fixtures.collections.chart_collection[1]._id.toHexString())
+            .eql(fixture._id.toHexString())
         })
         .expect(200, done);
     });
@@ -301,18 +310,15 @@ describe('routes: /charts', function () {
 
 describe('routes: /charts/:id', function () {
 
-  before(function (done) {
-    dbClient.connect(dbClient.MODE_TEST, done);
+  before(function () {
+    return dbClient.connect();
   });
 
-  beforeEach(function (done) {
-    dbClient.drop(function (err) {
-      if (err) {
-        return done(err);
-      }
-
-      dbClient.fixtures(fixtures, done);
-    });
+  beforeEach(function () {
+    return dbClient.drop()
+      .then(function () {
+        return dbClient.fixtures(chartsFixtures);
+      });
   });
 
 
@@ -323,7 +329,7 @@ describe('routes: /charts/:id', function () {
   describe('GET /api/v1/charts/:_id', function () {
 
     it('should fetch a single chart with the given id', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let id = chartsFixtures.collections.chart[0]._id.toHexString();
 
       request(app)
         .get(`/api/v1/charts/${id}`)
@@ -377,7 +383,8 @@ describe('routes: /charts/:id', function () {
   describe('POST /api/v1/charts/:_id', function () {
 
     it('should update chart description', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let fixture = chartsFixtures.collections.chart[0];
+      let id = fixture._id.toHexString();
       let chart = {
         description: 'Year 2016',
         options: {
@@ -403,15 +410,15 @@ describe('routes: /charts/:id', function () {
           // should leave unchanged
           res.body.chartType
             .should
-            .eql(fixtures.collections.chart_collection[0].chartType);
+            .eql(fixture.chartType);
 
           res.body.browserDownloadUrl
             .should
-            .eql(fixtures.collections.chart_collection[0].browserDownloadUrl);
+            .eql(fixture.browserDownloadUrl);
 
           res.body.createdAt
             .should
-            .eql(fixtures.collections.chart_collection[0].createdAt);
+            .eql(fixture.createdAt);
 
           // should update `updatedAt` field
           // use 1 second threshold
@@ -423,9 +430,10 @@ describe('routes: /charts/:id', function () {
     });
 
     it('should not update fields other than description, datatable or options',
-      function (done) {
+        function (done) {
 
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let fixture = chartsFixtures.collections.chart[0];
+      let id = fixture._id.toHexString();
       let chart = {
         custom: 'Some custom data'
       };
@@ -442,15 +450,15 @@ describe('routes: /charts/:id', function () {
           // should leave unchanged
           res.body.chartType
             .should
-            .eql(fixtures.collections.chart_collection[0].chartType);
+            .eql(fixture.chartType);
 
           res.body.browserDownloadUrl
             .should
-            .eql(fixtures.collections.chart_collection[0].browserDownloadUrl);
+            .eql(fixture.browserDownloadUrl);
 
           res.body.createdAt
             .should
-            .eql(fixtures.collections.chart_collection[0].createdAt);
+            .eql(fixture.createdAt);
 
           // should update `updatedAt` field
           // use 1 second threshold
@@ -511,7 +519,7 @@ describe('routes: /charts/:id', function () {
   describe('DELETE /api/v1/charts/:_id', function () {
 
     it('should delete a chart by _id', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let id = chartsFixtures.collections.chart[0]._id.toHexString();
 
       request(app)
         .delete(`/api/v1/charts/${id}`)
@@ -561,7 +569,7 @@ describe('routes: /charts/:id', function () {
   describe('PUT /api/v1/charts/:id/datatable', function () {
 
     it('should replace chart data table', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let id = chartsFixtures.collections.chart[0]._id.toHexString();
       let datatable = chart.datatable;
       
       request(app)
@@ -620,7 +628,8 @@ describe('routes: /charts/:id', function () {
   describe('GET /api/v1/charts/:id/datatable', function () {
 
     it('should get chart data table in JSON format', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let fixture = chartsFixtures.collections.chart[0];
+      let id = fixture._id.toHexString();
 
       request(app)
         .get(`/api/v1/charts/${id}/datatable?format=json`)
@@ -629,13 +638,13 @@ describe('routes: /charts/:id', function () {
         .expect(function (res) {
           res.body
             .should
-            .eql(fixtures.collections.chart_collection[0].datatable);
+            .eql(fixture.datatable);
         })
         .expect(200, done);
     });
 
     it('should download chart data table to a .xlsx file', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let id = chartsFixtures.collections.chart[0]._id.toHexString();
 
       request(app)
         .get(`/api/v1/charts/${id}/datatable?format=xlsx`)
@@ -647,7 +656,7 @@ describe('routes: /charts/:id', function () {
     });
 
     it('should response 404 if cannot process format query parameter', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let id = chartsFixtures.collections.chart[0]._id.toHexString();
 
       request(app)
         .get(`/api/v1/charts/${id}/datatable?format=unknown`)
@@ -667,7 +676,7 @@ describe('routes: /charts/:id', function () {
   describe('POST /api/v1/charts/:id/assets', function () {
 
     it('should process uploaded .xlsx file', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let id = chartsFixtures.collections.chart[0]._id.toHexString();
       let filename = 'datatable0.xlsx';
       let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', filename);
 
@@ -767,7 +776,7 @@ describe('routes: /charts/:id', function () {
     });
 
     it('should process uploaded .png file', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let id = chartsFixtures.collections.chart[0]._id.toHexString();
       let filename = 'sample.png';
       let testPNGFile = path.join(__dirname, '..', 'fixtures', filename);
 
@@ -799,7 +808,7 @@ describe('routes: /charts/:id', function () {
     });
 
     it('should process uploaded .jpg file', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let id = chartsFixtures.collections.chart[0]._id.toHexString();
       let filename = 'sample.jpg';
       let testPNGFile = path.join(__dirname, '..', 'fixtures', filename);
 
@@ -831,7 +840,7 @@ describe('routes: /charts/:id', function () {
     });
 
     it('should process uploaded .jpeg file', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let id = chartsFixtures.collections.chart[0]._id.toHexString();
       let filename = 'sample.jpeg';
       let testPNGFile = path.join(__dirname, '..', 'fixtures', filename);
 
@@ -863,7 +872,7 @@ describe('routes: /charts/:id', function () {
     });
 
     it('should ignore unexpected form fields', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let id = chartsFixtures.collections.chart[0]._id.toHexString();
       let filename = 'datatable0.xlsx';
       let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', filename);
 
@@ -964,7 +973,7 @@ describe('routes: /charts/:id', function () {
     });
 
     it('should response 400 if uploaded an invalid file format', function (done) {
-      let id = fixtures.collections.chart_collection[0]._id.toHexString();
+      let id = chartsFixtures.collections.chart[0]._id.toHexString();
       let filename = 'charts.json';
       let invalidFile = path.join(__dirname, '..', 'fixtures', filename);
 

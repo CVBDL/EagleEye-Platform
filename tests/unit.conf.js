@@ -21,6 +21,7 @@ require('./helpers/error-handlers.spec');
 // routes
 require('./routes/charts.spec');
 require('./routes/chart-sets.spec');
+require('./routes/tasks.spec');
 require('./routes/root-endpoint.spec');
 
 // main

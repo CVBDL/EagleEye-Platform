@@ -54,6 +54,8 @@ const INDEX = {
 
 /**
  * Create all required collections.
+ * MongoDB creates a collection implicitly when the collection is
+ * first referenced in a command.
  *
  * @method
  * @param {Db} The connected database.
@@ -126,8 +128,6 @@ exports.connect = function connect() {
   if (state.db && state.mode === mode) {
     return Promise.resolve(state.db);
   }
-
-  console.log('==> Connecting to: ' + uri);
 
   return MongoClient.connect(uri)
     //.then(createCollections)

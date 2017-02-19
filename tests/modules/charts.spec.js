@@ -328,13 +328,12 @@ describe('modules: charts', function () {
 
   describe('getOne', function () {
 
-    it('should select one chart by _id', function (done) {
-      let id = chartsFixtures.collections.chart[0]._id;
+    it('should select one chart by id', function (done) {
+      let fixture = chartsFixtures.collections.chart[0];
+      let id = fixture._id;
 
       charts.getOne(id)
         .then(function (docs) {
-          let fixture = chartsFixtures.collections.chart[0];
-
           docs.length.should.eql(1);
 
           docs[0]._id

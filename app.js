@@ -49,6 +49,7 @@ app.use('/api/v1', rootApi);
 app.use('/api/v1', chartsApi);
 app.use('/api/v1', chartSetsApi);
 app.use('/api/v1', jobsApi);
+app.use('/api/v1', tasksApi);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

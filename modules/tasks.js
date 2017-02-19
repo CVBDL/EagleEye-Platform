@@ -167,14 +167,34 @@ exports.all = function() {
 /**
  * Not in use currently.
  */
-exports.getOne = function(_id) {
+exports.getOne = function (id) {
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "task",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
   return dbClient.connect().then(function (db) {
 
     return db
       .collection(COLLECTION)
-      .find({
-        "_id": ObjectId(_id)
-      }).toArray();
+      .find({ _id: ObjectId(id) })
+      .limit(1)
+      .toArray()
+      .then(function (docs) {
+        if (!docs.length) {
+          return Promise.reject({
+            status: 404
+          });
+        } else {
+          return docs;
+        }
+      });
   });
 };
 
@@ -182,13 +202,32 @@ exports.getOne = function(_id) {
 /**
  * Not in use currently.
  */
-exports.remove = function(_id, callback) {
+exports.deleteOne = function (id) {
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "task",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
   return dbClient.connect().then(function (db) {
 
     return db
       .collection(COLLECTION)
-      .removeOne({
-        _id: ObjectId(_id)
+      .deleteOne({ _id: ObjectId(id) })
+      .then(function (result) {
+        if (result.deletedCount === 0) {
+          return Promise.reject({
+            status: 404
+          });
+
+        } else {
+          return result;
+        }
       });
   });
 };

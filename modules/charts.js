@@ -144,7 +144,7 @@ exports.getOne = function(id) {
 
     return db
       .collection(COLLECTION)
-      .find({ "_id": ObjectId(id) })
+      .find({ _id: ObjectId(id) })
       .limit(1)
       .toArray()
       .then(function (docs) {

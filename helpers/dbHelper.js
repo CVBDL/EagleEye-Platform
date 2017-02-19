@@ -73,6 +73,11 @@ let createCollections = function createCollections(db) {
     .all(promiseList)
     .then(function () {
       return db;
+    })
+    .catch(function (err) {
+      console.log('Failed to create collections. ');
+      console.trace(err);
+      return Promise.reject(err);
     });
 };
 
@@ -98,6 +103,11 @@ let createIndexes = function createIndexes(db) {
     .all(promiseList)
     .then(function () {
       return db;
+    })
+    .catch(function (err) {
+      console.log('Failed to create indexes. ');
+      console.trace(err);
+      return Promise.reject(err);
     });
 };
 
@@ -117,6 +127,8 @@ exports.connect = function connect() {
     return Promise.resolve(state.db);
   }
 
+  console.log('==> Connecting to: ' + uri);
+
   return MongoClient.connect(uri)
     .then(createCollections)
     .then(createIndexes)
@@ -125,7 +137,9 @@ exports.connect = function connect() {
       state.mode = mode;
     })
     .catch(function (err) {
-      console.log(err);
+      console.log('Failed to connect to database. ');
+      console.trace(err);
+      return Promise.reject(err);
     });
 };
 
@@ -155,6 +169,11 @@ exports.drop = function drop() {
     .all(promiseList)
     .then(function () {
       return db;
+    })
+    .catch(function (err) {
+      console.log('Failed to drop database. ');
+      console.trace(err);
+      return Promise.reject(err);
     });
 };
 
@@ -196,5 +215,10 @@ exports.fixtures = function(data) {
     .all(promiseList)
     .then(function () {
       return db;
+    })
+    .catch(function (err) {
+      console.log('Failed to add fixtures. ');
+      console.trace(err);
+      return Promise.reject(err);
     });
 };

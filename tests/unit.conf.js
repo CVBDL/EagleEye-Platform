@@ -9,9 +9,10 @@ process.env.DB_CONNECTION_URI =
 // modules
 require('./modules/charts.spec');
 require('./modules/chart-sets.spec');
+require('./modules/tasks.spec');
+require('./modules/jobs.spec');
 require('./modules/file-parser.spec');
 require('./modules/data-table.spec');
-require('./modules/tasks.spec');
 
 // helpers
 require('./helpers/column-types.spec');
@@ -22,6 +23,7 @@ require('./helpers/error-handlers.spec');
 require('./routes/charts.spec');
 require('./routes/chart-sets.spec');
 require('./routes/tasks.spec');
+require('./routes/jobs.spec');
 require('./routes/root-endpoint.spec');
 
 // main

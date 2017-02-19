@@ -190,13 +190,18 @@ describe('modules: charts', function () {
   describe('all', function () {
 
     it('should list all charts', function (done) {
-      charts.all().then(function (docs) {
-        docs.length
-          .should
-          .eql(chartsFixtures.collections.chart.length);
+      charts.all()
+        .then(function (docs) {
+          docs.length
+            .should
+            .eql(chartsFixtures.collections.chart.length);
 
-        done();
-      });
+          done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
     });
 
     it('should sort on "createdAt" field in "asc" order', function (done) {
@@ -450,9 +455,9 @@ describe('modules: charts', function () {
     });
 
     it('should return error 404 if no record to delete', function (done) {
-      let nonexistentId = '000000000000000000000000';
+      let id = '000000000000000000000000';
 
-      charts.deleteOne(nonexistentId)
+      charts.deleteOne(id)
         .should
         .rejectedWith({
           status: 404

@@ -9,8 +9,6 @@ let scheduler = require('../helpers/scheduler');
 
 const COLLECTION = dbClient.COLLECTION.JOB;
 
-let getTimeStamp = () => new Date().valueOf();
-
 
 /**
  * Create a new job.
@@ -40,7 +38,7 @@ exports.create = function (data) {
   requiredFields.forEach(function (field) {
     if (validators.isUndefined(data[field])) {
       errors.push({
-        resource: "jobs",
+        resource: "job",
         field: field,
         code: "missing_field"
       });
@@ -50,7 +48,7 @@ exports.create = function (data) {
     }
   });
 
-  if (!errors.length) {
+  if (errors.length) {
     return Promise.reject({
       status: 422,
       errors: errors
@@ -173,59 +171,15 @@ exports.deleteOne = function (id) {
 
     return db
       .collection(COLLECTION)
-      .find({ "_id": ObjectId(id) })
-      .limit(1)
-      .toArray()
-      .then(function (docs) {
-        if (!docs.length) {
+      .deleteOne({ _id: ObjectId(id) })
+      .then(function (result) {
+        if (result.deletedCount === 0) {
           return Promise.reject({
             status: 404
           });
+
         } else {
-          return docs;
-        }
-      });
-  });
-};
-
-
-/**
- * Not in use currently.
- */
-exports.enableOneJob = function(_id, enable) {
-  return dbClient.connect().then(function (db) {
-
-    return db
-      .collection(COLLECTION)
-      .findOneAndUpdate({
-        _id: ObjectId(_id)
-      }, {
-        $set: {
-          enable: enable,
-          lastUpdateTimestamp: getTimeStamp()
-        }
-      });
-  });
-};
-
-
-/**
- * Not in use currently.
- */
-exports.updateOneJob = function(_id, jobName, time, enable, para, callback) {
-  return dbClient.connect().then(function (db) {
-
-    return db
-      .collection(COLLECTION)
-      .findOneAndUpdate({
-        _id: ObjectId(_id)
-      }, {
-        $set: {
-          jobName: jobName,
-          scheduleTimeString: time,
-          enable: enable,
-          para: para,
-          lastUpdateTimestamp: getTimeStamp()
+          return result;
         }
       });
   });

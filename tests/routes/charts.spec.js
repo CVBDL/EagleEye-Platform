@@ -528,10 +528,10 @@ describe('routes: /charts/:id', function () {
     });
 
     it('should response 422 if sent invalid id', function (done) {
-      let invalidId = '0';
+      let id = '0';
 
       request(app)
-        .delete(`/api/v1/charts/${invalidId}`)
+        .delete(`/api/v1/charts/${id}`)
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {
@@ -548,10 +548,10 @@ describe('routes: /charts/:id', function () {
     });
 
     it('should response 404 cannot find the record', function (done) {
-      let nonexistentId = '000000000000000000000000';
+      let id = '000000000000000000000000';
 
       request(app)
-        .delete(`/api/v1/charts/${nonexistentId}`)
+        .delete(`/api/v1/charts/${id}`)
         .send()
         .expect('Content-Type', /json/)
         .expect(function (res) {

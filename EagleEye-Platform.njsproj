@@ -53,9 +53,11 @@
     <Compile Include="tests\helpers\utils.spec.js" />
     <Compile Include="tests\modules\data-table.spec.js" />
     <Compile Include="tests\modules\file-parser.spec.js" />
+    <Compile Include="tests\modules\jobs.spec.js" />
     <Compile Include="tests\modules\tasks.spec.js" />
     <Compile Include="tests\routes\chart-sets.spec.js" />
     <Compile Include="tests\routes\charts.spec.js" />
+    <Compile Include="tests\routes\jobs.spec.js" />
     <Compile Include="tests\routes\root-endpoint.spec.js" />
     <Compile Include="tests\routes\tasks.spec.js" />
     <Compile Include="tests\unit.conf.js" />
@@ -73,6 +75,7 @@
     <Compile Include="tests\helpers\column-types.spec.js" />
     <Compile Include="tests\modules\charts.spec.js" />
     <Compile Include="tests\modules\chart-sets.spec.js" />
+    <Content Include="tests\fixtures\jobs.json" />
     <Content Include="tests\fixtures\sample.jpeg" />
     <Content Include="tests\fixtures\sample.jpg" />
     <Content Include="tests\fixtures\sample.png" />

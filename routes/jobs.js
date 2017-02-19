@@ -14,7 +14,7 @@ let router = module.exports = express.Router();
 router.route('/jobs')
 
   // list all jobs
-  .get(function getJobs(req, res) {
+  .get(function getJobs(req, res, next) {
     jobs.all()
       .then(function (docs) {
         res.send(docs);
@@ -23,7 +23,7 @@ router.route('/jobs')
   })
 
   // create a job
-  .post(function postJobs(req, res) {
+  .post(function postJobs(req, res, next) {
     jobs.create(req.body)
       .then(function (doc) {
         res.send(doc);
@@ -36,7 +36,7 @@ router.route('/jobs')
 router.route('/jobs/:id')
 
   // get a single job
-  .get(function getJob(req, res) {
+  .get(function getJob(req, res, next) {
     let id = req.params.id;
 
     jobs.getOne(id)
@@ -47,7 +47,7 @@ router.route('/jobs/:id')
   })
 
   // delete a job
-  .delete(function deleteJob(req, res) {
+  .delete(function deleteJob(req, res, next) {
     let id = req.params.id;
 
     jobs.deleteOne(id)
@@ -62,7 +62,7 @@ router.route('/jobs/:id')
 router.route('/jobs/:id/restart')
 
   // restart a job
-  .put(function putJobRestart(req, res) {
+  .put(function putJobRestart(req, res, next) {
     let id = req.params.id;
 
     jobs.getOne(id)
@@ -80,7 +80,7 @@ router.route('/jobs/:id/restart')
 router.route('/jobs/:id/tasks')
 
   // read a job's all tasks
-  .get(function getJobTasks(req, res) {
+  .get(function getJobTasks(req, res, next) {
     let id = req.params.id;
 
     tasks.getAllByJobId(id)

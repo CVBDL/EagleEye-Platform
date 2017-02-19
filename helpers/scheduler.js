@@ -65,7 +65,7 @@ exports.runJob = function runJob(job) {
  * @param {Object} job An job config object.
  * @returns {Object} Job scheduling status.
  */
-exports.schedule = function schedule(job) {
+exports.schedule = function (job) {
   let id = job._id;
 
   // convert ObjectId
@@ -75,7 +75,7 @@ exports.schedule = function schedule(job) {
 
   stat[id] = {};
   stat[id].job = job;
-  stat[id].jobHandler = schedule.scheduleJob(expression, function () {
+  stat[id].jobHandler = schedule.scheduleJob(job.expression, function () {
     exports.runJob(job);
   });
 

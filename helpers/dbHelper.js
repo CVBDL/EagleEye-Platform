@@ -130,7 +130,7 @@ exports.connect = function connect() {
   console.log('==> Connecting to: ' + uri);
 
   return MongoClient.connect(uri)
-    .then(createCollections)
+    //.then(createCollections)
     .then(createIndexes)
     .then(function (db) {
       state.db = db;

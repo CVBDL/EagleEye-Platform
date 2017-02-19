@@ -1,10 +1,7 @@
 'use strict';
 
-let Exceljs = require('exceljs');
 let MongoClient = require('mongodb').MongoClient
 let ObjectId = require('mongodb').ObjectId;
-let os = require('os');
-let path = require('path');
 let should = require('should');
 
 let dbClient = require('../../helpers/dbHelper');
@@ -12,110 +9,77 @@ let charts = require('../../modules/charts');
 let chartsFixtures = require('../fixtures/charts');
 let chartSetsFixtures = require('../fixtures/chart-sets');
 
-const CHART_COLLECTION_NAME = "chart_collection";
-const CHART_SET_COLLECTION_NAME = "chart_set_collection";
+const CHART_COLLECTION = dbClient.COLLECTION.CHART;
+const CHART_SET_COLLECTION = dbClient.COLLECTION.CHART_SET;
+
 const DB_CONNECTION_URI = process.env.DB_CONNECTION_URI;
 
 
 describe('modules: charts', function () {
 
-  before(function (done) {
-    dbClient.connect(dbClient.MODE_TEST, done);
+  before(function () {
+    return dbClient.connect();
   });
-
-  beforeEach(function (done) {
-    dbClient.drop(function (err) {
-      if (err) {
-        return done(err);
-      }
-
-      dbClient.fixtures(chartsFixtures, done);
-    });
-  });
-
-  let chart;
-
-  beforeEach(function() {
-    chart = {
-      "chartType": "BarChart",
-      "description": "This is a bar chart.",
-      "options": {
-        "title": "Population"
-      },
-      "datatable": {
-        "cols": [
-          {
-            "label": "City",
-            "type": "string"
-          },
-          {
-            "label": "2010 Population",
-            "type": "number"
-          },
-          {
-            "label": "2000 Population",
-            "type": "number"
-          }
-        ],
-        "rows": [
-          {
-            "c": [
-              { "v": "New York City, NY" },
-              { "v": 8175000 },
-              { "v": 8008000 }
-            ]
-          },
-          {
-            "c": [
-              { "v": "Los Angeles, CA" },
-              { "v": 3792000 },
-              { "v": 3694000 }
-            ]
-          },
-          {
-            "c": [
-              { "v": "Chicago, IL" },
-              { "v": 2695000 },
-              { "v": 2896000 }
-            ]
-          },
-          {
-            "c": [
-              { "v": "Houston, TX" },
-              { "v": 2099000 },
-              { "v": 1953000 }
-            ]
-          },
-          {
-            "c": [
-              { "v": "Philadelphia, PA" },
-              { "v": 1526000 },
-              { "v": 1517000 }
-            ]
-          }
-        ]
-      }
-    }
+  
+  beforeEach(function () {
+    return dbClient.drop()
+      .then(function () {
+        return dbClient.fixtures(chartsFixtures);
+      })
+      .then(function () {
+        return dbClient.fixtures(chartSetsFixtures);
+      });
   });
 
 
   describe('create', function () {
 
     it('should be able to create a chart', function (done) {
-      charts.create(chart)
-        .then(function (newChart) {
-          newChart.createdAt.should.be.type('string');
-          newChart.updatedAt.should.be.type('string');
-          newChart.createdAt.should.eql(newChart.updatedAt);
+      let chart = {
+        "chartType": "BarChart",
+        "description": "This is a bar chart.",
+        "options": {
+          "title": "Population"
+        },
+        "datatable": {
+          "cols": [
+            { "label": "City", "type": "string" },
+            { "label": "2010 Population", "type": "number" },
+            { "label": "2000 Population", "type": "number" }
+          ],
+          "rows": [
+            {
+              "c": [
+                { "v": "New York City, NY" },
+                { "v": 8175000 },
+                { "v": 8008000 }
+              ]
+            },
+            {
+              "c": [
+                { "v": "Los Angeles, CA" },
+                { "v": 3792000 },
+                { "v": 3694000 }
+              ]
+            }
+          ]
+        }
+      }
 
-          newChart.chartType.should.eql(chart.chartType);
-          newChart.description.should.eql(chart.description);
-          newChart.options.should.eql(chart.options);
-          newChart.datatable.should.eql(chart.datatable);
+      charts.create(chart)
+        .then(function (createdChart) {
+          createdChart.createdAt.should.be.type('string');
+          createdChart.updatedAt.should.be.type('string');
+          createdChart.createdAt.should.eql(createdChart.updatedAt);
+
+          createdChart.chartType.should.eql(chart.chartType);
+          createdChart.description.should.eql(chart.description);
+          createdChart.options.should.eql(chart.options);
+          createdChart.datatable.should.eql(chart.datatable);
         
           return MongoClient.connect(DB_CONNECTION_URI)
             .then(function (db) {
-              let collection = db.collection(CHART_COLLECTION_NAME);
+              let collection = db.collection(CHART_COLLECTION);
 
               return collection
                 .find({})
@@ -126,13 +90,13 @@ describe('modules: charts', function () {
                   try {
                     docs.length
                       .should
-                      .eql(chartsFixtures.collections.chart_collection.length + 1);
+                      .eql(chartsFixtures.collections.chart.length + 1);
 
                     let found = false;
 
                     docs.forEach(function (chart) {
                       if (ObjectId(chart._id).toHexString() ===
-                        ObjectId(newChart._id).toHexString()) {
+                        ObjectId(createdChart._id).toHexString()) {
 
                         found = true;
                       }
@@ -159,16 +123,20 @@ describe('modules: charts', function () {
         chartType: 'unknown'
       };
       
-      charts.create(chart).should.be.rejectedWith({
-        status: 422,
-        errors: [{
-          "resource": "chart",
-          "field": "chartType",
-          "code": "missing_field"
-        }]
-      });
-
-      done();
+      charts.create(chart)
+        .should
+        .rejectedWith({
+          status: 422,
+          errors: [{
+            "resource": "chart",
+            "field": "chartType",
+            "code": "missing_field"
+          }]
+        })
+        .then(function () {
+          done();
+        })
+        .catch(done);
     });
 
     it('should contain all chart fields', function (done) {
@@ -222,13 +190,18 @@ describe('modules: charts', function () {
   describe('all', function () {
 
     it('should list all charts', function (done) {
-      charts.all().then(function (docs) {
-        docs.length
-          .should
-          .eql(chartsFixtures.collections.chart_collection.length);
+      charts.all()
+        .then(function (docs) {
+          docs.length
+            .should
+            .eql(chartsFixtures.collections.chart.length);
 
-        done();
-      });
+          done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
     });
 
     it('should sort on "createdAt" field in "asc" order', function (done) {
@@ -296,11 +269,11 @@ describe('modules: charts', function () {
       }).then(function (docs) {
         docs.length
           .should
-          .eql(chartsFixtures.collections.chart_collection.length - 1);
+          .eql(chartsFixtures.collections.chart.length - 1);
 
         docs[0]._id
           .should
-          .eql(chartsFixtures.collections.chart_collection[1]._id);
+          .eql(chartsFixtures.collections.chart[1]._id);
 
         done();
 
@@ -318,7 +291,7 @@ describe('modules: charts', function () {
         docs.length.should.eql(1);
         docs[0]._id
           .should
-          .eql(chartsFixtures.collections.chart_collection[0]._id);
+          .eql(chartsFixtures.collections.chart[0]._id);
 
         done();
 
@@ -360,13 +333,12 @@ describe('modules: charts', function () {
 
   describe('getOne', function () {
 
-    it('should select one chart by _id', function (done) {
-      let id = chartsFixtures.collections.chart_collection[0]._id;
+    it('should select one chart by id', function (done) {
+      let fixture = chartsFixtures.collections.chart[0];
+      let id = fixture._id;
 
       charts.getOne(id)
         .then(function (docs) {
-          let fixture = chartsFixtures.collections.chart_collection[0];
-
           docs.length.should.eql(1);
 
           docs[0]._id
@@ -432,7 +404,7 @@ describe('modules: charts', function () {
         .then(function (result) {
           result.deletedCount
             .should
-            .eql(chartsFixtures.collections.chart_collection.length);
+            .eql(chartsFixtures.collections.chart.length);
 
           done();
 
@@ -445,13 +417,9 @@ describe('modules: charts', function () {
 
 
   describe('deleteOne', function () {
-
-    beforeEach(function (done) {
-      dbClient.fixtures(chartSetsFixtures, done);
-    });
-
+    
     it('should delete one chart with given id', function (done) {
-      let id = chartsFixtures.collections.chart_collection[0]._id;
+      let id = chartsFixtures.collections.chart[0]._id;
 
       charts.deleteOne(id)
         .then(function (result) {
@@ -460,7 +428,7 @@ describe('modules: charts', function () {
           // delete it in chart sets
           return MongoClient.connect(DB_CONNECTION_URI)
             .then(function (db) {
-              let collection = db.collection(CHART_SET_COLLECTION_NAME);
+              let collection = db.collection(CHART_SET_COLLECTION);
 
               return collection
                 .find({
@@ -487,9 +455,9 @@ describe('modules: charts', function () {
     });
 
     it('should return error 404 if no record to delete', function (done) {
-      let nonexistentId = '000000000000000000000000';
+      let id = '000000000000000000000000';
 
-      charts.deleteOne(nonexistentId)
+      charts.deleteOne(id)
         .should
         .rejectedWith({
           status: 404
@@ -505,7 +473,7 @@ describe('modules: charts', function () {
   describe('updateOne', function () {
 
     it('should update an existing chart', function (done) {
-      let id = chartsFixtures.collections.chart_collection[0]._id;
+      let id = chartsFixtures.collections.chart[0]._id;
       let data = {
         description: 'An updated description.',
         datatable: null,

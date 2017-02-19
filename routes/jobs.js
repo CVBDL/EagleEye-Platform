@@ -2,9 +2,10 @@
 
 let express = require('express');
 
-let scheduleJobHelper = require('../helpers/scheduleJobHelper');
-let utils             = require('../helpers/utils');
-let jobLog            = require('../modules/scheduleJobLogModule');
+let scheduler = require('../helpers/scheduler');
+let utils = require('../helpers/utils');
+let jobs = require('../modules/jobs');
+let tasks = require('../modules/tasks');
 
 let router = module.exports = express.Router();
 
@@ -12,38 +13,22 @@ let router = module.exports = express.Router();
 // define routes
 router.route('/jobs')
 
-  // read all jobs
-  .get(function getJobs(req, res) {
-    res.send(scheduleJobHelper.getJobList().map(function (x) {
-      return {
-        "_id": x.id,
-        "name": x.name,
-        "expression": x.time,
-        "command": x.para,
-        "enabled": x.enable,
-      };
-    }));
+  // list all jobs
+  .get(function getJobs(req, res, next) {
+    jobs.all()
+      .then(function (docs) {
+        res.send(docs);
+      })
+      .catch(next);
   })
 
   // create a job
-  .post(function postJobs(req, res) {
-    let job = req.body.name;
-    let time = req.body.expression;
-    let para = req.body.command;
-
-    scheduleJobHelper.createJob(job, time, para, (err, doc) => {
-      if (err) {
-        res.status(500).send('');
-      } else {
-        res.send({
-          '_id': doc._id,
-          'name': doc.jobName,
-          'expression': doc.scheduleTimeString,
-          'command': doc.para,
-          'enable': doc.enable
-        });
-      }
-    });
+  .post(function postJobs(req, res, next) {
+    jobs.create(req.body)
+      .then(function (doc) {
+        res.send(doc);
+      })
+      .catch(next);
   });
 
 
@@ -51,28 +36,25 @@ router.route('/jobs')
 router.route('/jobs/:id')
 
   // get a single job
-  .get(function getJob(req, res) {
+  .get(function getJob(req, res, next) {
     let id = req.params.id;
-    let job = scheduleJobHelper.getJob(id);
 
-    if (job) {
-      res.send(job);
-    } else {
-      res.send({errorMessage: 'Job ' + id  + ' not found'});
-    }
+    jobs.getOne(id)
+      .then(function (docs) {
+        res.send(docs[0]);
+      })
+      .catch(next);
   })
 
   // delete a job
-  .delete(function deleteJob(req, res) {
+  .delete(function deleteJob(req, res, next) {
     let id = req.params.id;
 
-    scheduleJobHelper.removeJob(id, function(err, result) {
-      if (err) {
-        res.status(500).send('');
-      } else {
-        res.send('ok');
-      }
-    });
+    jobs.deleteOne(id)
+      .then(function () {
+        res.status(204).send();
+      })
+      .catch(next);
   });
 
 
@@ -80,11 +62,17 @@ router.route('/jobs/:id')
 router.route('/jobs/:id/restart')
 
   // restart a job
-  .put(function putJobRestart(req, res) {
+  .put(function putJobRestart(req, res, next) {
     let id = req.params.id;
 
-    scheduleJobHelper.triggerJob(id);
-    res.send('ok');
+    jobs.getOne(id)
+      .then(function (docs) {
+        scheduler.runJob(docs[0]);
+      })
+      .then(function () {
+        res.status(204).send();
+      })
+      .catch(next);
   });
 
 
@@ -92,11 +80,13 @@ router.route('/jobs/:id/restart')
 router.route('/jobs/:id/tasks')
 
   // read a job's all tasks
-  .get(function getJobTasks(req, res) {
+  .get(function getJobTasks(req, res, next) {
     let id = req.params.id;
 
-    jobLog.getLogsByJob(id, function(err, docs) {
-      docs.sort((a, b) => b.finishedAt - a.finishedAt);
-      res.send(docs);
-    });
+    tasks.getAllByJobId(id)
+      .then(function (docs) {
+        docs.sort((a, b) => b.finishedAt - a.finishedAt);
+        res.send(docs);
+      })
+      .catch(next);
   });

@@ -31,7 +31,7 @@
     <Compile Include="helpers\column-types.js" />
     <Compile Include="helpers\dbHelper.js" />
     <Compile Include="helpers\error-handlers.js" />
-    <Compile Include="helpers\scheduleJobHelper.js" />
+    <Compile Include="helpers\scheduler.js" />
     <Compile Include="helpers\utils.js" />
     <Compile Include="helpers\validators.js" />
     <Compile Include="modules\chart-sets.js" />
@@ -39,14 +39,12 @@
     <Compile Include="modules\charts.js" />
     <Compile Include="modules\data-table.js" />
     <Compile Include="modules\file-parser.js" />
-    <Compile Include="modules\scheduleJobLogModule.js" />
-    <Compile Include="modules\scheduleJobModule.js" />
-    <Compile Include="modules\statistics.js" />
+    <Compile Include="modules\tasks.js" />
+    <Compile Include="modules\jobs.js" />
     <Compile Include="routes\chart-sets.js" />
     <Compile Include="routes\charts.js" />
     <Compile Include="routes\jobs.js" />
     <Compile Include="routes\root-endpoint.js" />
-    <Compile Include="routes\schedule-management.js" />
     <Compile Include="routes\search.js" />
     <Compile Include="routes\tasks.js" />
     <Compile Include="tests\app.spec.js" />
@@ -55,9 +53,13 @@
     <Compile Include="tests\helpers\utils.spec.js" />
     <Compile Include="tests\modules\data-table.spec.js" />
     <Compile Include="tests\modules\file-parser.spec.js" />
+    <Compile Include="tests\modules\jobs.spec.js" />
+    <Compile Include="tests\modules\tasks.spec.js" />
     <Compile Include="tests\routes\chart-sets.spec.js" />
     <Compile Include="tests\routes\charts.spec.js" />
+    <Compile Include="tests\routes\jobs.spec.js" />
     <Compile Include="tests\routes\root-endpoint.spec.js" />
+    <Compile Include="tests\routes\tasks.spec.js" />
     <Compile Include="tests\unit.conf.js" />
     <Compile Include="bin\start-express.js" />
     <Compile Include="bin\terminate-express.js" />
@@ -73,9 +75,11 @@
     <Compile Include="tests\helpers\column-types.spec.js" />
     <Compile Include="tests\modules\charts.spec.js" />
     <Compile Include="tests\modules\chart-sets.spec.js" />
+    <Content Include="tests\fixtures\jobs.json" />
     <Content Include="tests\fixtures\sample.jpeg" />
     <Content Include="tests\fixtures\sample.jpg" />
     <Content Include="tests\fixtures\sample.png" />
+    <Content Include="tests\fixtures\tasks.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin" />

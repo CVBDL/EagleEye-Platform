@@ -6,45 +6,39 @@ let should = require('should');
 
 let dbClient = require('../../helpers/dbHelper');
 let chartSets = require('../../modules/chart-sets');
-let chartSetsFixtures = require('../fixtures/chart-sets');
 let chartsFixtures = require('../fixtures/charts');
+let chartSetsFixtures = require('../fixtures/chart-sets');
 
+const CHART_SET_COLLECTION = dbClient.COLLECTION.CHART_SET;
 const DB_CONNECTION_URI = process.env.DB_CONNECTION_URI;
-const CHART_SET_COLLECTION_NAME = "chart_set_collection";
 
 
 describe('modules: chart-sets', function() {
 
-  before(function (done) {
-    dbClient.connect(dbClient.MODE_TEST, done);
+  before(function () {
+    return dbClient.connect();
   });
-
-  beforeEach(function (done) {
-    dbClient.drop(function (err) {
-      if (err) {
-        return done(err);
-      }
-
-      dbClient.fixtures(chartSetsFixtures, function () {
-        dbClient.fixtures(chartsFixtures, done);
-      });
-    });
-  });
-
-  let chartSet;
 
   beforeEach(function () {
-    chartSet = {
-      "title": "Chart set sample",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-      "charts": ["588edf0a60514b38109e7f41", "588edf0a60514b38109e7f43"]
-    };
+    return dbClient.drop()
+      .then(function () {
+        return dbClient.fixtures(chartsFixtures);
+      })
+      .then(function () {
+        return dbClient.fixtures(chartSetsFixtures);
+      });
   });
 
 
   describe('create', function () {
 
     it('should be able to create a chart set', function (done) {
+      let chartSet = {
+        "title": "Chart set sample",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
+        "charts": ["588edf0a60514b38109e7f41", "588edf0a60514b38109e7f43"]
+      };
+
       chartSets.create(chartSet).then(function (newChartSet) {
 
         newChartSet.createdAt.should.be.type('string');
@@ -56,12 +50,12 @@ describe('modules: chart-sets', function() {
         newChartSet.charts.should.eql(chartSet.charts);
 
         MongoClient.connect(DB_CONNECTION_URI).then(function (db) {
-          let collection = db.collection(CHART_SET_COLLECTION_NAME);
+          let collection = db.collection(CHART_SET_COLLECTION);
 
           collection.find({}).toArray().then(function (docs) {
             docs.length
               .should
-              .eql(chartSetsFixtures.collections.chart_set_collection.length + 1);
+              .eql(chartSetsFixtures.collections.chart_set.length + 1);
             
             let found = false;
             
@@ -128,7 +122,7 @@ describe('modules: chart-sets', function() {
       chartSets.all().then(function (docs) {
         docs.length
           .should
-          .eql(chartSetsFixtures.collections.chart_set_collection.length);
+          .eql(chartSetsFixtures.collections.chart_set.length);
 
         done();
       });
@@ -199,11 +193,11 @@ describe('modules: chart-sets', function() {
       }).then(function (docs) {
         docs.length
           .should
-          .eql(chartSetsFixtures.collections.chart_set_collection.length - 1);
+          .eql(chartSetsFixtures.collections.chart_set.length - 1);
 
         docs[0]._id
           .should
-          .eql(chartSetsFixtures.collections.chart_set_collection[1]._id);
+          .eql(chartSetsFixtures.collections.chart_set[1]._id);
 
         done();
 
@@ -265,11 +259,11 @@ describe('modules: chart-sets', function() {
   describe('getOne', function () {
 
     it('should select one chart set by _id', function (done) {
-      let id = chartSetsFixtures.collections.chart_set_collection[0]._id;
+      let id = chartSetsFixtures.collections.chart_set[0]._id;
 
       chartSets.getOne(id)
         .then(function (doc) {
-          let fixture = chartSetsFixtures.collections.chart_set_collection[0];
+          let fixture = chartSetsFixtures.collections.chart_set[0];
 
           doc._id
             .should
@@ -290,19 +284,19 @@ describe('modules: chart-sets', function() {
     });
 
     it('should contain chart details in "charts" field', function (done) {
-      let id = chartSetsFixtures.collections.chart_set_collection[0]._id;
+      let id = chartSetsFixtures.collections.chart_set[0]._id;
 
       chartSets.getOne(id)
         .then(function (doc) {
-          let fixture = chartSetsFixtures.collections.chart_set_collection[0];
+          let fixture = chartSetsFixtures.collections.chart_set[0];
 
           doc.charts[0]
             .should
-            .eql(chartsFixtures.collections.chart_collection[0])
+            .eql(chartsFixtures.collections.chart[0])
 
           doc.charts[1]
             .should
-            .eql(chartsFixtures.collections.chart_collection[2])
+            .eql(chartsFixtures.collections.chart[2])
 
           done();
 
@@ -362,7 +356,7 @@ describe('modules: chart-sets', function() {
         .then(function (result) {
           result.deletedCount
             .should
-            .eql(chartSetsFixtures.collections.chart_set_collection.length);
+            .eql(chartSetsFixtures.collections.chart_set.length);
 
           done();
 
@@ -377,7 +371,7 @@ describe('modules: chart-sets', function() {
   describe('deleteOne', function () {
 
     it('should delete one chart set with given id', function (done) {
-      let id = chartSetsFixtures.collections.chart_set_collection[0]._id;
+      let id = chartSetsFixtures.collections.chart_set[0]._id;
 
       chartSets.deleteOne(id)
         .then(function (result) {
@@ -409,7 +403,7 @@ describe('modules: chart-sets', function() {
   describe('updateOne', function () {
 
     it('should update an existing chart set', function (done) {
-      let id = chartSetsFixtures.collections.chart_set_collection[0]._id;
+      let id = chartSetsFixtures.collections.chart_set[0]._id;
       let data = {
         description: 'An updated description.',
         title: 'Title',
@@ -485,7 +479,7 @@ describe('modules: chart-sets', function() {
   describe('deleteChartInChartSets', function () {
 
     it('should delete the chart id from all chart sets', function (done) {
-      let id = chartsFixtures.collections.chart_collection[2]._id.toHexString();
+      let id = chartsFixtures.collections.chart[2]._id.toHexString();
 
       chartSets.deleteChartInChartSets(id)
         .then(function (result) {
@@ -500,14 +494,14 @@ describe('modules: chart-sets', function() {
     });
 
     it('should update "updatedAt" field of chart set if got modified', function (done) {
-      let id = chartsFixtures.collections.chart_collection[2]._id.toHexString();
+      let id = chartsFixtures.collections.chart[2]._id.toHexString();
 
       chartSets.deleteChartInChartSets(id)
         .then(function (result) {
 
           return MongoClient.connect(DB_CONNECTION_URI)
             .then(function (db) {
-              let collection = db.collection(CHART_SET_COLLECTION_NAME);
+              let collection = db.collection(CHART_SET_COLLECTION);
 
               return collection
                 .find({})

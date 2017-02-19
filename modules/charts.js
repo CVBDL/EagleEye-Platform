@@ -13,15 +13,7 @@ let validators = require('../helpers/validators');
 
 const ROOT_ENDPOINT = utils.getRootEndpoint();
 const API_ROOT_ENDPOINT = utils.getRestApiRootEndpoint();
-const COLLECTION = "chart_collection";
-
-dbClient.DATABASE_KEYS.push({
-  COLLECTION: COLLECTION,
-  keys: [{
-    "options.title": "text",
-    "description": "text"
-  }]
-});
+const COLLECTION = dbClient.COLLECTION.CHART;
 
 
 /**
@@ -37,11 +29,8 @@ dbClient.DATABASE_KEYS.push({
  *                    Or rejected with defined errors.
  */
 exports.create = function(data) {
-  let db = dbClient.get();
-  
   // chart schema
   let schema = {
-    _id: null,
     chartType: null,
     description: null,
     datatable: null,
@@ -53,10 +42,6 @@ exports.create = function(data) {
     updatedAt: null
   };
 
-  const id = ObjectId();
-
-  schema._id = id;
-
   if (validators.isValidChartType(data.chartType)) {
     schema.chartType = data.chartType;
 
@@ -64,9 +49,9 @@ exports.create = function(data) {
     return Promise.reject({
       status: 422,
       errors: [{
-        "resource": "chart",
-        "field": "chartType",
-        "code": "missing_field"
+        resource: "chart",
+        field: "chartType",
+        code: "missing_field"
       }]
     });
   }
@@ -85,11 +70,15 @@ exports.create = function(data) {
 
   schema.createdAt = schema.updatedAt = new Date().toISOString();
 
-  return db.collection(COLLECTION)
-    .insertOne(schema)
-    .then(function (result) {
-      return result.ops[0];
-    });
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .insertOne(schema)
+      .then(function (result) {
+        return result.ops[0];
+      });
+  });
 };
 
 
@@ -105,11 +94,10 @@ exports.create = function(data) {
  *                               query (useful for pagination).
  * @param {number} [params.limit] Sets the limit of documents returned in
  *                                the query.
- * @returns {Promise} A promise will be resolved with new created chart.
+ * @returns {Promise} A promise will be resolved with charts list.
  *                    Or rejected with defined errors.
  */
 exports.all = function(params) {
-  let db = dbClient.get();
   let query = {};
 
   params = params || {};
@@ -122,9 +110,13 @@ exports.all = function(params) {
     delete params.query;
   }
 
-  return db.collection(COLLECTION)
-    .find(query, false, params)
-    .toArray();
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .find(query, false, params)
+      .toArray();
+  });
 };
 
 
@@ -148,21 +140,23 @@ exports.getOne = function(id) {
     });
   }
 
-  let db = dbClient.get();
+  return dbClient.connect().then(function (db) {
 
-  return db.collection(COLLECTION)
-    .find({ "_id": ObjectId(id) })
-    .limit(1)
-    .toArray()
-    .then(function (docs) {
-      if (!docs.length) {
-        return Promise.reject({
-          status: 404
-        });
-      } else {
-        return docs;
-      }
-    });
+    return db
+      .collection(COLLECTION)
+      .find({ _id: ObjectId(id) })
+      .limit(1)
+      .toArray()
+      .then(function (docs) {
+        if (!docs.length) {
+          return Promise.reject({
+            status: 404
+          });
+        } else {
+          return docs;
+        }
+      });
+  });
 };
 
 
@@ -174,9 +168,12 @@ exports.getOne = function(id) {
  *                    Or rejected when error occurred.
  */
 exports.deleteAll = function() {
-  let db = dbClient.get();
+  return dbClient.connect().then(function (db) {
 
-  return db.collection(COLLECTION).deleteMany();
+    return db
+      .collection(COLLECTION)
+      .deleteMany();
+  });
 };
 
 
@@ -200,23 +197,25 @@ exports.deleteOne = function (id) {
     });
   }
 
-  let db = dbClient.get();
+  return dbClient.connect().then(function (db) {
 
-  return db.collection(COLLECTION)
-    .deleteOne({ _id: ObjectId(id) })
-    .then(function (result) {
-      if (result.deletedCount === 0) {
-        return Promise.reject({
-          status: 404
-        });
-
-      } else {
-        return chartSets.deleteChartInChartSets(id)
-          .then(function () {
-            return result;
+    return db
+      .collection(COLLECTION)
+      .deleteOne({ _id: ObjectId(id) })
+      .then(function (result) {
+        if (result.deletedCount === 0) {
+          return Promise.reject({
+            status: 404
           });
-      }
-    });
+
+        } else {
+          return chartSets.deleteChartInChartSets(id)
+            .then(function () {
+              return result;
+            });
+        }
+      });
+  });
 };
 
 
@@ -243,8 +242,7 @@ exports.updateOne = function (id, data) {
       }]
     });
   }
-
-  let db = dbClient.get();
+  
   let fields = ['description', 'datatable', 'options'];
   let updateData = {
     updatedAt: new Date().toISOString()
@@ -266,24 +264,28 @@ exports.updateOne = function (id, data) {
     };
   }
 
-  return db.collection(COLLECTION)
-    .findOneAndUpdate({
-      _id: ObjectId(id)
-    }, {
-      $set: updateData
-    }, {
-      // When false, returns the updated document rather than
-      // the original.
-      returnOriginal: false
-    })
-    .then(function (result) {
-      if (result.value === null) {
-        return Promise.reject({
-          status: 404
-        });
+  return dbClient.connect().then(function (db) {
 
-      } else {
-        return result.value;
-      }
-    });
+    return db
+      .collection(COLLECTION)
+      .findOneAndUpdate({
+        _id: ObjectId(id)
+      }, {
+        $set: updateData
+      }, {
+        // When false, returns the updated document rather than
+        // the original.
+        returnOriginal: false
+      })
+      .then(function (result) {
+        if (result.value === null) {
+          return Promise.reject({
+            status: 404
+          });
+
+        } else {
+          return result.value;
+        }
+      });
+  });
 };

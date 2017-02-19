@@ -7,15 +7,7 @@ let dbClient = require('../helpers/dbHelper');
 let validators = require('../helpers/validators');
 let charts = require('./charts');
 
-let COLLECTION = "chart_set_collection";
-
-dbClient.DATABASE_KEYS.push({
-  COLLECTION: COLLECTION,
-  keys: [{
-    title: "text",
-    description: "text"
-  }]
-});
+let COLLECTION = dbClient.COLLECTION.CHART_SET;
 
 
 /**
@@ -30,22 +22,15 @@ dbClient.DATABASE_KEYS.push({
  *                    Or rejected with defined errors.
  */
 exports.create = function (data) {
-  let db = dbClient.get();
-
   // chart set schema
   let schema = {
-    _id: null,
     title: null,
     description: null,
     charts: [],
     createdAt: null,
     updatedAt: null
   };
-
-  const id = ObjectId();
-
-  schema._id = id;
-
+  
   if (validators.isString(data.title)) {
     schema.title = data.title;
   }
@@ -70,11 +55,15 @@ exports.create = function (data) {
 
   schema.createdAt = schema.updatedAt = new Date().toISOString();
 
-  return db.collection(COLLECTION)
-    .insertOne(schema)
-    .then(function (result) {
-      return result.ops[0];
-    });
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .insertOne(schema)
+      .then(function (result) {
+        return result.ops[0];
+      });
+  });
 };
 
 
@@ -94,7 +83,6 @@ exports.create = function (data) {
  *                    Or rejected with defined errors.
  */
 exports.all = function (params) {
-  let db = dbClient.get();
   let query = {};
 
   params = params || {};
@@ -107,9 +95,13 @@ exports.all = function (params) {
     delete params.query;
   }
 
-  return db.collection(COLLECTION)
-    .find(query, false, params)
-    .toArray();
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .find(query, false, params)
+      .toArray();
+  });
 };
 
 
@@ -133,36 +125,38 @@ exports.getOne = function (id) {
     });
   }
 
-  let db = dbClient.get();
-  
-  return db.collection(COLLECTION)
-    .find({ "_id": ObjectId(id) })
-    .limit(1)
-    .toArray()
-    .then(function (docs) {
-      if (!docs.length) {
-        return Promise.reject({
-          status: 404
-        });
-      }
+  return dbClient.connect().then(function (db) {
 
-      let promiseQueue = [];
-
-      docs[0].charts.forEach(function (chartId, index) {
-        promiseQueue.push(charts.getOne(chartId));
-      });
-
-      return Promise.all(promiseQueue)
-        .then(function (result) {
-          docs[0].charts = [];
-
-          result.forEach(function (chart) {
-            docs[0].charts.push(chart[0]);
+    return db
+      .collection(COLLECTION)
+      .find({ "_id": ObjectId(id) })
+      .limit(1)
+      .toArray()
+      .then(function (docs) {
+        if (!docs.length) {
+          return Promise.reject({
+            status: 404
           });
+        }
 
-          return docs[0];
+        let promiseQueue = [];
+
+        docs[0].charts.forEach(function (chartId, index) {
+          promiseQueue.push(charts.getOne(chartId));
         });
-    });
+
+        return Promise.all(promiseQueue)
+          .then(function (result) {
+            docs[0].charts = [];
+
+            result.forEach(function (chart) {
+              docs[0].charts.push(chart[0]);
+            });
+
+            return docs[0];
+          });
+      });
+  });
 };
 
 
@@ -174,9 +168,12 @@ exports.getOne = function (id) {
  *                    Or rejected when error occurred.
  */
 exports.deleteAll = function () {
-  let db = dbClient.get();
+  return dbClient.connect().then(function (db) {
 
-  return db.collection(COLLECTION).deleteMany();
+    return db
+      .collection(COLLECTION)
+      .deleteMany();
+  });
 };
 
 
@@ -200,20 +197,22 @@ exports.deleteOne = function (id) {
     });
   }
 
-  let db = dbClient.get();
-  
-  return db.collection(COLLECTION)
-    .deleteOne({ _id: ObjectId(id) })
-    .then(function (result) {
-      if (result.deletedCount === 0) {
-        return Promise.reject({
-          status: 404
-        });
+  return dbClient.connect().then(function (db) {
 
-      } else {
-        return result;
-      }
-    });
+    return db
+      .collection(COLLECTION)
+      .deleteOne({ _id: ObjectId(id) })
+      .then(function (result) {
+        if (result.deletedCount === 0) {
+          return Promise.reject({
+            status: 404
+          });
+
+        } else {
+          return result;
+        }
+      });
+  });
 };
 
 
@@ -240,8 +239,7 @@ exports.updateOne = function (id, data) {
       }]
     });
   }
-
-  let db = dbClient.get();
+  
   let fields = ['title', 'description', 'charts'];
   let updateData = {
     updatedAt: new Date().toISOString()
@@ -253,26 +251,30 @@ exports.updateOne = function (id, data) {
     }
   });
 
-  return db.collection(COLLECTION)
-    .findOneAndUpdate({
-      _id: ObjectId(id)
-    }, {
-      $set: updateData
-    }, {
-      // When false, returns the updated document rather than
-      // the original.
-      returnOriginal: false
-    })
-    .then(function (result) {
-      if (result.value === null) {
-        return Promise.reject({
-          status: 404
-        });
+  return dbClient.connect().then(function (db) {
 
-      } else {
-        return result.value;
-      }
-    });
+    return db
+      .collection(COLLECTION)
+      .findOneAndUpdate({
+        _id: ObjectId(id)
+      }, {
+        $set: updateData
+      }, {
+        // When false, returns the updated document rather than
+        // the original.
+        returnOriginal: false
+      })
+      .then(function (result) {
+        if (result.value === null) {
+          return Promise.reject({
+            status: 404
+          });
+
+        } else {
+          return result.value;
+        }
+      });
+  });
 };
 
 // TODO: update `updatedAt`
@@ -288,17 +290,19 @@ exports.deleteChartInChartSets = function (id) {
     });
   }
 
-  let db = dbClient.get();
+  return dbClient.connect().then(function (db) {
 
-  return db.collection(COLLECTION)
-    .updateMany({
-      "charts": id
-    }, {
-      $pullAll: {
-        "charts": [id]
-      },
-      $set: {
-        updatedAt: new Date().toISOString()
-      }
-    });
+    return db
+      .collection(COLLECTION)
+      .updateMany({
+        "charts": id
+      }, {
+        $pullAll: {
+          "charts": [id]
+        },
+        $set: {
+          updatedAt: new Date().toISOString()
+        }
+      });
+  });
 };

@@ -7,17 +7,18 @@ let logger = require('morgan');
 let path = require('path');
 
 let db = require('./helpers/dbHelper');
-let utils = require('./helpers/utils');
 let errorHandler = require('./helpers/error-handlers');
+let scheduler = require('./helpers/scheduler');
+let utils = require('./helpers/utils');
+
 let rootApi = require('./routes/root-endpoint');
 let chartsApi = require('./routes/charts');
 let chartSetsApi = require('./routes/chart-sets');
 let jobsApi = require('./routes/jobs');
 let tasksApi = require('./routes/tasks');
 let searchApi = require('./routes/search');
-let scheduleTask = require('./routes/schedule-management');
 
-let app = express();
+let app = module.exports = express();
 
 // CORS support
 app.use(function(req, res, next) {
@@ -48,7 +49,7 @@ app.use('/api/v1', rootApi);
 app.use('/api/v1', chartsApi);
 app.use('/api/v1', chartSetsApi);
 app.use('/api/v1', jobsApi);
-app.use('/schedule', scheduleTask);
+app.use('/api/v1', tasksApi);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -62,6 +63,7 @@ app.use(function (req, res, next) {
 // only log the error trace in development mode
 /* istanbul ignore if  */
 if (app.get('env') === 'development') {
+
   app.use(function (err, req, res, next) {
     console.error(err);
     next(err);
@@ -71,6 +73,7 @@ if (app.get('env') === 'development') {
 // error handler
 app.use(errorHandler);
 
-db.get();
-
-module.exports = app;
+db.connect()
+  .then(function () {
+    scheduler.start();
+  });

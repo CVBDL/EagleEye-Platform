@@ -18,20 +18,18 @@ const chartSet = {
 
 describe('routes: /chart-sets', function () {
 
-  before(function (done) {
-    dbClient.connect(dbClient.MODE_TEST, done);
+  before(function () {
+    return dbClient.connect();
   });
 
-  beforeEach(function (done) {
-    dbClient.drop(function (err) {
-      if (err) {
-        return done(err);
-      }
-
-      dbClient.fixtures(chartSetsFixtures, function () {
-        dbClient.fixtures(chartsFixtures, done);
+  beforeEach(function () {
+    return dbClient.drop()
+      .then(function () {
+        return dbClient.fixtures(chartsFixtures);
+      })
+      .then(function () {
+        return dbClient.fixtures(chartSetsFixtures);
       });
-    });
   });
 
 
@@ -44,6 +42,8 @@ describe('routes: /chart-sets', function () {
     const ENDPOINT = '/api/v1/chart-sets';
 
     it('should fetch all chart sets', function (done) {
+      let fixtures = chartSetsFixtures.collections.chart_set;
+
       request(app)
         .get(ENDPOINT)
         .send()
@@ -51,12 +51,14 @@ describe('routes: /chart-sets', function () {
         .expect(function (res) {
           res.body.length
             .should
-            .eql(chartSetsFixtures.collections.chart_set_collection.length);
+            .eql(fixtures.length);
         })
         .expect(200, done);
     });
 
     it('should sort list by "createdAt" in "asc" desc by default', function (done) {
+      let fixtures = chartSetsFixtures.collections.chart_set;
+
       request(app)
         .get(ENDPOINT)
         .send()
@@ -64,7 +66,7 @@ describe('routes: /chart-sets', function () {
         .expect(function (res) {
           res.body.length
             .should
-            .eql(chartSetsFixtures.collections.chart_set_collection.length);
+            .eql(fixtures.length);
 
           let chartSetA = res.body[0];
           let chartSetB = res.body[1];
@@ -77,6 +79,7 @@ describe('routes: /chart-sets', function () {
     });
 
     it('should sort list by "updatedAt" in "asc" order', function (done) {
+      let fixtures = chartSetsFixtures.collections.chart_set;
       let _endpoint = ENDPOINT + '?sort=updatedAt&order=asc';
 
       request(app)
@@ -86,7 +89,7 @@ describe('routes: /chart-sets', function () {
         .expect(function (res) {
           res.body.length
             .should
-            .eql(chartSetsFixtures.collections.chart_set_collection.length);
+            .eql(fixtures.length);
 
           let chartSetA = res.body[0];
           let chartSetB = res.body[1];
@@ -114,6 +117,8 @@ describe('routes: /chart-sets', function () {
     });
 
     it('should set start and limit on result list', function (done) {
+      let fixtures = chartSetsFixtures.collections.chart_set;
+      let fixture = fixtures[1];
       let _endpoint = ENDPOINT + '?start=2&limit=1';
 
       request(app)
@@ -127,7 +132,7 @@ describe('routes: /chart-sets', function () {
 
           res.body[0]._id
             .should
-            .eql(chartSetsFixtures.collections.chart_set_collection[1]._id.toHexString())
+            .eql(fixture._id.toHexString())
         })
         .expect(200, done);
     });
@@ -261,20 +266,18 @@ describe('routes: /chart-sets', function () {
 
 describe('routes: /chart-sets/:id', function () {
 
-  before(function (done) {
-    dbClient.connect(dbClient.MODE_TEST, done);
+  before(function () {
+    return dbClient.connect();
   });
 
-  beforeEach(function (done) {
-    dbClient.drop(function (err) {
-      if (err) {
-        return done(err);
-      }
-
-      dbClient.fixtures(chartSetsFixtures, function () {
-        dbClient.fixtures(chartsFixtures, done);
+  beforeEach(function () {
+    return dbClient.drop()
+      .then(function () {
+        return dbClient.fixtures(chartsFixtures);
+      })
+      .then(function () {
+        return dbClient.fixtures(chartSetsFixtures);
       });
-    });
   });
 
 
@@ -286,7 +289,7 @@ describe('routes: /chart-sets/:id', function () {
 
     it('should fetch a single chart set with the given id', function (done) {
       let id = chartSetsFixtures
-        .collections.chart_set_collection[1]._id.toHexString();
+        .collections.chart_set[1]._id.toHexString();
 
       request(app)
         .get(`/api/v1/chart-sets/${id}`)
@@ -296,9 +299,9 @@ describe('routes: /chart-sets/:id', function () {
           res.body._id.should.eql(id);
           res.body.charts.length
             .should
-            .eql(chartSetsFixtures.collections.chart_set_collection[1].charts.length);
+            .eql(chartSetsFixtures.collections.chart_set[1].charts.length);
 
-          let fixture = chartsFixtures.collections.chart_collection[1];
+          let fixture = chartsFixtures.collections.chart[1];
 
           res.body.charts[0]._id
             .should
@@ -349,7 +352,7 @@ describe('routes: /chart-sets/:id', function () {
   describe('POST /api/v1/chart-sets/:_id', function () {
 
     it('should update chart description', function (done) {
-      let fixture = chartSetsFixtures.collections.chart_set_collection[1]
+      let fixture = chartSetsFixtures.collections.chart_set[1]
       let id = fixture._id.toHexString();
 
       request(app)
@@ -378,7 +381,7 @@ describe('routes: /chart-sets/:id', function () {
 
     it('should not update fields other than title, description or charts',
       function (done) {
-        let fixture = chartSetsFixtures.collections.chart_set_collection[0];
+        let fixture = chartSetsFixtures.collections.chart_set[0];
         let id = fixture._id.toHexString();
         let data = {
           custom: 'Some custom data'
@@ -461,7 +464,7 @@ describe('routes: /chart-sets/:id', function () {
   describe('DELETE /api/v1/charts/:_id', function () {
 
     it('should delete a chart set with given id', function (done) {
-      let id = chartSetsFixtures.collections.chart_set_collection[0]._id.toHexString();
+      let id = chartSetsFixtures.collections.chart_set[0]._id.toHexString();
 
       request(app)
         .delete(`/api/v1/chart-sets/${id}`)

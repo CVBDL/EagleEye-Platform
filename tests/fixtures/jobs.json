@@ -1,0 +1,30 @@
+﻿{
+  "collections": {
+    "job": [
+      {
+        "_id": "57fca45d69ea5f081a6b4076",
+        "name": "Code Review By Month",
+        "expression": "0 0 * * *",
+        "command": "/path/to/command/codecollaborator2eagleeye.exe",
+        "enabled": true,
+        "createdAt": "2016-10-06T11:00:00.000Z",
+        "updatedAt": "2016-10-06T11:00:00.000Z",
+        "lastState": "success",
+        "lastStartedAt": "2016-10-08T11:00:00.000Z",
+        "lastFinishedAt": "2016-10-08T11:01:15.000Z"
+      },
+      {
+        "_id": "57fca45d69ea5f081a6b4077",
+        "name": "Code Review By Product",
+        "expression": "0 0 * * *",
+        "command": "/path/to/command/codecollaborator2eagleeye.exe",
+        "enabled": true,
+        "createdAt": "2016-10-08T11:00:00.000Z",
+        "updatedAt": "2016-10-08T11:00:00.000Z",
+        "lastState": "success",
+        "lastStartedAt": "2016-10-10T11:00:00.000Z",
+        "lastFinishedAt": "2016-10-10T11:01:15.000Z"
+      }
+    ]
+  }
+}

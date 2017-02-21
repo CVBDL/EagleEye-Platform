@@ -9,6 +9,41 @@ let scheduler = require('../helpers/scheduler');
 
 const COLLECTION = dbClient.COLLECTION.JOB;
 
+const JOB_SCHEMA = {
+  _id: {
+    type: 'ObjectId',
+    required: false
+  },
+  name: {
+    type: 'string',
+    required: true
+  },
+  expression: {
+    type: 'string',
+    required: true
+  },
+  command: {
+    type: 'string',
+    required: true
+  },
+  enabled: {
+    type: 'boolean',
+    required: false
+  },
+  createdAt: {
+    type: 'string',
+    required: false
+  },
+  updatedAt: {
+    type: 'string',
+    required: false
+  },
+  lastState: {
+    type: 'string',
+    required: false,
+    options: ['running', 'success', 'failure']
+  }
+};
 
 /**
  * Create a new job.
@@ -28,7 +63,8 @@ exports.create = function (data) {
     command: null,
     enabled: true,
     createdAt: null,
-    updatedAt: null
+    updatedAt: null,
+    lastState: null
   };
 
   let errors = [];

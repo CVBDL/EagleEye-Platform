@@ -53,37 +53,6 @@ const INDEX = {
 };
 
 /**
- * Create all required collections.
- * MongoDB creates a collection implicitly when the collection is
- * first referenced in a command.
- *
- * @method
- * @param {Db} The connected database.
- * @returns {Promise} A promise resolve with Db.
- */
-let createCollections = function createCollections(db) {
-  let promiseList = [];
-
-  Object.keys(COLLECTION).forEach(function (key) {
-    let collectionName = COLLECTION[key];
-    let resultPromise = db.createCollection(collectionName);
-
-    promiseList.push(resultPromise);
-  });
-
-  return Promise
-    .all(promiseList)
-    .then(function () {
-      return db;
-    })
-    .catch(function (err) {
-      console.log('Failed to create collections. ');
-      console.trace(err);
-      return Promise.reject(err);
-    });
-};
-
-/**
  * Create database indexes.
  *
  * @method
@@ -107,8 +76,6 @@ let createIndexes = function createIndexes(db) {
       return db;
     })
     .catch(function (err) {
-      console.log('Failed to create indexes. ');
-      console.trace(err);
       return Promise.reject(err);
     });
 };
@@ -130,15 +97,12 @@ exports.connect = function connect() {
   }
 
   return MongoClient.connect(uri)
-    //.then(createCollections)
     .then(createIndexes)
     .then(function (db) {
       state.db = db;
       state.mode = mode;
     })
     .catch(function (err) {
-      console.log('Failed to connect to database. ');
-      console.trace(err);
       return Promise.reject(err);
     });
 };
@@ -171,8 +135,6 @@ exports.drop = function drop() {
       return db;
     })
     .catch(function (err) {
-      console.log('Failed to drop database. ');
-      console.trace(err);
       return Promise.reject(err);
     });
 };
@@ -217,8 +179,6 @@ exports.fixtures = function(data) {
       return db;
     })
     .catch(function (err) {
-      console.log('Failed to add fixtures. ');
-      console.trace(err);
       return Promise.reject(err);
     });
 };

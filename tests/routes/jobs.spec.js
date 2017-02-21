@@ -270,12 +270,12 @@ describe('routes: /jobs/:id/tasks', function () {
 
 
   /**
-   * Restart a job
-   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#restart-a-job>
+   * List tasks
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#list-tasks>
    */
   describe('GET /api/v1/jobs/:id/tasks', function () {
 
-    it('should restart a job', function (done) {
+    it('should list tasks to this job', function (done) {
       let id = jobsFixtures.collections.job[0]._id.toHexString();
 
       request(app)

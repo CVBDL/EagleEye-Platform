@@ -45,7 +45,6 @@
     <Compile Include="routes\charts.js" />
     <Compile Include="routes\jobs.js" />
     <Compile Include="routes\root-endpoint.js" />
-    <Compile Include="routes\search.js" />
     <Compile Include="routes\tasks.js" />
     <Compile Include="tests\app.spec.js" />
     <Compile Include="tests\helpers\db.spec.js" />

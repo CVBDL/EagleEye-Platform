@@ -16,7 +16,6 @@ let chartsApi = require('./routes/charts');
 let chartSetsApi = require('./routes/chart-sets');
 let jobsApi = require('./routes/jobs');
 let tasksApi = require('./routes/tasks');
-let searchApi = require('./routes/search');
 
 let app = module.exports = express();
 

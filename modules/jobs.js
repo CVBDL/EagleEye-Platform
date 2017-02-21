@@ -9,10 +9,10 @@ let scheduler = require('../helpers/scheduler');
 
 const COLLECTION = dbClient.COLLECTION.JOB;
 
+// required and default cannot exist at the same time
 const JOB_SCHEMA = {
   _id: {
-    type: 'ObjectId',
-    required: false
+    type: 'ObjectId'
   },
   name: {
     type: 'string',
@@ -28,22 +28,115 @@ const JOB_SCHEMA = {
   },
   enabled: {
     type: 'boolean',
-    required: false
+    default: true
   },
   createdAt: {
-    type: 'string',
-    required: false
+    type: 'string'
   },
   updatedAt: {
-    type: 'string',
-    required: false
+    type: 'string'
   },
   lastState: {
     type: 'string',
-    required: false,
     options: ['running', 'success', 'failure']
   }
 };
+
+function createFromSchema(schema, data) {
+  schema = {
+    _id: {
+      _type: 'ObjectId'
+    },
+    name: {
+      _type: 'string',
+      _required: true
+    },
+    enabled: {
+      _type: 'boolean',
+      _default: true
+    },
+    lastState: {
+      _type: 'string',
+      _options: ['running', 'success', 'failure']
+    },
+    browserDownloadUrl: {
+      image: {
+        _type: 'string',
+      }
+    },
+    tasks: [{
+      name: {
+        _type: 'string'
+      },
+      description: {
+        _type: 'string'
+      }
+    }]
+  };
+
+  data = data || {};
+
+  let errors = [];
+
+  let model = {};
+  for (let key in schema) {
+    if (!schema.hasOwnProperty(key)) continue;
+
+    if (schema[key]._type) {
+      let value = data[key];
+
+      let type = schema[key]._type;
+      let isRequired = schema[key]._required;
+      let defaultValue = schema[key]._default;
+      let options = schema[key]._options;
+
+      //if it's a required field:
+      //  if `value` exists:
+      //    yes: the next step
+      //    no : add error `missing field`
+      //  if `value` is of type `type`:
+      //    if has `options` settings:
+      //      if `value` in `options`:
+      //        set `value`
+      //      else:
+      //        add error `invalid_value`
+      //    else:
+      //      set `value`
+      //  else:
+      //    add error `invalid_value`
+
+      //if `value` is `undefined` or `null`
+      //  if has `defaultValue`:
+      //    set `defaultValue`
+      //  else:
+      //    set `null`
+      //else:
+      //  if `value` is of type `type`:
+      //    if has `options` settings:
+      //      if `value` in `options`:
+      //        set `value`
+      //      else:
+      //        add error `invalid_value`
+      //    else:
+      //      set `value`
+      //  else:
+      //    add error `invalid_value`
+    }
+
+    //if schema[key] is an Array:
+    //  let subSchema = schema[key][0]
+    //  foreach data[key] (item, index)
+    //    {errors[], result} = createFromSchema(subSchema, item)
+    //    if no error:
+    //      upLevelResult[key].push(result)
+    //    else:
+    //      push error
+
+    //if schema[key] is an Object without `_type`:
+    //  let subSchema = schema[key]
+    //  {errors[], result} = createFromSchema(subSchema, data[key])
+  }
+}
 
 /**
  * Create a new job.
@@ -56,12 +149,12 @@ const JOB_SCHEMA = {
  *                    Or rejected with defined errors.
  */
 exports.create = function (data) {
-  let schema = {
+  let job = {
     _id: ObjectId(),
     name: null,
     expression: null,
     command: null,
-    enabled: true,
+    enabled: JOB_SCHEMA.enabled.default,
     createdAt: null,
     updatedAt: null,
     lastState: null
@@ -80,7 +173,7 @@ exports.create = function (data) {
       });
 
     } else {
-      schema[field] = data[field];
+      job[field] = data[field];
     }
   });
 
@@ -92,15 +185,15 @@ exports.create = function (data) {
   }
 
   // set `enabled` field
-  schema.enabled =
+  job.enabled =
     validators.isDefined(data.enabled)
       ? !!data.enabled
       : true;
 
   // set `createdAt` and `updatedAt` fields
-  schema.createdAt = schema.updatedAt = new Date().toISOString();
+  job.createdAt = job.updatedAt = new Date().toISOString();
 
-  let stat = scheduler.schedule(schema);
+  let stat = scheduler.schedule(job);
 
   if (stat.jobHandler === null) {
     return Promise.reject({
@@ -113,7 +206,7 @@ exports.create = function (data) {
 
       return db
         .collection(COLLECTION)
-        .insertOne(schema)
+        .insertOne(job)
         .then(function (result) {
           return result.ops[0];
         });

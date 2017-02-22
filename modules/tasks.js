@@ -3,6 +3,7 @@
 let ObjectId = require('mongodb').ObjectId;
 
 let dbClient = require('../helpers/dbHelper');
+let jobs = require('./jobs');
 
 const COLLECTION = dbClient.COLLECTION.TASK;
 
@@ -104,7 +105,12 @@ exports.updateOne = function (id, data) {
           });
 
         } else {
-          return result.value;
+          let jobId = result.value.job._id.toHexString();
+
+          return jobs.updateOne(jobId, { lastState: result.value.state })
+            .then(function () {
+              return result.value;
+            });
         }
       });
   });

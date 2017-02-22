@@ -6,8 +6,10 @@ let should = require('should');
 
 let dbClient = require('../../helpers/dbHelper');
 let tasks = require('../../modules/tasks');
+let jobsFixtures = require('../fixtures/jobs');
 let tasksFixtures = require('../fixtures/tasks');
 
+const JOB_COLLECTION = dbClient.COLLECTION.JOB;
 const TASK_COLLECTION = dbClient.COLLECTION.TASK;
 
 const DB_CONNECTION_URI = process.env.DB_CONNECTION_URI;
@@ -21,6 +23,9 @@ describe('modules: tasks', function () {
 
   beforeEach(function () {
     return dbClient.drop()
+      .then(function () {
+        return dbClient.fixtures(jobsFixtures);
+      })
       .then(function () {
         return dbClient.fixtures(tasksFixtures);
       });
@@ -102,6 +107,45 @@ describe('modules: tasks', function () {
             .belowOrEqual(1000);
 
           done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
+    });
+
+    it('should update "lastState" of its job', function (done) {
+      let fixture = tasksFixtures.collections.task[0];
+      let id = fixture._id;
+      let data = {
+        state: 'success'
+      };
+
+      tasks.updateOne(id, data)
+        .then(function (doc) {
+
+          return MongoClient.connect(DB_CONNECTION_URI)
+            .then(function (db) {
+              let collection = db.collection(JOB_COLLECTION);
+
+              return collection
+                .find({ _id: doc.job._id })
+                .limit(1)
+                .toArray()
+                .then(function (docs) {
+                  db.close(true);
+
+                  try {
+                    docs.length.should.eql(1);
+                    docs[0].lastState.should.eql(data.state);
+
+                    done();
+
+                  } catch (err) {
+                    done(err);
+                  }
+                });
+            });
 
         }, function () {
           should.fail(null, null, 'Promise should be resolved.');

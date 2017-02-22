@@ -8,8 +8,6 @@ let validators = require('../helpers/validators');
 let scheduler = require('../helpers/scheduler');
 
 const COLLECTION = dbClient.COLLECTION.JOB;
-
-// required and default cannot exist at the same time
 const JOB_SCHEMA = {
   _id: {
     type: 'ObjectId'
@@ -42,101 +40,6 @@ const JOB_SCHEMA = {
   }
 };
 
-function createFromSchema(schema, data) {
-  schema = {
-    _id: {
-      _type: 'ObjectId'
-    },
-    name: {
-      _type: 'string',
-      _required: true
-    },
-    enabled: {
-      _type: 'boolean',
-      _default: true
-    },
-    lastState: {
-      _type: 'string',
-      _options: ['running', 'success', 'failure']
-    },
-    browserDownloadUrl: {
-      image: {
-        _type: 'string',
-      }
-    },
-    tasks: [{
-      name: {
-        _type: 'string'
-      },
-      description: {
-        _type: 'string'
-      }
-    }]
-  };
-
-  data = data || {};
-
-  let errors = [];
-
-  let model = {};
-  for (let key in schema) {
-    if (!schema.hasOwnProperty(key)) continue;
-
-    if (schema[key]._type) {
-      let value = data[key];
-
-      let type = schema[key]._type;
-      let isRequired = schema[key]._required;
-      let defaultValue = schema[key]._default;
-      let options = schema[key]._options;
-
-      //if it's a required field:
-      //  if `value` exists:
-      //    yes: the next step
-      //    no : add error `missing field`
-      //  if `value` is of type `type`:
-      //    if has `options` settings:
-      //      if `value` in `options`:
-      //        set `value`
-      //      else:
-      //        add error `invalid_value`
-      //    else:
-      //      set `value`
-      //  else:
-      //    add error `invalid_value`
-
-      //if `value` is `undefined` or `null`
-      //  if has `defaultValue`:
-      //    set `defaultValue`
-      //  else:
-      //    set `null`
-      //else:
-      //  if `value` is of type `type`:
-      //    if has `options` settings:
-      //      if `value` in `options`:
-      //        set `value`
-      //      else:
-      //        add error `invalid_value`
-      //    else:
-      //      set `value`
-      //  else:
-      //    add error `invalid_value`
-    }
-
-    //if schema[key] is an Array:
-    //  let subSchema = schema[key][0]
-    //  foreach data[key] (item, index)
-    //    {errors[], result} = createFromSchema(subSchema, item)
-    //    if no error:
-    //      upLevelResult[key].push(result)
-    //    else:
-    //      push error
-
-    //if schema[key] is an Object without `_type`:
-    //  let subSchema = schema[key]
-    //  {errors[], result} = createFromSchema(subSchema, data[key])
-  }
-}
 
 /**
  * Create a new job.
@@ -154,7 +57,7 @@ exports.create = function (data) {
     name: null,
     expression: null,
     command: null,
-    enabled: JOB_SCHEMA.enabled.default,
+    enabled: true,
     createdAt: null,
     updatedAt: null,
     lastState: null
@@ -309,6 +212,59 @@ exports.deleteOne = function (id) {
 
         } else {
           return result;
+        }
+      });
+  });
+};
+
+
+/**
+ * Update a single job.
+ *
+ * @method
+ * @param {string} id ObjectId string.
+ * @param {Object} data The updated job data object.
+ * @returns {Promise} A promise will be resolved with the updated job.
+ *                    Or rejected with defined errors.
+ */
+exports.updateOne = function (id, data) {
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "job",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+  
+  let updateData = {
+    lastState: data.lastState,
+    updatedAt: new Date().toISOString()
+  };
+  
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .findOneAndUpdate({
+        _id: ObjectId(id)
+      }, {
+        $set: updateData
+      }, {
+        // When false, returns the updated document rather than
+        // the original.
+        returnOriginal: false
+      })
+      .then(function (result) {
+        if (result.value === null) {
+          return Promise.reject({
+            status: 404
+          });
+
+        } else {
+          return result.value;
         }
       });
   });

@@ -8,6 +8,37 @@ let validators = require('../helpers/validators');
 let scheduler = require('../helpers/scheduler');
 
 const COLLECTION = dbClient.COLLECTION.JOB;
+const JOB_SCHEMA = {
+  _id: {
+    type: 'ObjectId'
+  },
+  name: {
+    type: 'string',
+    required: true
+  },
+  expression: {
+    type: 'string',
+    required: true
+  },
+  command: {
+    type: 'string',
+    required: true
+  },
+  enabled: {
+    type: 'boolean',
+    default: true
+  },
+  createdAt: {
+    type: 'string'
+  },
+  updatedAt: {
+    type: 'string'
+  },
+  lastState: {
+    type: 'string',
+    options: ['running', 'success', 'failure']
+  }
+};
 
 
 /**
@@ -21,14 +52,15 @@ const COLLECTION = dbClient.COLLECTION.JOB;
  *                    Or rejected with defined errors.
  */
 exports.create = function (data) {
-  let schema = {
+  let job = {
     _id: ObjectId(),
     name: null,
     expression: null,
     command: null,
     enabled: true,
     createdAt: null,
-    updatedAt: null
+    updatedAt: null,
+    lastState: null
   };
 
   let errors = [];
@@ -44,7 +76,7 @@ exports.create = function (data) {
       });
 
     } else {
-      schema[field] = data[field];
+      job[field] = data[field];
     }
   });
 
@@ -56,15 +88,15 @@ exports.create = function (data) {
   }
 
   // set `enabled` field
-  schema.enabled =
+  job.enabled =
     validators.isDefined(data.enabled)
       ? !!data.enabled
       : true;
 
   // set `createdAt` and `updatedAt` fields
-  schema.createdAt = schema.updatedAt = new Date().toISOString();
+  job.createdAt = job.updatedAt = new Date().toISOString();
 
-  let stat = scheduler.schedule(schema);
+  let stat = scheduler.schedule(job);
 
   if (stat.jobHandler === null) {
     return Promise.reject({
@@ -77,7 +109,7 @@ exports.create = function (data) {
 
       return db
         .collection(COLLECTION)
-        .insertOne(schema)
+        .insertOne(job)
         .then(function (result) {
           return result.ops[0];
         });
@@ -180,6 +212,59 @@ exports.deleteOne = function (id) {
 
         } else {
           return result;
+        }
+      });
+  });
+};
+
+
+/**
+ * Update a single job.
+ *
+ * @method
+ * @param {string} id ObjectId string.
+ * @param {Object} data The updated job data object.
+ * @returns {Promise} A promise will be resolved with the updated job.
+ *                    Or rejected with defined errors.
+ */
+exports.updateOne = function (id, data) {
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "job",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+  
+  let updateData = {
+    lastState: data.lastState,
+    updatedAt: new Date().toISOString()
+  };
+  
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .findOneAndUpdate({
+        _id: ObjectId(id)
+      }, {
+        $set: updateData
+      }, {
+        // When false, returns the updated document rather than
+        // the original.
+        returnOriginal: false
+      })
+      .then(function (result) {
+        if (result.value === null) {
+          return Promise.reject({
+            status: 404
+          });
+
+        } else {
+          return result.value;
         }
       });
   });

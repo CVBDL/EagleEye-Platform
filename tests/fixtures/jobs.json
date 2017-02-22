@@ -9,9 +9,7 @@
         "enabled": true,
         "createdAt": "2016-10-06T11:00:00.000Z",
         "updatedAt": "2016-10-06T11:00:00.000Z",
-        "lastState": "success",
-        "lastStartedAt": "2016-10-08T11:00:00.000Z",
-        "lastFinishedAt": "2016-10-08T11:01:15.000Z"
+        "lastState": "success"
       },
       {
         "_id": "57fca45d69ea5f081a6b4077",
@@ -21,9 +19,7 @@
         "enabled": true,
         "createdAt": "2016-10-08T11:00:00.000Z",
         "updatedAt": "2016-10-08T11:00:00.000Z",
-        "lastState": "success",
-        "lastStartedAt": "2016-10-10T11:00:00.000Z",
-        "lastFinishedAt": "2016-10-10T11:01:15.000Z"
+        "lastState": "failure"
       }
     ]
   }

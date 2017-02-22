@@ -8,6 +8,7 @@ let should = require('should');
 let app = require('../../app');
 let dbClient = require('../../helpers/dbHelper');
 let tasks = require('../../modules/tasks');
+let jobsFixtures = require('../fixtures/jobs');
 let tasksFixtures = require('../fixtures/tasks');
 
 
@@ -19,6 +20,9 @@ describe('routes: /tasks/:id', function () {
 
   beforeEach(function () {
     return dbClient.drop()
+      .then(function () {
+        return dbClient.fixtures(jobsFixtures);
+      })
       .then(function () {
         return dbClient.fixtures(tasksFixtures);
       });

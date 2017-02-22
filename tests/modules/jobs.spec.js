@@ -267,4 +267,71 @@ describe('modules: jobs', function () {
     });
   });
 
+
+  describe('updateOne', function () {
+
+    it('should update an existing job', function (done) {
+      let id = jobsFixtures.collections.job[0]._id;
+      let data = {
+        lastState: 'failure'
+      };
+
+      jobs.updateOne(id, data)
+        .then(function (doc) {
+          doc._id.should.eql(id);
+          doc.lastState.should.eql(data.lastState);
+
+          // should update `updatedAt` field
+          // use 1 second threshold
+          (Date.now() - new Date(doc.updatedAt).getTime())
+            .should
+            .belowOrEqual(1000);
+
+          done();
+
+        }, function () {
+          should.fail(null, null, 'Promise should be resolved.');
+        })
+        .catch(done);
+    });
+
+    it('should return error 404 if no record to update', function (done) {
+      let id = '000000000000000000000000';
+      let data = {
+        lastState: 'failure'
+      };
+
+      jobs.updateOne(id, data)
+        .should
+        .rejectedWith({
+          status: 404
+        })
+        .then(function () {
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should return error 422 when passing invalid id', function (done) {
+      let id = '0';
+      let data = {
+        lastState: 'failure'
+      };
+
+      jobs.updateOne(id, data)
+        .should
+        .rejectedWith({
+          status: 422,
+          errors: [{
+            "resource": "job",
+            "field": "_id",
+            "code": "invalid"
+          }]
+        })
+        .then(function () {
+          done();
+        })
+        .catch(done);
+    });
+  });
 });

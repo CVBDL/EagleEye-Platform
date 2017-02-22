@@ -502,14 +502,14 @@ describe('modules: charts', function () {
     });
 
     it('should return error 404 if no record to update', function (done) {
-      let nonexistentId = '000000000000000000000000';
+      let id = '000000000000000000000000';
       let data = {
         description: 'An updated description.',
         datatable: null,
         options: null
       };
 
-      charts.updateOne(nonexistentId, data)
+      charts.updateOne(id, data)
         .should
         .rejectedWith({
           status: 404
@@ -521,14 +521,14 @@ describe('modules: charts', function () {
     });
 
     it('should return error 422 when passing invalid id', function (done) {
-      let invalidId = '0';
+      let id = '0';
       let data = {
         description: 'An updated description.',
         datatable: null,
         options: null
       };
 
-      charts.updateOne(invalidId, data)
+      charts.updateOne(id, data)
         .should
         .rejectedWith({
           status: 422,

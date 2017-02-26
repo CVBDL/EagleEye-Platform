@@ -1,4 +1,4 @@
 ﻿'use strict';
 
-let db = require('../../helpers/dbHelper');
+let db = require('../../helpers/db');
 

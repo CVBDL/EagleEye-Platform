@@ -4,7 +4,7 @@ let MongoClient = require('mongodb').MongoClient
 let ObjectId = require('mongodb').ObjectId;
 let should = require('should');
 
-let dbClient = require('../../helpers/dbHelper');
+let dbClient = require('../../helpers/db');
 let jobs = require('../../modules/jobs');
 let jobsFixtures = require('../fixtures/jobs');
 

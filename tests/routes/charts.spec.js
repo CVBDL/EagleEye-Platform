@@ -6,7 +6,7 @@ let request = require('supertest');
 let should = require('should');
 
 let app = require('../../app');
-let dbClient = require('../../helpers/dbHelper');
+let dbClient = require('../../helpers/db');
 let chartsFixtures = require('../fixtures/charts');
 
 let chart = {

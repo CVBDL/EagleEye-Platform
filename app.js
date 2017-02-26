@@ -6,7 +6,7 @@ let express = require('express');
 let logger = require('morgan');
 let path = require('path');
 
-let db = require('./helpers/dbHelper');
+let db = require('./helpers/db');
 let errorHandler = require('./helpers/error-handlers');
 let scheduler = require('./helpers/scheduler');
 let utils = require('./helpers/utils');

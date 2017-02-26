@@ -4,7 +4,7 @@ let MongoClient = require('mongodb').MongoClient
 let ObjectId = require('mongodb').ObjectId;
 let should = require('should');
 
-let dbClient = require('../../helpers/dbHelper');
+let dbClient = require('../../helpers/db');
 let chartSets = require('../../modules/chart-sets');
 let chartsFixtures = require('../fixtures/charts');
 let chartSetsFixtures = require('../fixtures/chart-sets');

@@ -2,7 +2,7 @@
 
 let ObjectId = require('mongodb').ObjectId;
 
-let dbClient = require('../helpers/dbHelper');
+let dbClient = require('../helpers/db');
 let jobs = require('./jobs');
 
 const COLLECTION = dbClient.COLLECTION.TASK;

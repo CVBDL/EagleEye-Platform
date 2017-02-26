@@ -3,7 +3,7 @@
 let ObjectId = require('mongodb').ObjectId;
 let Promise = require('es6-promise').Promise;
 
-let dbClient = require('../helpers/dbHelper');
+let dbClient = require('../helpers/db');
 let validators = require('../helpers/validators');
 let charts = require('./charts');
 

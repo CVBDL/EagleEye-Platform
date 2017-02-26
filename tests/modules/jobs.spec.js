@@ -148,7 +148,7 @@ describe('modules: jobs', function () {
   describe('all', function () {
 
     it('should list all jobs', function (done) {
-      jobs.all()
+      jobs.list()
         .then(function (docs) {
           docs.length
             .should
@@ -170,7 +170,7 @@ describe('modules: jobs', function () {
       let fixture = jobsFixtures.collections.job[0];
       let id = fixture._id;
 
-      jobs.getOne(id)
+      jobs.get(id)
         .then(function (docs) {
           docs.length.should.eql(1);
 
@@ -201,7 +201,7 @@ describe('modules: jobs', function () {
     it('should return error 404 if cannot find the record', function (done) {
       let id = '000000000000000000000000';
 
-      jobs.getOne(id)
+      jobs.get(id)
         .should
         .rejectedWith({
           status: 404
@@ -215,7 +215,7 @@ describe('modules: jobs', function () {
     it('should return error 422 when passing invalid id', function (done) {
       let id = '0';
 
-      jobs.getOne(id)
+      jobs.get(id)
         .then(function (docs) {
           should.fail(null, null, 'Promise should be resolved.');
 
@@ -241,7 +241,7 @@ describe('modules: jobs', function () {
     it('should delete one chart with given id', function (done) {
       let id = jobsFixtures.collections.job[0]._id;
 
-      jobs.deleteOne(id)
+      jobs.delete(id)
         .then(function (result) {
           result.deletedCount.should.eql(1);
           done();
@@ -255,7 +255,7 @@ describe('modules: jobs', function () {
     it('should return error 404 if no record to delete', function (done) {
       let id = '000000000000000000000000';
 
-      jobs.deleteOne(id)
+      jobs.delete(id)
         .should
         .rejectedWith({
           status: 404
@@ -276,7 +276,7 @@ describe('modules: jobs', function () {
         lastState: 'failure'
       };
 
-      jobs.updateOne(id, data)
+      jobs.update(id, data)
         .then(function (doc) {
           doc._id.should.eql(id);
           doc.lastState.should.eql(data.lastState);
@@ -301,7 +301,7 @@ describe('modules: jobs', function () {
         lastState: 'failure'
       };
 
-      jobs.updateOne(id, data)
+      jobs.update(id, data)
         .should
         .rejectedWith({
           status: 404
@@ -318,7 +318,7 @@ describe('modules: jobs', function () {
         lastState: 'failure'
       };
 
-      jobs.updateOne(id, data)
+      jobs.update(id, data)
         .should
         .rejectedWith({
           status: 422,

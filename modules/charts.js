@@ -17,72 +17,6 @@ const COLLECTION = dbClient.COLLECTION.CHART;
 
 
 /**
- * Create a new chart.
- *
- * @method
- * @param {Object} data The new chart object.
- * @param {string} data.chartType The chart's type.
- * @param {?string} [data.description=null] The chart's description.
- * @param {?Object} [data.datatable=null] The chart's data table.
- * @param {?Object} [data.options=null] The chart's options.
- * @returns {Promise} A promise will be resolved with new created chart.
- *                    Or rejected with defined errors.
- */
-exports.create = function(data) {
-  // chart schema
-  let schema = {
-    chartType: null,
-    description: null,
-    datatable: null,
-    options: null,
-    browserDownloadUrl: {
-      image: null
-    },
-    createdAt: null,
-    updatedAt: null
-  };
-
-  if (validators.isValidChartType(data.chartType)) {
-    schema.chartType = data.chartType;
-
-  } else {
-    return Promise.reject({
-      status: 422,
-      errors: [{
-        resource: "chart",
-        field: "chartType",
-        code: "missing_field"
-      }]
-    });
-  }
-  
-  if (validators.isValidDescription(data.description)) {
-    schema.description = data.description;
-  }
-
-  if (validators.isValidDataTable(data.datatable)) {
-    schema.datatable = data.datatable;
-  }
-
-  if (validators.isValidOptions(data.options)) {
-    schema.options = data.options;
-  }
-
-  schema.createdAt = schema.updatedAt = new Date().toISOString();
-
-  return dbClient.connect().then(function (db) {
-
-    return db
-      .collection(COLLECTION)
-      .insertOne(schema)
-      .then(function (result) {
-        return result.ops[0];
-      });
-  });
-};
-
-
-/**
  * List all charts.
  *
  * @method
@@ -97,7 +31,7 @@ exports.create = function(data) {
  * @returns {Promise} A promise will be resolved with charts list.
  *                    Or rejected with defined errors.
  */
-exports.all = function(params) {
+exports.list = function(params) {
   let query = {};
 
   params = params || {};
@@ -128,7 +62,7 @@ exports.all = function(params) {
  * @returns {Promise} A promise will be resolved with the found chart.
  *                    Or rejected with defined errors.
  */
-exports.getOne = function(id) {
+exports.get = function(id) {
   if (!ObjectId.isValid(id)) {
     return Promise.reject({
       status: 422,
@@ -161,18 +95,139 @@ exports.getOne = function(id) {
 
 
 /**
- * Delete all charts.
+ * Create a new chart.
  *
  * @method
- * @returns {Promise} A promise will be resolved when delete successfully.
- *                    Or rejected when error occurred.
+ * @param {Object} data The new chart object.
+ * @param {string} data.chartType The chart's type.
+ * @param {?string} [data.description=null] The chart's description.
+ * @param {?Object} [data.datatable=null] The chart's data table.
+ * @param {?Object} [data.options=null] The chart's options.
+ * @returns {Promise} A promise will be resolved with new created chart.
+ *                    Or rejected with defined errors.
  */
-exports.deleteAll = function() {
+exports.create = function (data) {
+  // chart schema
+  let schema = {
+    chartType: null,
+    description: null,
+    datatable: null,
+    options: null,
+    browserDownloadUrl: {
+      image: null
+    },
+    createdAt: null,
+    updatedAt: null
+  };
+
+  if (validators.isValidChartType(data.chartType)) {
+    schema.chartType = data.chartType;
+
+  } else {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        resource: "chart",
+        field: "chartType",
+        code: "missing_field"
+      }]
+    });
+  }
+
+  if (validators.isValidDescription(data.description)) {
+    schema.description = data.description;
+  }
+
+  if (validators.isValidDataTable(data.datatable)) {
+    schema.datatable = data.datatable;
+  }
+
+  if (validators.isValidOptions(data.options)) {
+    schema.options = data.options;
+  }
+
+  schema.createdAt = schema.updatedAt = new Date().toISOString();
+
   return dbClient.connect().then(function (db) {
 
     return db
       .collection(COLLECTION)
-      .deleteMany();
+      .insertOne(schema)
+      .then(function (result) {
+        return result.ops[0];
+      });
+  });
+};
+
+
+/**
+ * Update a single chart.
+ *
+ * @method
+ * @param {string} id The chart '_id' property.
+ * @param {Object} data The updated chart data object.
+ * @param {?string} [data.description] The chart description field.
+ * @param {?Object} [data.datatable] The chart datatable field.
+ * @param {?Object} [data.options] The chart options field.
+ * @returns {Promise} A promise will be resolved with the updated chart.
+ *                    Or rejected with defined errors.
+ */
+exports.update = function (id, data) {
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "chart",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
+  let fields = ['description', 'datatable', 'options'];
+  let updateData = {
+    updatedAt: new Date().toISOString()
+  };
+
+  fields.forEach(function (field) {
+    if (validators.isDefined(data[field])) {
+      updateData[field] = data[field];
+    }
+  });
+
+  if (validators.isDefined(data.browserDownloadUrl) &&
+    validators.isDefined(data.browserDownloadUrl.image)) {
+
+    let filename = data.browserDownloadUrl.image;
+
+    updateData.browserDownloadUrl = {
+      image: ROOT_ENDPOINT + '/upload/' + filename
+    };
+  }
+
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .findOneAndUpdate({
+        _id: ObjectId(id)
+      }, {
+        $set: updateData
+      }, {
+        // When false, returns the updated document rather than
+        // the original.
+        returnOriginal: false
+      })
+      .then(function (result) {
+        if (result.value === null) {
+          return Promise.reject({
+            status: 404
+          });
+
+        } else {
+          return result.value;
+        }
+      });
   });
 };
 
@@ -185,7 +240,7 @@ exports.deleteAll = function() {
  * @returns {Promise} A promise will be resolved when delete successfully.
  *                    Or rejected with defined errors.
  */
-exports.deleteOne = function (id) {
+exports.delete = function (id) {
   if (!ObjectId.isValid(id)) {
     return Promise.reject({
       status: 422,
@@ -220,72 +275,17 @@ exports.deleteOne = function (id) {
 
 
 /**
- * Update a single chart.
+ * Delete all charts.
  *
  * @method
- * @param {string} id The chart '_id' property.
- * @param {Object} data The updated chart data object.
- * @param {?string} [data.description] The chart description field.
- * @param {?Object} [data.datatable] The chart datatable field.
- * @param {?Object} [data.options] The chart options field.
- * @returns {Promise} A promise will be resolved with the updated chart.
- *                    Or rejected with defined errors.
+ * @returns {Promise} A promise will be resolved when delete successfully.
+ *                    Or rejected when error occurred.
  */
-exports.updateOne = function (id, data) {
-  if (!ObjectId.isValid(id)) {
-    return Promise.reject({
-      status: 422,
-      errors: [{
-        "resource": "chart",
-        "field": "_id",
-        "code": "invalid"
-      }]
-    });
-  }
-  
-  let fields = ['description', 'datatable', 'options'];
-  let updateData = {
-    updatedAt: new Date().toISOString()
-  };
-
-  fields.forEach(function (field) {
-    if (validators.isDefined(data[field])) {
-      updateData[field] = data[field];
-    }
-  });
-
-  if (validators.isDefined(data.browserDownloadUrl) &&
-      validators.isDefined(data.browserDownloadUrl.image)) {
-
-    let filename = data.browserDownloadUrl.image;
-
-    updateData.browserDownloadUrl = {
-      image: ROOT_ENDPOINT + '/upload/' + filename
-    };
-  }
-
+exports.deleteAll = function () {
   return dbClient.connect().then(function (db) {
 
     return db
       .collection(COLLECTION)
-      .findOneAndUpdate({
-        _id: ObjectId(id)
-      }, {
-        $set: updateData
-      }, {
-        // When false, returns the updated document rather than
-        // the original.
-        returnOriginal: false
-      })
-      .then(function (result) {
-        if (result.value === null) {
-          return Promise.reject({
-            status: 404
-          });
-
-        } else {
-          return result.value;
-        }
-      });
+      .deleteMany();
   });
 };

@@ -42,6 +42,64 @@ const JOB_SCHEMA = {
 
 
 /**
+ * List all jobs.
+ *
+ * @method
+ * @returns {Promise} A promise will be resolved with jobs list.
+ *                    Or rejected with defined errors.
+ */
+exports.list = function() {
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .find({})
+      .toArray();
+  });
+};
+
+
+/**
+ * Get a single job.
+ *
+ * @method
+ * @param {string} id The job's '_id' property.
+ * @returns {Promise} A promise will be resolved with the found job.
+ *                    Or rejected with defined errors.
+ */
+exports.get = function (id) {
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "job",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .find({ "_id": ObjectId(id) })
+      .limit(1)
+      .toArray()
+      .then(function (docs) {
+        if (!docs.length) {
+          return Promise.reject({
+            status: 404
+          });
+        } else {
+          return docs;
+        }
+      });
+  });
+};
+
+
+/**
  * Create a new job.
  *
  * @method
@@ -119,32 +177,15 @@ exports.create = function (data) {
 
 
 /**
- * List all jobs.
+ * Update a single job.
  *
  * @method
- * @returns {Promise} A promise will be resolved with jobs list.
+ * @param {string} id ObjectId string.
+ * @param {Object} data The updated job data object.
+ * @returns {Promise} A promise will be resolved with the updated job.
  *                    Or rejected with defined errors.
  */
-exports.all = function() {
-  return dbClient.connect().then(function (db) {
-
-    return db
-      .collection(COLLECTION)
-      .find({})
-      .toArray();
-  });
-};
-
-
-/**
- * Get a single job.
- *
- * @method
- * @param {string} id The job's '_id' property.
- * @returns {Promise} A promise will be resolved with the found job.
- *                    Or rejected with defined errors.
- */
-exports.getOne = function (id) {
+exports.update = function (id, data) {
   if (!ObjectId.isValid(id)) {
     return Promise.reject({
       status: 422,
@@ -156,20 +197,32 @@ exports.getOne = function (id) {
     });
   }
 
+  let updateData = {
+    lastState: data.lastState,
+    updatedAt: new Date().toISOString()
+  };
+
   return dbClient.connect().then(function (db) {
 
     return db
       .collection(COLLECTION)
-      .find({ "_id": ObjectId(id) })
-      .limit(1)
-      .toArray()
-      .then(function (docs) {
-        if (!docs.length) {
+      .findOneAndUpdate({
+        _id: ObjectId(id)
+      }, {
+        $set: updateData
+      }, {
+        // When false, returns the updated document rather than
+        // the original.
+        returnOriginal: false
+      })
+      .then(function (result) {
+        if (result.value === null) {
           return Promise.reject({
             status: 404
           });
+
         } else {
-          return docs;
+          return result.value;
         }
       });
   });
@@ -184,7 +237,7 @@ exports.getOne = function (id) {
  * @returns {Promise} A promise will be resolved when delete successfully.
  *                    Or rejected with defined errors.
  */
-exports.deleteOne = function (id) {
+exports.delete = function (id) {
   if (!ObjectId.isValid(id)) {
     return Promise.reject({
       status: 422,
@@ -212,59 +265,6 @@ exports.deleteOne = function (id) {
 
         } else {
           return result;
-        }
-      });
-  });
-};
-
-
-/**
- * Update a single job.
- *
- * @method
- * @param {string} id ObjectId string.
- * @param {Object} data The updated job data object.
- * @returns {Promise} A promise will be resolved with the updated job.
- *                    Or rejected with defined errors.
- */
-exports.updateOne = function (id, data) {
-  if (!ObjectId.isValid(id)) {
-    return Promise.reject({
-      status: 422,
-      errors: [{
-        "resource": "job",
-        "field": "_id",
-        "code": "invalid"
-      }]
-    });
-  }
-  
-  let updateData = {
-    lastState: data.lastState,
-    updatedAt: new Date().toISOString()
-  };
-  
-  return dbClient.connect().then(function (db) {
-
-    return db
-      .collection(COLLECTION)
-      .findOneAndUpdate({
-        _id: ObjectId(id)
-      }, {
-        $set: updateData
-      }, {
-        // When false, returns the updated document rather than
-        // the original.
-        returnOriginal: false
-      })
-      .then(function (result) {
-        if (result.value === null) {
-          return Promise.reject({
-            status: 404
-          });
-
-        } else {
-          return result.value;
         }
       });
   });

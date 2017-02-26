@@ -16,7 +16,7 @@ router.route('/charts')
 
   // read all charts
   .get(function getCharts(req, res, next) {
-    charts.all(utils.getQueryParameters(req))
+    charts.list(utils.getQueryParameters(req))
       .then(function (docs) {
         res.send(docs);
       })
@@ -49,7 +49,7 @@ router.route('/charts/:id')
   .get(function getChart(req, res, next) {
     let id = req.params.id;
     
-    charts.getOne(id)
+    charts.get(id)
       .then(function (docs) {
         res.send(docs[0]);
       })
@@ -60,7 +60,7 @@ router.route('/charts/:id')
   .post(function postChart(req, res, next) {
     let id = req.params.id;
 
-    charts.updateOne(id, req.body)
+    charts.update(id, req.body)
       .then(function (doc) {
         res.send(doc);
       })
@@ -71,7 +71,7 @@ router.route('/charts/:id')
   .delete(function deleteChart(req, res, next) {
     let id = req.params.id;
     
-    charts.deleteOne(id)
+    charts.delete(id)
       .then(function () {
         res.status(204).send();
       })
@@ -86,7 +86,7 @@ router.route('/charts/:id/datatable')
   .put(function putChartDataTable(req, res, next) {
     let id = req.params.id;
     
-    charts.updateOne(id, { datatable: req.body })
+    charts.update(id, { datatable: req.body })
       .then(function (doc) {
         res.send(doc);
       })
@@ -99,14 +99,14 @@ router.route('/charts/:id/datatable')
     let format = req.query.format || '';
 
     if (format === 'json') {
-      charts.getOne(id)
+      charts.get(id)
         .then(function (docs) {
           res.send(docs[0].datatable);
         })
         .catch(next);
 
     } else if (format === 'xlsx') {
-      charts.getOne(id)
+      charts.get(id)
         .then(function (docs) {
           res.setHeader('Content-disposition', 'attachment; filename=' + (docs[0]._id) + '.xlsx');
           res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -153,7 +153,7 @@ router.route('/charts/:id/assets')
           actionPromise = dataTable
             .fromXLSXStream(part)
             .then(function (datatable) {
-              return charts.updateOne(id, {
+              return charts.update(id, {
                 datatable: datatable
               });
             });
@@ -162,7 +162,7 @@ router.route('/charts/:id/assets')
           actionPromise = fileParser
             .readImageStream(part)
             .then(function (filename) {
-              return charts.updateOne(id, {
+              return charts.update(id, {
                 browserDownloadUrl: {
                   image: filename
                 }

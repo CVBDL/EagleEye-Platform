@@ -11,63 +11,6 @@ let COLLECTION = dbClient.COLLECTION.CHART_SET;
 
 
 /**
- * Create a new chart set.
- *
- * @method
- * @param {Object} data The new chart set object.
- * @param {?string} [data.title=null] The chart set title.
- * @param {?string} [data.description=null] The chart set description.
- * @param {Array} [data.charts] The charts' ids belong to this chart set.
- * @returns {Promise} A promise will be resolved with new created chart set.
- *                    Or rejected with defined errors.
- */
-exports.create = function (data) {
-  // chart set schema
-  let schema = {
-    title: null,
-    description: null,
-    charts: [],
-    createdAt: null,
-    updatedAt: null
-  };
-  
-  if (validators.isString(data.title)) {
-    schema.title = data.title;
-  }
-
-  if (validators.isValidDescription(data.description)) {
-    schema.description = data.description;
-  }
-  
-  if (validators.isValidChartIds(data.charts)) {
-    schema.charts = data.charts;
-
-  } else {
-    return Promise.reject({
-      status: 422,
-      errors: [{
-        "resource": "chart-sets",
-        "field": "charts",
-        "code": "invalid"
-      }]
-    });
-  }
-
-  schema.createdAt = schema.updatedAt = new Date().toISOString();
-
-  return dbClient.connect().then(function (db) {
-
-    return db
-      .collection(COLLECTION)
-      .insertOne(schema)
-      .then(function (result) {
-        return result.ops[0];
-      });
-  });
-};
-
-
-/**
  * Get all chart sets.
  *
  * @method
@@ -82,7 +25,7 @@ exports.create = function (data) {
  * @returns {Promise} A promise will be resolved with new created chart set.
  *                    Or rejected with defined errors.
  */
-exports.all = function (params) {
+exports.list = function (params) {
   let query = {};
 
   params = params || {};
@@ -113,7 +56,7 @@ exports.all = function (params) {
  * @returns {Promise} A promise will be resolved with the found chart set.
  *                    Or rejected with defined errors.
  */
-exports.getOne = function (id) {
+exports.get = function (id) {
   if (!ObjectId.isValid(id)) {
     return Promise.reject({
       status: 422,
@@ -142,7 +85,7 @@ exports.getOne = function (id) {
         let promiseQueue = [];
 
         docs[0].charts.forEach(function (chartId, index) {
-          promiseQueue.push(charts.getOne(chartId));
+          promiseQueue.push(charts.get(chartId));
         });
 
         return Promise.all(promiseQueue)
@@ -161,56 +104,57 @@ exports.getOne = function (id) {
 
 
 /**
- * Delete all chart sets.
+ * Create a new chart set.
  *
  * @method
- * @returns {Promise} A promise will be resolved when delete successfully.
- *                    Or rejected when error occurred.
- */
-exports.deleteAll = function () {
-  return dbClient.connect().then(function (db) {
-
-    return db
-      .collection(COLLECTION)
-      .deleteMany();
-  });
-};
-
-
-/**
- * Delete a single chart set.
- *
- * @method
- * @param {string} id The chart set '_id' property.
- * @returns {Promise} A promise will be resolved when delete successfully.
+ * @param {Object} data The new chart set object.
+ * @param {?string} [data.title=null] The chart set title.
+ * @param {?string} [data.description=null] The chart set description.
+ * @param {Array} [data.charts] The charts' ids belong to this chart set.
+ * @returns {Promise} A promise will be resolved with new created chart set.
  *                    Or rejected with defined errors.
  */
-exports.deleteOne = function (id) {
-  if (!ObjectId.isValid(id)) {
+exports.create = function (data) {
+  // chart set schema
+  let schema = {
+    title: null,
+    description: null,
+    charts: [],
+    createdAt: null,
+    updatedAt: null
+  };
+
+  if (validators.isString(data.title)) {
+    schema.title = data.title;
+  }
+
+  if (validators.isValidDescription(data.description)) {
+    schema.description = data.description;
+  }
+
+  if (validators.isValidChartIds(data.charts)) {
+    schema.charts = data.charts;
+
+  } else {
     return Promise.reject({
       status: 422,
       errors: [{
         "resource": "chart-sets",
-        "field": "_id",
+        "field": "charts",
         "code": "invalid"
       }]
     });
   }
 
+  schema.createdAt = schema.updatedAt = new Date().toISOString();
+
   return dbClient.connect().then(function (db) {
 
     return db
       .collection(COLLECTION)
-      .deleteOne({ _id: ObjectId(id) })
+      .insertOne(schema)
       .then(function (result) {
-        if (result.deletedCount === 0) {
-          return Promise.reject({
-            status: 404
-          });
-
-        } else {
-          return result;
-        }
+        return result.ops[0];
       });
   });
 };
@@ -228,7 +172,7 @@ exports.deleteOne = function (id) {
  * @returns {Promise} A promise will be resolved with the updated chart set.
  *                    Or rejected with defined errors.
  */
-exports.updateOne = function (id, data) {
+exports.update = function (id, data) {
   if (!ObjectId.isValid(id)) {
     return Promise.reject({
       status: 422,
@@ -239,7 +183,7 @@ exports.updateOne = function (id, data) {
       }]
     });
   }
-  
+
   let fields = ['title', 'description', 'charts'];
   let updateData = {
     updatedAt: new Date().toISOString()
@@ -277,7 +221,71 @@ exports.updateOne = function (id, data) {
   });
 };
 
-// TODO: update `updatedAt`
+
+/**
+ * Delete a single chart set.
+ *
+ * @method
+ * @param {string} id The chart set '_id' property.
+ * @returns {Promise} A promise will be resolved when delete successfully.
+ *                    Or rejected with defined errors.
+ */
+exports.delete = function (id) {
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "chart-sets",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .deleteOne({ _id: ObjectId(id) })
+      .then(function (result) {
+        if (result.deletedCount === 0) {
+          return Promise.reject({
+            status: 404
+          });
+
+        } else {
+          return result;
+        }
+      });
+  });
+};
+
+
+/**
+ * Delete all chart sets.
+ *
+ * @method
+ * @returns {Promise} A promise will be resolved when delete successfully.
+ *                    Or rejected when error occurred.
+ */
+exports.deleteAll = function () {
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .deleteMany();
+  });
+};
+
+
+/**
+ * Delete chart in all chart sets.
+ *
+ * @method
+ * @param {string} id The chart '_id' property.
+ * @returns {Promise} A promise will be resolved when delete successfully.
+ *                    Or rejected when error occurred.
+ */
 exports.deleteChartInChartSets = function (id) {
   if (!ObjectId.isValid(id)) {
     return Promise.reject({

@@ -9,6 +9,94 @@ const COLLECTION = dbClient.COLLECTION.TASK;
 
 
 /**
+ * Not in use currently.
+ */
+exports.list = function() {
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .find({})
+      .toArray();
+  });
+};
+
+
+/**
+ * List all tasks with the specific job id.
+ *
+ * @method
+ * @param {string} jobId The `_id` of a job.
+ * @returns {Promise} A promise will be resolved with tasks.
+ *                    Or rejected with defined errors.
+ */
+exports.listByJobId = function (jobId) {
+  if (!ObjectId.isValid(jobId)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "task",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .find({ 'job._id': ObjectId(jobId) })
+      .toArray()
+      .then(function (docs) {
+        if (!docs.length) {
+          return Promise.reject({
+            status: 404
+          });
+        } else {
+          return docs;
+        }
+      });
+  });
+};
+
+
+/**
+ * Not in use currently.
+ */
+exports.get = function (id) {
+  if (!ObjectId.isValid(id)) {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        "resource": "task",
+        "field": "_id",
+        "code": "invalid"
+      }]
+    });
+  }
+
+  return dbClient.connect().then(function (db) {
+
+    return db
+      .collection(COLLECTION)
+      .find({ _id: ObjectId(id) })
+      .limit(1)
+      .toArray()
+      .then(function (docs) {
+        if (!docs.length) {
+          return Promise.reject({
+            status: 404
+          });
+        } else {
+          return docs;
+        }
+      });
+  });
+};
+
+
+/**
  * Create a task.
  *
  * @method
@@ -27,7 +115,7 @@ exports.create = function (job) {
       }]
     });
   }
-  
+
   let task = {
     job: job,
     state: 'running',
@@ -56,7 +144,7 @@ exports.create = function (job) {
  * @returns {Promise} A promise will be resolved with the updated task.
  *                    Or rejected with defined errors.
  */
-exports.updateOne = function (id, data) {
+exports.update = function (id, data) {
   if (!ObjectId.isValid(id)) {
     return Promise.reject({
       status: 422,
@@ -107,7 +195,7 @@ exports.updateOne = function (id, data) {
         } else {
           let jobId = result.value.job._id.toHexString();
 
-          return jobs.updateOne(jobId, { lastState: result.value.state })
+          return jobs.update(jobId, { lastState: result.value.state })
             .then(function () {
               return result.value;
             });
@@ -118,97 +206,9 @@ exports.updateOne = function (id, data) {
 
 
 /**
- * List all tasks with the specific job id.
- *
- * @method
- * @param {string} jobId The `_id` of a job.
- * @returns {Promise} A promise will be resolved with tasks.
- *                    Or rejected with defined errors.
- */
-exports.getAllByJobId = function (jobId) {
-  if (!ObjectId.isValid(jobId)) {
-    return Promise.reject({
-      status: 422,
-      errors: [{
-        "resource": "task",
-        "field": "_id",
-        "code": "invalid"
-      }]
-    });
-  }
-
-  return dbClient.connect().then(function (db) {
-
-    return db
-      .collection(COLLECTION)
-      .find({ 'job._id': ObjectId(jobId) })
-      .toArray()
-      .then(function (docs) {
-        if (!docs.length) {
-          return Promise.reject({
-            status: 404
-          });
-        } else {
-          return docs;
-        }
-      });
-  });
-};
-
-
-/**
  * Not in use currently.
  */
-exports.all = function() {
-  return dbClient.connect().then(function (db) {
-
-    return db
-      .collection(COLLECTION)
-      .find({})
-      .toArray();
-  });
-};
-
-
-/**
- * Not in use currently.
- */
-exports.getOne = function (id) {
-  if (!ObjectId.isValid(id)) {
-    return Promise.reject({
-      status: 422,
-      errors: [{
-        "resource": "task",
-        "field": "_id",
-        "code": "invalid"
-      }]
-    });
-  }
-
-  return dbClient.connect().then(function (db) {
-
-    return db
-      .collection(COLLECTION)
-      .find({ _id: ObjectId(id) })
-      .limit(1)
-      .toArray()
-      .then(function (docs) {
-        if (!docs.length) {
-          return Promise.reject({
-            status: 404
-          });
-        } else {
-          return docs;
-        }
-      });
-  });
-};
-
-
-/**
- * Not in use currently.
- */
-exports.deleteOne = function (id) {
+exports.delete = function (id) {
   if (!ObjectId.isValid(id)) {
     return Promise.reject({
       status: 422,

@@ -15,7 +15,7 @@ router.route('/tasks/:id')
     let id = req.params.id;
     let state = req.body.state;
 
-    tasks.updateOne(id, { state: state })
+    tasks.update(id, { state: state })
       .then(function (doc) {
         res.send(doc);
       })

@@ -190,7 +190,7 @@ describe('modules: charts', function () {
   describe('all', function () {
 
     it('should list all charts', function (done) {
-      charts.all()
+      charts.list()
         .then(function (docs) {
           docs.length
             .should
@@ -205,7 +205,7 @@ describe('modules: charts', function () {
     });
 
     it('should sort on "createdAt" field in "asc" order', function (done) {
-      charts.all({
+      charts.list({
         sort: [
           ['createdAt', 'asc']
         ]
@@ -227,7 +227,7 @@ describe('modules: charts', function () {
     });
 
     it('should sort on "updatedAt" field in "desc" order', function (done) {
-      charts.all({
+      charts.list({
         sort: [
           ['updatedAt', 'desc']
         ]
@@ -249,7 +249,7 @@ describe('modules: charts', function () {
     });
 
     it('should apply limit option on result set', function (done) {
-      charts.all({
+      charts.list({
         limit: 1
 
       }).then(function (docs) {
@@ -263,7 +263,7 @@ describe('modules: charts', function () {
     });
 
     it('should apply skip option on result set', function (done) {
-      charts.all({
+      charts.list({
         skip: 1
 
       }).then(function (docs) {
@@ -284,7 +284,7 @@ describe('modules: charts', function () {
     });
 
     it('should apply q query parameter on options.title field', function (done) {
-      charts.all({
+      charts.list({
         query: 'Population'
 
       }).then(function (docs) {
@@ -302,7 +302,7 @@ describe('modules: charts', function () {
     });
 
     it('should apply q query parameter on description field', function (done) {
-      charts.all({
+      charts.list({
         query: 'chart'
 
       }).then(function (docs) {
@@ -316,7 +316,7 @@ describe('modules: charts', function () {
     });
 
     it('should not query on stop words', function (done) {
-      charts.all({
+      charts.list({
         query: 'is'
 
       }).then(function (docs) {
@@ -337,7 +337,7 @@ describe('modules: charts', function () {
       let fixture = chartsFixtures.collections.chart[0];
       let id = fixture._id;
 
-      charts.getOne(id)
+      charts.get(id)
         .then(function (docs) {
           docs.length.should.eql(1);
 
@@ -362,7 +362,7 @@ describe('modules: charts', function () {
     it('should return error 404 if cannot find the record', function (done) {
       let id = '000000000000000000000000';
 
-      charts.getOne(id)
+      charts.get(id)
         .should
         .rejectedWith({
           status: 404
@@ -376,7 +376,7 @@ describe('modules: charts', function () {
     it('should return error 422 when passing invalid id', function (done) {
       let id = '0';
 
-      charts.getOne(id)
+      charts.get(id)
         .then(function (docs) {
           should.fail(null, null, 'Promise should be resolved.');
 
@@ -421,7 +421,7 @@ describe('modules: charts', function () {
     it('should delete one chart with given id', function (done) {
       let id = chartsFixtures.collections.chart[0]._id;
 
-      charts.deleteOne(id)
+      charts.delete(id)
         .then(function (result) {
           result.deletedCount.should.eql(1);
 
@@ -457,7 +457,7 @@ describe('modules: charts', function () {
     it('should return error 404 if no record to delete', function (done) {
       let id = '000000000000000000000000';
 
-      charts.deleteOne(id)
+      charts.delete(id)
         .should
         .rejectedWith({
           status: 404
@@ -480,7 +480,7 @@ describe('modules: charts', function () {
         options: null
       };
 
-      charts.updateOne(id, data)
+      charts.update(id, data)
         .then(function (doc) {
           doc._id.should.eql(id);
           should.equal(doc.description, data.description);
@@ -509,7 +509,7 @@ describe('modules: charts', function () {
         options: null
       };
 
-      charts.updateOne(id, data)
+      charts.update(id, data)
         .should
         .rejectedWith({
           status: 404
@@ -528,7 +528,7 @@ describe('modules: charts', function () {
         options: null
       };
 
-      charts.updateOne(id, data)
+      charts.update(id, data)
         .should
         .rejectedWith({
           status: 422,

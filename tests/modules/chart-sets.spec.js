@@ -119,7 +119,7 @@ describe('modules: chart-sets', function() {
   describe('all', function () {
 
     it('should list all chart sets', function (done) {
-      chartSets.all().then(function (docs) {
+      chartSets.list().then(function (docs) {
         docs.length
           .should
           .eql(chartSetsFixtures.collections.chart_set.length);
@@ -129,7 +129,7 @@ describe('modules: chart-sets', function() {
     });
     
     it('should sort on "createdAt" field in "asc" order', function (done) {
-      chartSets.all({
+      chartSets.list({
         sort: [
           ['createdAt', 'asc']
         ]
@@ -151,7 +151,7 @@ describe('modules: chart-sets', function() {
     });
 
     it('should sort on "updatedAt" field in "desc" order', function (done) {
-      chartSets.all({
+      chartSets.list({
         sort: [
           ['updatedAt', 'desc']
         ]
@@ -173,7 +173,7 @@ describe('modules: chart-sets', function() {
     });
 
     it('should apply limit option on result set', function (done) {
-      chartSets.all({
+      chartSets.list({
         limit: 1
 
       }).then(function (docs) {
@@ -187,7 +187,7 @@ describe('modules: chart-sets', function() {
     });
 
     it('should apply skip option on result set', function (done) {
-      chartSets.all({
+      chartSets.list({
         skip: 1
 
       }).then(function (docs) {
@@ -209,7 +209,7 @@ describe('modules: chart-sets', function() {
 
     it('should apply q query parameter on title field', function (done) {
       chartSets
-        .all({
+        .list({
           query: 'CCC'
         })
         .then(function (docs) {
@@ -224,7 +224,7 @@ describe('modules: chart-sets', function() {
 
     it('should apply q query parameter on description field', function (done) {
       chartSets
-        .all({
+        .list({
           query: 'JJJ'
         })
         .then(function (docs) {
@@ -240,7 +240,7 @@ describe('modules: chart-sets', function() {
     // Ref: <https://docs.mongodb.com/manual/tutorial/specify-language-for-text-index/>
     it('should not query on stop words', function (done) {
       chartSets
-        .all({
+        .list({
           query: 'J'
         })
         .then(function (docs) {
@@ -261,7 +261,7 @@ describe('modules: chart-sets', function() {
     it('should select one chart set by _id', function (done) {
       let id = chartSetsFixtures.collections.chart_set[0]._id;
 
-      chartSets.getOne(id)
+      chartSets.get(id)
         .then(function (doc) {
           let fixture = chartSetsFixtures.collections.chart_set[0];
 
@@ -286,7 +286,7 @@ describe('modules: chart-sets', function() {
     it('should contain chart details in "charts" field', function (done) {
       let id = chartSetsFixtures.collections.chart_set[0]._id;
 
-      chartSets.getOne(id)
+      chartSets.get(id)
         .then(function (doc) {
           let fixture = chartSetsFixtures.collections.chart_set[0];
 
@@ -309,7 +309,7 @@ describe('modules: chart-sets', function() {
     it('should return error 404 if cannot find the chart set', function (done) {
       let id = '000000000000000000000000';
 
-      chartSets.getOne(id)
+      chartSets.get(id)
         .should
         .rejectedWith({
           status: 404
@@ -323,7 +323,7 @@ describe('modules: chart-sets', function() {
     it('should return error 422 when passing invalid id', function (done) {
       let id = '0';
 
-      chartSets.getOne(id)
+      chartSets.get(id)
         .then(function (docs) {
           should.fail(null, null, 'Promise should be resolved.');
 
@@ -373,7 +373,7 @@ describe('modules: chart-sets', function() {
     it('should delete one chart set with given id', function (done) {
       let id = chartSetsFixtures.collections.chart_set[0]._id;
 
-      chartSets.deleteOne(id)
+      chartSets.delete(id)
         .then(function (result) {
           result.deletedCount.should.eql(1);
           done();
@@ -387,7 +387,7 @@ describe('modules: chart-sets', function() {
     it('should return error 404 if no record to delete', function (done) {
       let id = '000000000000000000000000';
 
-      chartSets.deleteOne(id)
+      chartSets.delete(id)
         .should
         .rejectedWith({
           status: 404
@@ -410,7 +410,7 @@ describe('modules: chart-sets', function() {
         charts: []
       };
 
-      chartSets.updateOne(id, data)
+      chartSets.update(id, data)
         .then(function (doc) {
           doc._id.should.eql(id);
           should.equal(doc.title, data.title);
@@ -439,7 +439,7 @@ describe('modules: chart-sets', function() {
         charts: []
       };
 
-      chartSets.updateOne(id, data)
+      chartSets.update(id, data)
         .should
         .rejectedWith({
           status: 404
@@ -458,7 +458,7 @@ describe('modules: chart-sets', function() {
         charts: []
       };
 
-      chartSets.updateOne(id, data)
+      chartSets.update(id, data)
         .should
         .rejectedWith({
           status: 422,

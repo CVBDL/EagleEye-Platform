@@ -15,7 +15,7 @@ router.route('/jobs')
 
   // list all jobs
   .get(function getJobs(req, res, next) {
-    jobs.all()
+    jobs.list()
       .then(function (docs) {
         res.send(docs);
       })
@@ -39,7 +39,7 @@ router.route('/jobs/:id')
   .get(function getJob(req, res, next) {
     let id = req.params.id;
 
-    jobs.getOne(id)
+    jobs.get(id)
       .then(function (docs) {
         res.send(docs[0]);
       })
@@ -50,7 +50,7 @@ router.route('/jobs/:id')
   .delete(function deleteJob(req, res, next) {
     let id = req.params.id;
 
-    jobs.deleteOne(id)
+    jobs.delete(id)
       .then(function () {
         res.status(204).send();
       })
@@ -65,7 +65,7 @@ router.route('/jobs/:id/restart')
   .put(function putJobRestart(req, res, next) {
     let id = req.params.id;
 
-    jobs.getOne(id)
+    jobs.get(id)
       .then(function (docs) {
         scheduler.runJob(docs[0]);
       })
@@ -83,7 +83,7 @@ router.route('/jobs/:id/tasks')
   .get(function getJobTasks(req, res, next) {
     let id = req.params.id;
 
-    tasks.getAllByJobId(id)
+    tasks.listByJobId(id)
       .then(function (docs) {
         docs.sort((a, b) => b.finishedAt - a.finishedAt);
         res.send(docs);

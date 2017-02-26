@@ -45,7 +45,7 @@ exports.runJob = function runJob(job) {
 
       child_process.exec(fullCommand, function (err, stdout, stderr) {
         if (err) {
-          tasks.updateOne(log._id, {
+          tasks.update(log._id, {
             state: 'failure',
             message: err.message
           });
@@ -103,7 +103,7 @@ exports.deleteJob = function deleteJob(id) {
  * @method
  */
 exports.start = function initSchedueJobs() {
-  jobs.all()
+  jobs.list()
     .then(function (jobs) {
       jobs.forEach(function (job) {
         if (job.enabled === true) {

@@ -93,7 +93,7 @@ describe('modules: tasks', function () {
         state: 'success'
       };
 
-      tasks.updateOne(id, data)
+      tasks.update(id, data)
         .then(function (doc) {
           doc._id.should.eql(id);
           doc.job.should.eql(fixture.job);
@@ -121,7 +121,7 @@ describe('modules: tasks', function () {
         state: 'success'
       };
 
-      tasks.updateOne(id, data)
+      tasks.update(id, data)
         .then(function (doc) {
 
           return MongoClient.connect(DB_CONNECTION_URI)
@@ -159,7 +159,7 @@ describe('modules: tasks', function () {
         state: 'success'
       };
 
-      tasks.updateOne(id, data)
+      tasks.update(id, data)
         .should
         .rejectedWith({
           status: 404
@@ -176,7 +176,7 @@ describe('modules: tasks', function () {
         state: 'success'
       };
 
-      tasks.updateOne(id, data)
+      tasks.update(id, data)
         .should
         .rejectedWith({
           status: 422,
@@ -199,7 +199,7 @@ describe('modules: tasks', function () {
         state: 'unknown'
       };
 
-      tasks.updateOne(id, data)
+      tasks.update(id, data)
         .should
         .rejectedWith({
           status: 422,
@@ -227,7 +227,7 @@ describe('modules: tasks', function () {
         return item.job._id.toHexString() === jobId.toHexString();
       }).length;
       
-      tasks.getAllByJobId(jobId)
+      tasks.listByJobId(jobId)
         .then(function (docs) {
           docs.length.should.eql(count);
 
@@ -239,7 +239,7 @@ describe('modules: tasks', function () {
     it('should return error 422 when passing invalid id', function (done) {
       let jobId = '0';
 
-      tasks.getAllByJobId(jobId)
+      tasks.listByJobId(jobId)
         .should
         .rejectedWith({
           status: 422,
@@ -258,7 +258,7 @@ describe('modules: tasks', function () {
     it('should return error 404 if no record to update', function (done) {
       let jobId = '000000000000000000000000';
 
-      tasks.getAllByJobId(jobId)
+      tasks.listByJobId(jobId)
         .should
         .rejectedWith({
           status: 404
@@ -276,7 +276,7 @@ describe('modules: tasks', function () {
     it('should list all tasks', function (done) {
       let fixtures = tasksFixtures.collections.task;
 
-      tasks.all()
+      tasks.list()
         .then(function (docs) {
           docs.length
             .should
@@ -294,7 +294,7 @@ describe('modules: tasks', function () {
       let fixture = tasksFixtures.collections.task[0];
       let id = fixture._id;
 
-      tasks.getOne(id)
+      tasks.get(id)
         .then(function (docs) {
           docs.length.should.eql(1);
 
@@ -316,7 +316,7 @@ describe('modules: tasks', function () {
     it('should return error 404 if cannot find the record', function (done) {
       let id = '000000000000000000000000';
 
-      tasks.getOne(id)
+      tasks.get(id)
         .should
         .rejectedWith({
           status: 404
@@ -330,7 +330,7 @@ describe('modules: tasks', function () {
     it('should return error 422 when passing invalid id', function (done) {
       let id = '0';
 
-      tasks.getOne(id)
+      tasks.get(id)
         .then(function (docs) {
           should.fail(null, null, 'Promise should be resolved.');
 
@@ -356,7 +356,7 @@ describe('modules: tasks', function () {
     it('should delete one task with given id', function (done) {
       let id = tasksFixtures.collections.task[0]._id;
 
-      tasks.deleteOne(id)
+      tasks.delete(id)
         .then(function (result) {
           result.deletedCount.should.eql(1);
           done();
@@ -370,7 +370,7 @@ describe('modules: tasks', function () {
     it('should return error 404 if no record to delete', function (done) {
       let nonexistentId = '000000000000000000000000';
 
-      tasks.deleteOne(nonexistentId)
+      tasks.delete(nonexistentId)
         .should
         .rejectedWith({
           status: 404

@@ -12,7 +12,7 @@ router.route('/chart-sets')
 
   // read all chart sets
   .get(function getChartSets(req, res, next) {
-    chartSets.all(utils.getQueryParameters(req))
+    chartSets.list(utils.getQueryParameters(req))
       .then(function (docs) {
         res.send(docs);
       })
@@ -45,7 +45,7 @@ router.route('/chart-sets/:id')
   .get(function getSingleChartSet(req, res, next) {
     let id = req.params.id;
 
-    chartSets.getOne(id)
+    chartSets.get(id)
       .then(function (doc) {
         res.send(doc);
       })
@@ -56,7 +56,7 @@ router.route('/chart-sets/:id')
   .post(function postChartSet(req, res, next) {
     let id = req.params.id;
 
-    chartSets.updateOne(id, req.body)
+    chartSets.update(id, req.body)
       .then(function (doc) {
         res.send(doc);
       })
@@ -67,7 +67,7 @@ router.route('/chart-sets/:id')
   .delete(function deleteSingleChartSet(req, res, next) {
     let id = req.params.id;
     
-    chartSets.deleteOne(id)
+    chartSets.delete(id)
       .then(function () {
         res.status(204).send();
       })

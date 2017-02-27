@@ -2,49 +2,35 @@
 
 let ObjectId = require('mongodb').ObjectId;
 
-let chart = require('../modules/chart');
-
-exports.isUndefined = function (value) {
+let isUndefined = exports.isUndefined = function (value) {
   return typeof value === 'undefined';
 };
 
-exports.isDefined = function (value) {
+let isDefined = exports.isDefined = function (value) {
   return typeof value !== 'undefined';
 };
 
-exports.isString = function (value) {
+let isString = exports.isString = function (value) {
   return typeof value === 'string';
 };
 
-exports.isObject = function (value) {
+let isObject = exports.isObject = function (value) {
   return value !== null && typeof value === 'object';
 };
 
-exports.isValidChartType = function (chartType) {
-  let isValid = false;
-
-  Object.keys(chart.TYPE).forEach(function (type) {
-    if (chart.TYPE[type] === chartType) {
-      isValid = true;
-    }
-  });
-
-  return isValid;
+let isValidDescription = exports.isValidDescription = function (description) {
+  return isString(description);
 };
 
-exports.isValidDescription = function (description) {
-  return exports.isString(description);
+let isValidDataTable = exports.isValidDataTable = function (dataTable) {
+  return isObject(dataTable);
 };
 
-exports.isValidDataTable = function (dataTable) {
-  return exports.isObject(dataTable);
+let isValidOptions = exports.isValidOptions = function (options) {
+  return isObject(options);
 };
 
-exports.isValidOptions = function (options) {
-  return exports.isObject(options);
-};
-
-exports.isValidChartIds = function (ids) {
+let isValidChartIds = exports.isValidChartIds = function (ids) {
   if (Array.isArray(ids)) {
     return ids.every(function (id) {
       return ObjectId.isValid(id);

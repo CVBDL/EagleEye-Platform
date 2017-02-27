@@ -48,7 +48,7 @@ router.route('/charts/:id')
   // read a single chart
   .get(function getChart(req, res, next) {
     let id = req.params.id;
-    
+
     chart.get(id)
       .then(function (docs) {
         res.send(docs[0]);
@@ -70,7 +70,7 @@ router.route('/charts/:id')
   // delete a single chart
   .delete(function deleteChart(req, res, next) {
     let id = req.params.id;
-    
+
     chart.delete(id)
       .then(function () {
         res.status(204).send();
@@ -85,7 +85,7 @@ router.route('/charts/:id/datatable')
   // update a single chart data table
   .put(function putChartDataTable(req, res, next) {
     let id = req.params.id;
-    
+
     chart.update(id, { datatable: req.body })
       .then(function (doc) {
         res.send(doc);

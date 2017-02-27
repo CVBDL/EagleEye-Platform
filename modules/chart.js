@@ -3,11 +3,11 @@
 let ObjectId = require('mongodb').ObjectId;
 let Promise = require('es6-promise').Promise;
 
-let chartSet = require('./chart-set');
-let fileParser = require('./file-parser');
 let dbClient = require('../helpers/db');
 let utils = require('../helpers/utils');
 let validators = require('../helpers/validators');
+let chartSet = require('./chart-set');
+let fileParser = require('./file-parser');
 
 const ROOT_ENDPOINT = utils.getRootEndpoint();
 const API_ROOT_ENDPOINT = utils.getRestApiRootEndpoint();
@@ -16,14 +16,12 @@ const RESOURCE_NAME = 'chart';
 
 
 /**
- * Supported google chart types.
+ * Supported google chart types and custom chart types.
  * Reference docs: <https://developers.google.com/chart/interactive/docs/>.
  * @constant
  * @type {Object}
  */
-exports.TYPE = {
-
-  // standard google chart types
+const CHART_TYPE = {
   AREA: 'AreaChart',
   BAR: 'BarChart',
   COLUMN: 'ColumnChart',
@@ -31,8 +29,20 @@ exports.TYPE = {
   LINE: 'LineChart',
   PIE: 'PieChart',
 
-  // custom chart types
+  // custom
   IMAGE: 'ImageChart'
+};
+
+function isValidChartType(chartType) {
+  let isValid = false;
+
+  Object.keys(CHART_TYPE).forEach(function (type) {
+    if (CHART_TYPE[type] === chartType) {
+      isValid = true;
+    }
+  });
+
+  return isValid;
 };
 
 
@@ -141,7 +151,7 @@ exports.create = function (data) {
     updatedAt: null
   };
 
-  if (validators.isValidChartType(data.chartType)) {
+  if (isValidChartType(data.chartType)) {
     schema.chartType = data.chartType;
 
   } else {

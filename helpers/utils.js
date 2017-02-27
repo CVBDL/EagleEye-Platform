@@ -1,17 +1,17 @@
 'use strict';
 
-let os      = require('os');
+let os = require('os');
 
 let validators = require('./validators');
 
 const protocol = 'http';
 const port = process.env.EAGLEEYE_PLATFORM_PORT || '3000';
 
-exports.getRootEndpoint = function() {
+exports.getRootEndpoint = function () {
   return protocol + '://' + os.hostname() + ':' + port;
 };
 
-exports.getRestApiRootEndpoint = function() {
+exports.getRestApiRootEndpoint = function () {
   return protocol + '://' + os.hostname() + ':' + port + '/api/v1';
 };
 
@@ -20,7 +20,7 @@ exports.getQueryParameters = function (req) {
 
   let params = {};
   let queryOption = {};
-  
+
   queryParameters.forEach(function (queryParameter) {
     if (validators.isDefined(req.query[queryParameter])) {
       params[queryParameter] = req.query[queryParameter];
@@ -28,13 +28,13 @@ exports.getQueryParameters = function (req) {
   });
 
   if (!params.sort ||
-      !new Set(["createdAt", "updatedAt"]).has(params.sort)) {
+    !new Set(["createdAt", "updatedAt"]).has(params.sort)) {
 
     params.sort = "createdAt";
   }
 
   if (!params.order ||
-      !new Set(["asc", "desc"]).has(params.order.toLowerCase())) {
+    !new Set(["asc", "desc"]).has(params.order.toLowerCase())) {
 
     params.order = "desc";
   }

@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 /**
  * @overview
@@ -37,36 +37,36 @@ let validators = [{
   toDataTable: convertNullToDataTable,
   toFile: convertNullToFile
 }, {
-  type: 'boolean',
-  validator: isBoolean,
-  toDataTable: convertBooleanToDataTable,
-  toFile: convertBooleanToFile
-}, {
-  type: 'number',
-  validator: isNumber,
-  toDataTable: convertNumberToDataTable,
-  toFile: convertNumberToFile
-}, {
-  type: 'timeofday',
-  validator: isTimeOfDay,
-  toDataTable: convertTimeOfDayToDataTable,
-  toFile: convertTimeOfDayToFile
-}, {
-  type: 'date',
-  validator: isDate,
-  toDataTable: convertDateToDataTable,
-  toFile: convertDateToFile
-}, {
-  type: 'datetime',
-  validator: isDateTime,
-  toDataTable: convertDateTimeToDataTable,
-  toFile: convertDateTimeToFile
-}, {
-  type: 'string',
-  validator: defaultValidator,
-  toDataTable: convertStringToDataTable,
-  toFile: convertStringToFile
-}];
+    type: 'boolean',
+    validator: isBoolean,
+    toDataTable: convertBooleanToDataTable,
+    toFile: convertBooleanToFile
+  }, {
+    type: 'number',
+    validator: isNumber,
+    toDataTable: convertNumberToDataTable,
+    toFile: convertNumberToFile
+  }, {
+    type: 'timeofday',
+    validator: isTimeOfDay,
+    toDataTable: convertTimeOfDayToDataTable,
+    toFile: convertTimeOfDayToFile
+  }, {
+    type: 'date',
+    validator: isDate,
+    toDataTable: convertDateToDataTable,
+    toFile: convertDateToFile
+  }, {
+    type: 'datetime',
+    validator: isDateTime,
+    toDataTable: convertDateTimeToDataTable,
+    toFile: convertDateTimeToFile
+  }, {
+    type: 'string',
+    validator: defaultValidator,
+    toDataTable: convertStringToDataTable,
+    toFile: convertStringToFile
+  }];
 
 /**
  * @method
@@ -75,7 +75,7 @@ let validators = [{
  * @param {*} value
  * @returns {string}
  */
-exports.infer = function(value) {
+exports.infer = function (value) {
   let resultType = '';
   let len = validators.length;
 
@@ -100,7 +100,7 @@ exports.infer = function(value) {
  * @param {*} value
  * @returns {*}
  */
-exports.convertFileToDataTable = function(value) {
+exports.convertFileToDataTable = function (value) {
   let resultValue;
   let len = validators.length;
 
@@ -114,7 +114,7 @@ exports.convertFileToDataTable = function(value) {
   return resultValue;
 }
 
-exports.convertDataTableToFile = function(value, type) {
+exports.convertDataTableToFile = function (value, type) {
   let resultValue;
 
   if (isNull(value)) return convertNullToFile();
@@ -252,7 +252,7 @@ function convertDateTimeToDataTable(value) {
 
   result = 'Date(' + dateParts[0] + ',' + month + ',' + day + ',' +
     parseInt(timeParts[0], 10) + ',' + parseInt(timeParts[1], 10) + ',' +
-    parseInt(secondsParts[0], 10) + (secondsParts[1] ? (',' + parseInt(secondsParts[1], 10)) : '') +')';
+    parseInt(secondsParts[0], 10) + (secondsParts[1] ? (',' + parseInt(secondsParts[1], 10)) : '') + ')';
 
   return result;
 }

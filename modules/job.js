@@ -5,7 +5,7 @@ let Promise = require('es6-promise').Promise;
 
 let dbClient = require('../helpers/db');
 let validators = require('../helpers/validators');
-let scheduler = require('../helpers/scheduler');
+let scheduler = require('../modules/scheduler');
 
 const COLLECTION = dbClient.COLLECTION.JOB;
 const RESOURCE_NAME = 'job';

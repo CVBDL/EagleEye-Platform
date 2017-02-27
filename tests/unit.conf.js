@@ -14,9 +14,9 @@ require('./modules/job.spec');
 require('./modules/file-parser.spec');
 require('./modules/data-table.spec');
 require('./modules/error-handler.spec');
+require('./modules/column-type.spec');
 
 // helpers
-require('./helpers/column-types.spec');
 require('./helpers/utils.spec');
 
 // routes

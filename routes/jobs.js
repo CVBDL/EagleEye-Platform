@@ -2,8 +2,8 @@
 
 let express = require('express');
 
-let scheduler = require('../helpers/scheduler');
 let utils = require('../helpers/utils');
+let scheduler = require('../modules/scheduler');
 let job = require('../modules/job');
 let task = require('../modules/task');
 

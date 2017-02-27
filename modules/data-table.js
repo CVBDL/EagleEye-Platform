@@ -2,7 +2,7 @@
 
 let Exceljs = require('exceljs');
 let Promise = require('es6-promise').Promise;
-let columnTypes = require('../helpers/column-types');
+let columnType = require('./column-type');
 let fileParser = require('./file-parser');
 let validators = require('../helpers/validators');
 
@@ -50,11 +50,11 @@ let fromWorksheet = function fromWorksheet(worksheet) {
 
       row.eachCell(function (cell, colNumber) {
         rowData.c.push({
-          v: columnTypes.convertFileToDataTable(cell.value)
+          v: columnType.convertFileToDataTable(cell.value)
         });
 
         if (!preferredColumnDataType[colNumber - 1]) {
-          let inferredType = columnTypes.infer(cell.value);
+          let inferredType = columnType.infer(cell.value);
 
           preferredColumnDataType[colNumber - 1] =
             inferredType === 'null'

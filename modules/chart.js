@@ -7,7 +7,6 @@ let chartSet = require('./chart-set');
 let fileParser = require('./file-parser');
 let dbClient = require('../helpers/db');
 let utils = require('../helpers/utils');
-let columnTypes = require('../helpers/column-types');
 let validators = require('../helpers/validators');
 
 const ROOT_ENDPOINT = utils.getRootEndpoint();

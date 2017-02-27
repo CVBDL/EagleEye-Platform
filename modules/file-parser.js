@@ -7,7 +7,7 @@ let fs = require('fs');
 let path = require('path');
 
 let chart = require('./chart');
-let columnTypes = require('../helpers/column-types');
+let columnType = require('./column-type');
 
 
 /**
@@ -96,7 +96,7 @@ exports.writeXLSXStream = function (stream, datatable) {
     let worksheetRow = [];
 
     cols.forEach(function (col, colIndex) {
-      let cellValue = columnTypes.convertDataTableToFile(
+      let cellValue = columnType.convertDataTableToFile(
         row.c[colIndex].v, cols[colIndex].type);
 
       worksheetRow.push(cellValue);

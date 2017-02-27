@@ -28,17 +28,16 @@
     <Content Include="README.md" />
     <Compile Include="app.js" />
     <Compile Include="gulpfile.js" />
-    <Compile Include="helpers\column-types.js" />
     <Compile Include="helpers\db.js" />
-    <Compile Include="helpers\error-handlers.js" />
-    <Compile Include="helpers\scheduler.js" />
     <Compile Include="helpers\utils.js" />
     <Compile Include="helpers\validators.js" />
     <Compile Include="modules\chart-set.js" />
     <Compile Include="modules\chart.js" />
+    <Compile Include="modules\column-type.js" />
     <Compile Include="modules\data-table.js" />
     <Compile Include="modules\error-handler.js" />
     <Compile Include="modules\file-parser.js" />
+    <Compile Include="modules\scheduler.js" />
     <Compile Include="modules\task.js" />
     <Compile Include="modules\job.js" />
     <Compile Include="routes\chart-sets.js" />
@@ -71,7 +70,7 @@
     <Content Include="tests\fixtures\datatable3.xlsx" />
     <Content Include="tests\fixtures\excelHelper.json" />
     <Content Include="tests\fixtures\excelModule.json" />
-    <Compile Include="tests\helpers\column-types.spec.js" />
+    <Compile Include="tests\modules\column-type.spec.js" />
     <Compile Include="tests\modules\chart.spec.js" />
     <Compile Include="tests\modules\chart-set.spec.js" />
     <Content Include="tests\fixtures\jobs.json" />
@@ -82,8 +81,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin" />
-    <Folder Include="excelPath\" />
-    <Folder Include="excelPath\test" />
     <Folder Include="helpers" />
     <Folder Include="modules" />
     <Folder Include="public" />

@@ -3,15 +3,42 @@
 let ObjectId = require('mongodb').ObjectId;
 let Promise = require('es6-promise').Promise;
 
+let chartSet = require('./chart-set');
+let fileParser = require('./file-parser');
 let dbClient = require('../helpers/db');
+let utils = require('../helpers/utils');
+let columnTypes = require('../helpers/column-types');
 let validators = require('../helpers/validators');
-let charts = require('./charts');
 
-let COLLECTION = dbClient.COLLECTION.CHART_SET;
+const ROOT_ENDPOINT = utils.getRootEndpoint();
+const API_ROOT_ENDPOINT = utils.getRestApiRootEndpoint();
+const COLLECTION = dbClient.COLLECTION.CHART;
+const RESOURCE_NAME = 'chart';
 
 
 /**
- * Get all chart sets.
+ * Supported google chart types.
+ * Reference docs: <https://developers.google.com/chart/interactive/docs/>.
+ * @constant
+ * @type {Object}
+ */
+exports.TYPE = {
+
+  // standard google chart types
+  AREA: 'AreaChart',
+  BAR: 'BarChart',
+  COLUMN: 'ColumnChart',
+  COMBO: 'ComboChart',
+  LINE: 'LineChart',
+  PIE: 'PieChart',
+
+  // custom chart types
+  IMAGE: 'ImageChart'
+};
+
+
+/**
+ * List all charts.
  *
  * @method
  * @param {Object} params URL query parameters.
@@ -22,10 +49,10 @@ let COLLECTION = dbClient.COLLECTION.CHART_SET;
  *                               query (useful for pagination).
  * @param {number} [params.limit] Sets the limit of documents returned in
  *                                the query.
- * @returns {Promise} A promise will be resolved with new created chart set.
+ * @returns {Promise} A promise will be resolved with charts list.
  *                    Or rejected with defined errors.
  */
-exports.list = function (params) {
+exports.list = function(params) {
   let query = {};
 
   params = params || {};
@@ -49,19 +76,19 @@ exports.list = function (params) {
 
 
 /**
- * Get a single chart set.
+ * Get a single chart.
  *
  * @method
- * @param {string} id The chart set '_id' property.
- * @returns {Promise} A promise will be resolved with the found chart set.
+ * @param {string} id The chart's '_id' property.
+ * @returns {Promise} A promise will be resolved with the found chart.
  *                    Or rejected with defined errors.
  */
-exports.get = function (id) {
+exports.get = function(id) {
   if (!ObjectId.isValid(id)) {
     return Promise.reject({
       status: 422,
       errors: [{
-        "resource": "chart-sets",
+        "resource": "chart",
         "field": "_id",
         "code": "invalid"
       }]
@@ -72,7 +99,7 @@ exports.get = function (id) {
 
     return db
       .collection(COLLECTION)
-      .find({ "_id": ObjectId(id) })
+      .find({ _id: ObjectId(id) })
       .limit(1)
       .toArray()
       .then(function (docs) {
@@ -80,70 +107,65 @@ exports.get = function (id) {
           return Promise.reject({
             status: 404
           });
+        } else {
+          return docs;
         }
-
-        let promiseQueue = [];
-
-        docs[0].charts.forEach(function (chartId, index) {
-          promiseQueue.push(charts.get(chartId));
-        });
-
-        return Promise.all(promiseQueue)
-          .then(function (result) {
-            docs[0].charts = [];
-
-            result.forEach(function (chart) {
-              docs[0].charts.push(chart[0]);
-            });
-
-            return docs[0];
-          });
       });
   });
 };
 
 
 /**
- * Create a new chart set.
+ * Create a new chart.
  *
  * @method
- * @param {Object} data The new chart set object.
- * @param {?string} [data.title=null] The chart set title.
- * @param {?string} [data.description=null] The chart set description.
- * @param {Array} [data.charts] The charts' ids belong to this chart set.
- * @returns {Promise} A promise will be resolved with new created chart set.
+ * @param {Object} data The new chart object.
+ * @param {string} data.chartType The chart's type.
+ * @param {?string} [data.description=null] The chart's description.
+ * @param {?Object} [data.datatable=null] The chart's data table.
+ * @param {?Object} [data.options=null] The chart's options.
+ * @returns {Promise} A promise will be resolved with new created chart.
  *                    Or rejected with defined errors.
  */
 exports.create = function (data) {
-  // chart set schema
+  // chart schema
   let schema = {
-    title: null,
+    resourceName: RESOURCE_NAME,
+    chartType: null,
     description: null,
-    charts: [],
+    datatable: null,
+    options: null,
+    browserDownloadUrl: {
+      image: null
+    },
     createdAt: null,
     updatedAt: null
   };
 
-  if (validators.isString(data.title)) {
-    schema.title = data.title;
+  if (validators.isValidChartType(data.chartType)) {
+    schema.chartType = data.chartType;
+
+  } else {
+    return Promise.reject({
+      status: 422,
+      errors: [{
+        resource: "chart",
+        field: "chartType",
+        code: "missing_field"
+      }]
+    });
   }
 
   if (validators.isValidDescription(data.description)) {
     schema.description = data.description;
   }
 
-  if (validators.isValidChartIds(data.charts)) {
-    schema.charts = data.charts;
+  if (validators.isValidDataTable(data.datatable)) {
+    schema.datatable = data.datatable;
+  }
 
-  } else {
-    return Promise.reject({
-      status: 422,
-      errors: [{
-        "resource": "chart-sets",
-        "field": "charts",
-        "code": "invalid"
-      }]
-    });
+  if (validators.isValidOptions(data.options)) {
+    schema.options = data.options;
   }
 
   schema.createdAt = schema.updatedAt = new Date().toISOString();
@@ -161,15 +183,15 @@ exports.create = function (data) {
 
 
 /**
- * Update a single chart set.
+ * Update a single chart.
  *
  * @method
- * @param {string} id The chart set '_id' property.
- * @param {Object} data The updated chart set data object.
- * @param {?string} [data.title] The chart set description field.
- * @param {?string} [data.description] The chart set description field.
- * @param {Array} [data.charts] The chart set charts field.
- * @returns {Promise} A promise will be resolved with the updated chart set.
+ * @param {string} id The chart '_id' property.
+ * @param {Object} data The updated chart data object.
+ * @param {?string} [data.description] The chart description field.
+ * @param {?Object} [data.datatable] The chart datatable field.
+ * @param {?Object} [data.options] The chart options field.
+ * @returns {Promise} A promise will be resolved with the updated chart.
  *                    Or rejected with defined errors.
  */
 exports.update = function (id, data) {
@@ -177,14 +199,14 @@ exports.update = function (id, data) {
     return Promise.reject({
       status: 422,
       errors: [{
-        "resource": "chart-sets",
+        "resource": "chart",
         "field": "_id",
         "code": "invalid"
       }]
     });
   }
 
-  let fields = ['title', 'description', 'charts'];
+  let fields = ['description', 'datatable', 'options'];
   let updateData = {
     updatedAt: new Date().toISOString()
   };
@@ -194,6 +216,16 @@ exports.update = function (id, data) {
       updateData[field] = data[field];
     }
   });
+
+  if (validators.isDefined(data.browserDownloadUrl) &&
+    validators.isDefined(data.browserDownloadUrl.image)) {
+
+    let filename = data.browserDownloadUrl.image;
+
+    updateData.browserDownloadUrl = {
+      image: ROOT_ENDPOINT + '/upload/' + filename
+    };
+  }
 
   return dbClient.connect().then(function (db) {
 
@@ -223,10 +255,10 @@ exports.update = function (id, data) {
 
 
 /**
- * Delete a single chart set.
+ * Delete a single chart.
  *
  * @method
- * @param {string} id The chart set '_id' property.
+ * @param {string} id The chart '_id' property.
  * @returns {Promise} A promise will be resolved when delete successfully.
  *                    Or rejected with defined errors.
  */
@@ -235,7 +267,7 @@ exports.delete = function (id) {
     return Promise.reject({
       status: 422,
       errors: [{
-        "resource": "chart-sets",
+        "resource": "chart",
         "field": "_id",
         "code": "invalid"
       }]
@@ -254,7 +286,10 @@ exports.delete = function (id) {
           });
 
         } else {
-          return result;
+          return chartSet.deleteChartInChartSets(id)
+            .then(function () {
+              return result;
+            });
         }
       });
   });
@@ -262,7 +297,7 @@ exports.delete = function (id) {
 
 
 /**
- * Delete all chart sets.
+ * Delete all charts.
  *
  * @method
  * @returns {Promise} A promise will be resolved when delete successfully.
@@ -274,43 +309,5 @@ exports.deleteAll = function () {
     return db
       .collection(COLLECTION)
       .deleteMany();
-  });
-};
-
-
-/**
- * Delete chart in all chart sets.
- *
- * @method
- * @param {string} id The chart '_id' property.
- * @returns {Promise} A promise will be resolved when delete successfully.
- *                    Or rejected when error occurred.
- */
-exports.deleteChartInChartSets = function (id) {
-  if (!ObjectId.isValid(id)) {
-    return Promise.reject({
-      status: 422,
-      errors: [{
-        "resource": "charts",
-        "field": "_id",
-        "code": "invalid"
-      }]
-    });
-  }
-
-  return dbClient.connect().then(function (db) {
-
-    return db
-      .collection(COLLECTION)
-      .updateMany({
-        "charts": id
-      }, {
-        $pullAll: {
-          "charts": [id]
-        },
-        $set: {
-          updatedAt: new Date().toISOString()
-        }
-      });
   });
 };

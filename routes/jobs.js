@@ -4,8 +4,8 @@ let express = require('express');
 
 let scheduler = require('../helpers/scheduler');
 let utils = require('../helpers/utils');
-let jobs = require('../modules/jobs');
-let tasks = require('../modules/tasks');
+let job = require('../modules/job');
+let task = require('../modules/task');
 
 let router = module.exports = express.Router();
 
@@ -15,7 +15,7 @@ router.route('/jobs')
 
   // list all jobs
   .get(function getJobs(req, res, next) {
-    jobs.list()
+    job.list()
       .then(function (docs) {
         res.send(docs);
       })
@@ -24,7 +24,7 @@ router.route('/jobs')
 
   // create a job
   .post(function postJobs(req, res, next) {
-    jobs.create(req.body)
+    job.create(req.body)
       .then(function (doc) {
         res.send(doc);
       })
@@ -39,7 +39,7 @@ router.route('/jobs/:id')
   .get(function getJob(req, res, next) {
     let id = req.params.id;
 
-    jobs.get(id)
+    job.get(id)
       .then(function (docs) {
         res.send(docs[0]);
       })
@@ -50,7 +50,7 @@ router.route('/jobs/:id')
   .delete(function deleteJob(req, res, next) {
     let id = req.params.id;
 
-    jobs.delete(id)
+    job.delete(id)
       .then(function () {
         res.status(204).send();
       })
@@ -65,7 +65,7 @@ router.route('/jobs/:id/restart')
   .put(function putJobRestart(req, res, next) {
     let id = req.params.id;
 
-    jobs.get(id)
+    job.get(id)
       .then(function (docs) {
         scheduler.runJob(docs[0]);
       })
@@ -83,7 +83,7 @@ router.route('/jobs/:id/tasks')
   .get(function getJobTasks(req, res, next) {
     let id = req.params.id;
 
-    tasks.listByJobId(id)
+    task.listByJobId(id)
       .then(function (docs) {
         docs.sort((a, b) => b.finishedAt - a.finishedAt);
         res.send(docs);

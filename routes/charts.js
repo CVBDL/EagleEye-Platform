@@ -4,7 +4,7 @@ let express = require('express');
 let multiparty = require('multiparty');
 
 let utils = require('../helpers/utils');
-let charts = require('../modules/charts');
+let chart = require('../modules/chart');
 let dataTable = require('../modules/data-table');
 let fileParser = require('../modules/file-parser');
 
@@ -16,7 +16,7 @@ router.route('/charts')
 
   // read all charts
   .get(function getCharts(req, res, next) {
-    charts.list(utils.getQueryParameters(req))
+    chart.list(utils.getQueryParameters(req))
       .then(function (docs) {
         res.send(docs);
       })
@@ -25,7 +25,7 @@ router.route('/charts')
 
   // create a chart
   .post(function postCharts(req, res, next) {
-    charts.create(req.body)
+    chart.create(req.body)
       .then(function (doc) {
         res.send(doc);
       })
@@ -34,7 +34,7 @@ router.route('/charts')
 
   // delete all charts
   .delete(function deleteCharts(req, res, next) {
-    charts.deleteAll()
+    chart.deleteAll()
       .then(function () {
         res.status(204).send();
       })
@@ -49,7 +49,7 @@ router.route('/charts/:id')
   .get(function getChart(req, res, next) {
     let id = req.params.id;
     
-    charts.get(id)
+    chart.get(id)
       .then(function (docs) {
         res.send(docs[0]);
       })
@@ -60,7 +60,7 @@ router.route('/charts/:id')
   .post(function postChart(req, res, next) {
     let id = req.params.id;
 
-    charts.update(id, req.body)
+    chart.update(id, req.body)
       .then(function (doc) {
         res.send(doc);
       })
@@ -71,7 +71,7 @@ router.route('/charts/:id')
   .delete(function deleteChart(req, res, next) {
     let id = req.params.id;
     
-    charts.delete(id)
+    chart.delete(id)
       .then(function () {
         res.status(204).send();
       })
@@ -86,7 +86,7 @@ router.route('/charts/:id/datatable')
   .put(function putChartDataTable(req, res, next) {
     let id = req.params.id;
     
-    charts.update(id, { datatable: req.body })
+    chart.update(id, { datatable: req.body })
       .then(function (doc) {
         res.send(doc);
       })
@@ -99,14 +99,14 @@ router.route('/charts/:id/datatable')
     let format = req.query.format || '';
 
     if (format === 'json') {
-      charts.get(id)
+      chart.get(id)
         .then(function (docs) {
           res.send(docs[0].datatable);
         })
         .catch(next);
 
     } else if (format === 'xlsx') {
-      charts.get(id)
+      chart.get(id)
         .then(function (docs) {
           res.setHeader('Content-disposition', 'attachment; filename=' + (docs[0]._id) + '.xlsx');
           res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -153,7 +153,7 @@ router.route('/charts/:id/assets')
           actionPromise = dataTable
             .fromXLSXStream(part)
             .then(function (datatable) {
-              return charts.update(id, {
+              return chart.update(id, {
                 datatable: datatable
               });
             });
@@ -162,7 +162,7 @@ router.route('/charts/:id/assets')
           actionPromise = fileParser
             .readImageStream(part)
             .then(function (filename) {
-              return charts.update(id, {
+              return chart.update(id, {
                 browserDownloadUrl: {
                   image: filename
                 }

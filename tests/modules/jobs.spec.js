@@ -5,7 +5,7 @@ let ObjectId = require('mongodb').ObjectId;
 let should = require('should');
 
 let dbClient = require('../../helpers/db');
-let jobs = require('../../modules/jobs');
+let jobs = require('../../modules/job');
 let jobsFixtures = require('../fixtures/jobs');
 
 const JOB_COLLECTION = dbClient.COLLECTION.JOB;

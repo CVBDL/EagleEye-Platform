@@ -6,7 +6,7 @@ let Promise = require('es6-promise').Promise;
 let fs = require('fs');
 let path = require('path');
 
-let charts = require('./charts');
+let chart = require('./chart');
 let columnTypes = require('../helpers/column-types');
 
 

@@ -34,13 +34,12 @@
     <Compile Include="helpers\scheduler.js" />
     <Compile Include="helpers\utils.js" />
     <Compile Include="helpers\validators.js" />
-    <Compile Include="modules\chart-sets.js" />
-    <Compile Include="modules\chart-types.js" />
-    <Compile Include="modules\charts.js" />
+    <Compile Include="modules\chart-set.js" />
+    <Compile Include="modules\chart.js" />
     <Compile Include="modules\data-table.js" />
     <Compile Include="modules\file-parser.js" />
-    <Compile Include="modules\tasks.js" />
-    <Compile Include="modules\jobs.js" />
+    <Compile Include="modules\task.js" />
+    <Compile Include="modules\job.js" />
     <Compile Include="routes\chart-sets.js" />
     <Compile Include="routes\charts.js" />
     <Compile Include="routes\jobs.js" />

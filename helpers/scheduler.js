@@ -22,8 +22,8 @@ let ObjectId = require('mongodb').ObjectId;
 let child_process = require('child_process');
 let schedule = require("node-schedule");
 
-let jobs = require('../modules/jobs');
-let tasks = require('../modules/tasks');
+let jobs = require('../modules/job');
+let tasks = require('../modules/task');
 
 // save running job configuration and handlers
 let stat = {};

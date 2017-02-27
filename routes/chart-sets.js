@@ -2,7 +2,7 @@
 
 let express = require('express');
 let utils = require('../helpers/utils');
-let chartSets = require('../modules/chart-sets');
+let chartSet = require('../modules/chart-set');
 
 let router = module.exports = express.Router();
 
@@ -12,7 +12,7 @@ router.route('/chart-sets')
 
   // read all chart sets
   .get(function getChartSets(req, res, next) {
-    chartSets.list(utils.getQueryParameters(req))
+    chartSet.list(utils.getQueryParameters(req))
       .then(function (docs) {
         res.send(docs);
       })
@@ -21,7 +21,7 @@ router.route('/chart-sets')
 
   // create a chart set
   .post(function postChartSets(req, res, next) {
-    chartSets.create(req.body)
+    chartSet.create(req.body)
       .then(function (result) {
         res.send(result);
       })
@@ -30,7 +30,7 @@ router.route('/chart-sets')
 
   // delete all chart sets
   .delete(function deleteChartSets(req, res, next) {
-    chartSets.deleteAll()
+    chartSet.deleteAll()
       .then(function () {
         res.status(204).send();
       })
@@ -45,7 +45,7 @@ router.route('/chart-sets/:id')
   .get(function getSingleChartSet(req, res, next) {
     let id = req.params.id;
 
-    chartSets.get(id)
+    chartSet.get(id)
       .then(function (doc) {
         res.send(doc);
       })
@@ -56,7 +56,7 @@ router.route('/chart-sets/:id')
   .post(function postChartSet(req, res, next) {
     let id = req.params.id;
 
-    chartSets.update(id, req.body)
+    chartSet.update(id, req.body)
       .then(function (doc) {
         res.send(doc);
       })
@@ -67,7 +67,7 @@ router.route('/chart-sets/:id')
   .delete(function deleteSingleChartSet(req, res, next) {
     let id = req.params.id;
     
-    chartSets.delete(id)
+    chartSet.delete(id)
       .then(function () {
         res.status(204).send();
       })

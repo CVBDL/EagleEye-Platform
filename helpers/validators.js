@@ -2,7 +2,7 @@
 
 let ObjectId = require('mongodb').ObjectId;
 
-const CHART_TYPES = require('../modules/chart-types');
+let chart = require('../modules/chart');
 
 exports.isUndefined = function (value) {
   return typeof value === 'undefined';
@@ -23,8 +23,8 @@ exports.isObject = function (value) {
 exports.isValidChartType = function (chartType) {
   let isValid = false;
 
-  Object.keys(CHART_TYPES).forEach(function (type) {
-    if (type === chartType) {
+  Object.keys(chart.TYPE).forEach(function (type) {
+    if (chart.TYPE[type] === chartType) {
       isValid = true;
     }
   });

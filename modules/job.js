@@ -8,6 +8,7 @@ let validators = require('../helpers/validators');
 let scheduler = require('../helpers/scheduler');
 
 const COLLECTION = dbClient.COLLECTION.JOB;
+const RESOURCE_NAME = 'job';
 const JOB_SCHEMA = {
   _id: {
     type: 'ObjectId'
@@ -111,7 +112,7 @@ exports.get = function (id) {
  */
 exports.create = function (data) {
   let job = {
-    _id: ObjectId(),
+    resourceName: RESOURCE_NAME,
     name: null,
     expression: null,
     command: null,

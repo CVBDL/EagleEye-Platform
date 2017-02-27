@@ -3,9 +3,10 @@
 let ObjectId = require('mongodb').ObjectId;
 
 let dbClient = require('../helpers/db');
-let jobs = require('./jobs');
+let job = require('./job');
 
 const COLLECTION = dbClient.COLLECTION.TASK;
+const RESOURCE_NAME = 'task';
 
 
 /**
@@ -117,6 +118,7 @@ exports.create = function (job) {
   }
 
   let task = {
+    resourceName: RESOURCE_NAME,
     job: job,
     state: 'running',
     startedAt: new Date().toISOString(),
@@ -195,7 +197,7 @@ exports.update = function (id, data) {
         } else {
           let jobId = result.value.job._id.toHexString();
 
-          return jobs.update(jobId, { lastState: result.value.state })
+          return job.update(jobId, { lastState: result.value.state })
             .then(function () {
               return result.value;
             });

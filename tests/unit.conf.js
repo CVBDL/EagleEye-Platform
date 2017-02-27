@@ -7,17 +7,17 @@ process.env.DB_CONNECTION_URI =
   'mongodb://localhost:27017/eagleeye_test';
 
 // modules
-require('./modules/charts.spec');
-require('./modules/chart-sets.spec');
-require('./modules/tasks.spec');
-require('./modules/jobs.spec');
+require('./modules/chart.spec');
+require('./modules/chart-set.spec');
+require('./modules/task.spec');
+require('./modules/job.spec');
 require('./modules/file-parser.spec');
 require('./modules/data-table.spec');
+require('./modules/error-handler.spec');
 
 // helpers
 require('./helpers/column-types.spec');
 require('./helpers/utils.spec');
-require('./helpers/error-handlers.spec');
 
 // routes
 require('./routes/charts.spec');

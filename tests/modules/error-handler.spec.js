@@ -5,7 +5,7 @@ let sinon = require('sinon');
 
 require('should-sinon');
 
-let errorHandler = require('../../helpers/error-handlers');
+let errorHandler = require('../../modules/error-handler');
 
 describe('helpers: error-handlers', function () {
   let req;

@@ -561,66 +561,6 @@ describe('routes: /charts/:id', function () {
     });
   });
 
-
-  /**
-   * Edit chart data table.
-   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#edit-data-table>
-   */
-  describe('PUT /api/v1/charts/:id/datatable', function () {
-
-    it('should replace chart data table', function (done) {
-      let id = chartsFixtures.collections.chart[0]._id.toHexString();
-      let datatable = chart.datatable;
-      
-      request(app)
-        .put(`/api/v1/charts/${id}/datatable`)
-        .set('Content-Type', 'application/json')
-        .send(datatable)
-        .expect('Content-Type', /json/)
-        .expect(function (res) {
-          res.body._id.should.eql(id);
-          res.body.datatable.should.eql(datatable);
-        })
-        .expect(200, done);
-    });
-
-    it('should response 422 if sent invalid id', function (done) {
-      let invalidId = '0';
-      let datatable = chart.datatable;
-
-      request(app)
-        .put(`/api/v1/charts/${invalidId}/datatable`)
-        .send(datatable)
-        .expect('Content-Type', /json/)
-        .expect(function (res) {
-          res.body.message.should.eql('Validation Failed');
-          res.body.errors.should.eql([
-            {
-              "resource": "chart",
-              "field": "_id",
-              "code": "invalid"
-            }
-          ]);
-        })
-        .expect(422, done);
-    });
-
-    it('should response 404 if cannot find the record', function (done) {
-      let nonexistentId = '000000000000000000000000';
-      let datatable = chart.datatable;
-
-      request(app)
-        .put(`/api/v1/charts/${nonexistentId}/datatable`)
-        .send(datatable)
-        .expect('Content-Type', /json/)
-        .expect(function (res) {
-          res.body.message.should.eql('Not Found');
-        })
-        .expect(404, done);
-    });
-  });
-
-
   /**
    * Get chart data table.
    * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#get-data-table>

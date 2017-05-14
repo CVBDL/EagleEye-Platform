@@ -82,17 +82,6 @@ router.route('/charts/:id')
 // define routes
 router.route('/charts/:id/datatable')
 
-  // update a single chart data table
-  .put(function putChartDataTable(req, res, next) {
-    let id = req.params.id;
-
-    chart.update(id, { datatable: req.body })
-      .then(function (doc) {
-        res.send(doc);
-      })
-      .catch(next);
-  })
-
   // get an asset
   .get(function getDataTable(req, res, next) {
     let id = req.params.id;

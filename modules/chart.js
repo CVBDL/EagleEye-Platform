@@ -33,18 +33,6 @@ const CHART_TYPE = {
   IMAGE: 'ImageChart'
 };
 
-function isValidChartType(chartType) {
-  let isValid = false;
-
-  Object.keys(CHART_TYPE).forEach(function (type) {
-    if (CHART_TYPE[type] === chartType) {
-      isValid = true;
-    }
-  });
-
-  return isValid;
-};
-
 
 /**
  * List all charts.
@@ -319,4 +307,17 @@ exports.deleteAll = function () {
       .collection(COLLECTION)
       .deleteMany();
   });
+};
+
+
+function isValidChartType(chartType) {
+  let isValid = false;
+
+  Object.keys(CHART_TYPE).forEach(function (type) {
+    if (CHART_TYPE[type] === chartType) {
+      isValid = true;
+    }
+  });
+
+  return isValid;
 };

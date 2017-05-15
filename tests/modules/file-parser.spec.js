@@ -33,7 +33,7 @@ describe('modules: file-parser', function () {
 
   describe('readImageStream', function () {
 
-    it('should update chart browserDownloadUrl with image', function (done) {
+    it('should update chart imageUrl with image', function (done) {
       let filename = 'sample.png';
       let testFilePath = path.join(__dirname, '..', 'fixtures', filename);
       let stream = fs.createReadStream(testFilePath);

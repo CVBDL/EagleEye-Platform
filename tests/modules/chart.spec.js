@@ -151,7 +151,7 @@ describe('modules: charts', function () {
           should(newChart.description).be.null();
           should(newChart.datatable).be.null();
           should(newChart.options).be.null();
-          should(newChart.browserDownloadUrl.image).be.null();
+          should(newChart.imageUrl).be.null();
           should(newChart.createdAt).not.be.undefined();
           should(newChart.updatedAt).not.be.undefined();
           done();
@@ -174,7 +174,7 @@ describe('modules: charts', function () {
           should(newChart.description).be.null();
           should(newChart.datatable).be.null();
           should(newChart.options).be.null();
-          should(newChart.browserDownloadUrl.image).be.null();
+          should(newChart.imageUrl).be.null();
           should(newChart.createdAt).not.be.undefined();
           should(newChart.updatedAt).not.be.undefined();
           done();

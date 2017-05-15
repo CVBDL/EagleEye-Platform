@@ -132,9 +132,7 @@ exports.create = function (data) {
     description: null,
     datatable: null,
     options: null,
-    browserDownloadUrl: {
-      image: null
-    },
+    imageUrl: null,
     createdAt: null,
     updatedAt: null
   };
@@ -214,18 +212,13 @@ exports.update = function (id, data) {
     }
   });
 
-  if (validators.isDefined(data.browserDownloadUrl) &&
-    validators.isDefined(data.browserDownloadUrl.image)) {
+  if (validators.isDefined(data.imageUrl)) {
+    let filename = data.imageUrl;
 
-    let filename = data.browserDownloadUrl.image;
-
-    updateData.browserDownloadUrl = {
-      image: ROOT_ENDPOINT + '/upload/' + filename
-    };
+    updateData.imageUrl = ROOT_ENDPOINT + '/upload/' + filename;
   }
 
   return dbClient.connect().then(function (db) {
-
     return db
       .collection(COLLECTION)
       .findOneAndUpdate({

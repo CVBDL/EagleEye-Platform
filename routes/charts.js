@@ -152,9 +152,7 @@ router.route('/charts/:id/assets')
             .readImageStream(part)
             .then(function (filename) {
               return chart.update(id, {
-                browserDownloadUrl: {
-                  image: filename
-                }
+                imageUrl: filename
               });
             });
 

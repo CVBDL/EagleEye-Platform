@@ -196,7 +196,7 @@ describe('routes: /charts', function () {
           res.body.datatable.should.eql(chart.datatable);
           res.body.options.should.eql(chart.options);
           
-          should.equal(null, res.body.browserDownloadUrl.image);
+          should.equal(null, res.body.imageUrl);
         })
         .expect(200, done);
     });
@@ -222,7 +222,7 @@ describe('routes: /charts', function () {
           res.body.chartType.should.eql(chart.chartType);
           res.body.description.should.eql(chart.description);
           
-          should.equal(null, res.body.browserDownloadUrl.image);
+          should.equal(null, res.body.imageUrl);
         })
         .expect(200, done);
     });
@@ -249,7 +249,7 @@ describe('routes: /charts', function () {
           should.equal(null, res.body.datatable);
           should.equal(null, res.body.options);
           
-          should.equal(null, res.body.browserDownloadUrl.image);
+          should.equal(null, res.body.imageUrl);
         })
         .expect(200, done);
     });
@@ -412,9 +412,7 @@ describe('routes: /charts/:id', function () {
             .should
             .eql(fixture.chartType);
 
-          res.body.browserDownloadUrl
-            .should
-            .eql(fixture.browserDownloadUrl);
+          should.equal(res.body.imageUrl, fixture.imageUrl);
 
           res.body.createdAt
             .should
@@ -452,9 +450,7 @@ describe('routes: /charts/:id', function () {
             .should
             .eql(fixture.chartType);
 
-          res.body.browserDownloadUrl
-            .should
-            .eql(fixture.browserDownloadUrl);
+          should.equal(res.body.imageUrl, fixture.imageUrl);
 
           res.body.createdAt
             .should
@@ -727,10 +723,10 @@ describe('routes: /charts/:id', function () {
         .expect('Content-Type', /json/)
         .expect(function (res) {
           res.body._id.should.eql(id);
-          res.body.browserDownloadUrl.image.should.endWith(filename);
+          res.body.imageUrl.should.endWith(filename);
 
           // check save file on server
-          let imageURL = res.body.browserDownloadUrl.image;
+          let imageURL = res.body.imageUrl;
           let savedFilename = imageURL.substring(imageURL.lastIndexOf('/') + 1);
           let savedPath = path.join(
             __dirname, '..', '..', 'public', 'upload', savedFilename);
@@ -759,10 +755,10 @@ describe('routes: /charts/:id', function () {
         .expect('Content-Type', /json/)
         .expect(function (res) {
           res.body._id.should.eql(id);
-          res.body.browserDownloadUrl.image.should.endWith(filename);
+          res.body.imageUrl.should.endWith(filename);
 
           // check save file on server
-          let imageURL = res.body.browserDownloadUrl.image;
+          let imageURL = res.body.imageUrl;
           let savedFilename = imageURL.substring(imageURL.lastIndexOf('/') + 1);
           let savedPath = path.join(
             __dirname, '..', '..', 'public', 'upload', savedFilename);
@@ -791,10 +787,10 @@ describe('routes: /charts/:id', function () {
         .expect('Content-Type', /json/)
         .expect(function (res) {
           res.body._id.should.eql(id);
-          res.body.browserDownloadUrl.image.should.endWith(filename);
+          res.body.imageUrl.should.endWith(filename);
 
           // check save file on server
-          let imageURL = res.body.browserDownloadUrl.image;
+          let imageURL = res.body.imageUrl;
           let savedFilename = imageURL.substring(imageURL.lastIndexOf('/') + 1);
           let savedPath = path.join(
             __dirname, '..', '..', 'public', 'upload', savedFilename);

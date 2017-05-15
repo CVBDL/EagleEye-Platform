@@ -113,10 +113,10 @@ router.route('/charts/:id/datatable')
 
 
 // define routes
-router.route('/charts/:id/assets')
+router.route('/charts/:id/files')
 
   // upload an asset
-  .post(function postAssets(req, res, next) {
+  .post(function postFiles(req, res, next) {
     let id = req.params.id;
 
     // .png and .jpeg image files

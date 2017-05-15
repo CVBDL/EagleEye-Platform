@@ -17,7 +17,7 @@ router.route('/')
     res.send({
       "root_endpoint_url": rootEndpoint,
       "charts_url": rootEndpoint + '/charts',
-      "charts_assets_url": rootEndpoint + '/charts/:_id/assets',
+      "chart_file_upload": rootEndpoint + '/charts/:_id/files',
       "chart_sets_url": rootEndpoint + '/chart-sets',
       "search_url": rootEndpoint + '/search',
       "search_charts_url": rootEndpoint + '/search/charts',

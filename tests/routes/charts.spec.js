@@ -606,10 +606,10 @@ describe('routes: /charts/:id', function () {
   });
 
   /**
-   * Process uploaded chart assets.
-   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#upload-a-chart-asset>
+   * Process uploaded chart files.
+   * <https://github.com/CVBDL/EagleEye-Docs/blob/master/rest-api/rest-api.md#upload-a-chart-file>
    */
-  describe('POST /api/v1/charts/:id/assets', function () {
+  describe('POST /api/v1/charts/:id/files', function () {
 
     it('should process uploaded .xlsx file', function (done) {
       let id = chartsFixtures.collections.chart[0]._id.toHexString();
@@ -700,7 +700,7 @@ describe('routes: /charts/:id', function () {
       };
 
       request(app)
-        .post(`/api/v1/charts/${id}/assets`)
+        .post(`/api/v1/charts/${id}/files`)
         .attach('file', testXlsxFilePath)
         .send()
         .expect('Content-Type', /json/)
@@ -717,7 +717,7 @@ describe('routes: /charts/:id', function () {
       let testPNGFile = path.join(__dirname, '..', 'fixtures', filename);
 
       request(app)
-        .post(`/api/v1/charts/${id}/assets`)
+        .post(`/api/v1/charts/${id}/files`)
         .attach('file', testPNGFile)
         .send()
         .expect('Content-Type', /json/)
@@ -749,7 +749,7 @@ describe('routes: /charts/:id', function () {
       let testPNGFile = path.join(__dirname, '..', 'fixtures', filename);
 
       request(app)
-        .post(`/api/v1/charts/${id}/assets`)
+        .post(`/api/v1/charts/${id}/files`)
         .attach('file', testPNGFile)
         .send()
         .expect('Content-Type', /json/)
@@ -781,7 +781,7 @@ describe('routes: /charts/:id', function () {
       let testPNGFile = path.join(__dirname, '..', 'fixtures', filename);
 
       request(app)
-        .post(`/api/v1/charts/${id}/assets`)
+        .post(`/api/v1/charts/${id}/files`)
         .attach('file', testPNGFile)
         .send()
         .expect('Content-Type', /json/)
@@ -896,7 +896,7 @@ describe('routes: /charts/:id', function () {
       };
 
       request(app)
-        .post(`/api/v1/charts/${id}/assets`)
+        .post(`/api/v1/charts/${id}/files`)
         .field('name', 'unexpected')
         .attach('file', testXlsxFilePath)
         .send()
@@ -914,7 +914,7 @@ describe('routes: /charts/:id', function () {
       let invalidFile = path.join(__dirname, '..', 'fixtures', filename);
 
       request(app)
-        .post(`/api/v1/charts/${id}/assets`)
+        .post(`/api/v1/charts/${id}/files`)
         .attach('file', invalidFile)
         .send()
         .expect('Content-Type', /json/)
@@ -930,7 +930,7 @@ describe('routes: /charts/:id', function () {
       let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', filename);
 
       request(app)
-        .post(`/api/v1/charts/${invalidId}/assets`)
+        .post(`/api/v1/charts/${invalidId}/files`)
         .attach('file', testXlsxFilePath)
         .send()
         .expect('Content-Type', /json/)
@@ -953,7 +953,7 @@ describe('routes: /charts/:id', function () {
       let testXlsxFilePath = path.join(__dirname, '..', 'fixtures', filename);
 
       request(app)
-        .post(`/api/v1/charts/${nonexistentId}/assets`)
+        .post(`/api/v1/charts/${nonexistentId}/files`)
         .attach('file', testXlsxFilePath)
         .send()
         .expect('Content-Type', /json/)

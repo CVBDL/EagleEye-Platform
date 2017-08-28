@@ -4,7 +4,7 @@ var Service  =  require('node-windows').Service;
 var svc  =  new  Service({  
   name: 'EagleEyePlatformExpress',
   description:'EagleEye Platform Web Server',
-  script: 'c:\\www\\EagleEye-Platform\\app.js'
+  script: 'c:\\www\\EagleEye-Platform\\bin\\www'
 });
 
 // Listen for the "install" event, which indicates the
